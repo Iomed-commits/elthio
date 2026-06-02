@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elthio — Sign in</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F7F5F0; --surface: #FFFFFF; --border: #E2DDD4; --text: #1A1814; --muted: #9B9488;
+  --green: #2D6A4F; --green-light: #D8F3DC; --red: #C1292E; --red-light: #FDECEA;
+  --gold: #C9A84C; --shadow: 0 2px 12px rgba(26,24,20,0.08);
+}
+body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; }
+.wrap { max-width: 420px; margin: 0 auto; padding: 32px 20px 48px; }
+.hero { text-align: center; margin-bottom: 28px; }
+.hero-label { font-size: 10px; letter-spacing: 0.25em; color: var(--gold); margin-bottom: 8px; }
+.hero h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(22px, 5vw, 32px); line-height: 1.1; }
+.hero h1 em { color: var(--gold); font-style: normal; }
+.hero p { font-size: 11px; color: var(--muted); margin-top: 10px; line-height: 1.6; }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 22px; box-shadow: var(--shadow);
+}
+.tabs { display: flex; gap: 4px; margin-bottom: 18px; flex-wrap: wrap; }
+.tab {
+  flex: 1; min-width: 90px; text-align: center; padding: 10px 6px; font-size: 9px; letter-spacing: 0.08em;
+  border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--muted);
+  cursor: pointer; transition: all 0.15s;
+}
+.tab:hover { color: var(--text); }
+.tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+label { display: block; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 6px; }
+.input {
+  width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px; padding: 11px 14px;
+  outline: none; margin-bottom: 14px; transition: border-color 0.15s;
+}
+.input:focus { border-color: var(--gold); }
+.btn {
+  width: 100%; background: var(--text); color: var(--bg); border: none; border-radius: 6px;
+  font-family: 'DM Mono', monospace; font-size: 11px; padding: 12px; cursor: pointer;
+  letter-spacing: 0.08em; margin-top: 4px; transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.88; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn.outline {
+  background: transparent; color: var(--text); border: 1px solid var(--border); margin-top: 10px;
+}
+.hint { font-size: 10px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+.link-row { text-align: right; margin: -8px 0 12px; }
+.link-row button {
+  background: none; border: none; padding: 0; font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--gold); cursor: pointer; text-decoration: underline;
+}
+.link-row button:hover { opacity: 0.85; }
+.msg { font-size: 11px; line-height: 1.55; margin-top: 14px; padding: 12px; border-radius: 8px; display: none; }
+.msg.show { display: block; }
+.msg.ok { background: var(--green-light); color: var(--green); }
+.msg.err { background: var(--red-light); color: var(--red); }
+.msg.info { background: #EBF5FB; color: #1B4F72; }
+.footer { text-align: center; margin-top: 22px; }
+.footer a { color: var(--muted); font-size: 10px; text-decoration: none; letter-spacing: 0.06em; }
+.footer a:hover { color: var(--gold); }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="hero-label">ELTHIO</div>
+    <h1>Elthio <em>Account</em></h1>
+    <p id="heroSub">Sign in to sync your supplement audits, or create a new account.</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs" role="tablist" id="modeTabs">
+      <button type="button" class="tab active" data-mode="signin" role="tab" aria-selected="true">Sign in</button>
+      <button type="button" class="tab" data-mode="signup" role="tab" aria-selected="false">Create account</button>
+      <button type="button" class="tab" data-mode="reset" role="tab" aria-selected="false">Reset password</button>
+    </div>
+
+    <form id="authForm" autocomplete="on">
+      <div id="panelSigninSignup">
+        <label for="email">Email</label>
+        <input class="input" type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com">
+
+        <div id="passwordBlock">
+          <label for="password">Password</label>
+          <input class="input" type="password" id="password" name="password" required minlength="6" autocomplete="current-password" placeholder="••••••••">
+          <div class="link-row" id="forgotLinkRow">
+            <button type="button" id="gotoReset">Forgot password?</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn">Sign in</button>
+      </div>
+
+      <div id="panelReset" class="hidden">
+        <p class="hint">Enter the email on your account. We will send a link to set a new password.</p>
+        <p class="hint">There is no separate username — you sign in with your <strong>email</strong>. If you are unsure which address you used, try your usual inboxes.</p>
+        <p class="hint">If the email link does nothing: keep Elthio running, open the link in a desktop browser on <strong>this PC</strong> (not a phone), and in Supabase add <strong>http://127.0.0.1:8765/auth</strong> under Authentication → URL configuration → Redirect URLs.</p>
+        <label for="resetEmail">Email</label>
+        <input class="input" type="email" id="resetEmail" autocomplete="email" placeholder="you@example.com">
+        <button type="button" class="btn" id="sendResetBtn">Send reset link</button>
+        <button type="button" class="btn outline" id="backToSignIn">Back to sign in</button>
+      </div>
+
+      <div id="panelNewPassword" class="hidden">
+        <p class="hint">Choose a new password for your account.</p>
+        <label for="newPassword">New password</label>
+        <input class="input" type="password" id="newPassword" minlength="6" autocomplete="new-password" placeholder="At least 6 characters">
+        <label for="confirmPassword">Confirm password</label>
+        <input class="input" type="password" id="confirmPassword" minlength="6" autocomplete="new-password" placeholder="Repeat password">
+        <button type="button" class="btn" id="savePasswordBtn">Update password</button>
+      </div>
+    </form>
+
+    <div class="msg" id="msg" role="status"></div>
+  </div>
+
+  <div class="footer">
+    <a href="/">← Back to Elthio</a>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const msg = document.getElementById('msg');
+const form = document.getElementById('authForm');
+const submitBtn = document.getElementById('submitBtn');
+const tabs = document.querySelectorAll('.tab');
+const panelSigninSignup = document.getElementById('panelSigninSignup');
+const panelReset = document.getElementById('panelReset');
+const panelNewPassword = document.getElementById('panelNewPassword');
+const passwordBlock = document.getElementById('passwordBlock');
+const forgotLinkRow = document.getElementById('forgotLinkRow');
+const modeTabs = document.getElementById('modeTabs');
+const heroSub = document.getElementById('heroSub');
+
+let mode = 'signin';
+let client = null;
+
+function showMessage(text, kind) {
+  msg.textContent = text;
+  msg.className = 'msg show ' + (kind || 'info');
+}
+
+function redirectAfterAuth() {
+  return window.location.origin + '/auth';
+}
+
+/** Parse Supabase redirect after email link (hash tokens, PKCE code, or errors). */
+function readAuthCallbackParams() {
+  const hash = (window.location.hash || '').replace(/^#/, '');
+  const hashParams = new URLSearchParams(hash);
+  const qs = new URLSearchParams(window.location.search);
+  const err =
+    qs.get('error_description') ||
+    qs.get('error') ||
+    hashParams.get('error_description') ||
+    hashParams.get('error');
+  return { hashParams, qs, err };
+}
+
+function clearAuthCallbackFromUrl() {
+  const clean = window.location.pathname || '/auth';
+  history.replaceState(null, '', clean);
+}
+
+async function handleAuthCallback() {
+  const { hashParams, qs, err } = readAuthCallbackParams();
+  if (err) {
+    showMessage(decodeURIComponent(String(err).replace(/\+/g, ' ')), 'err');
+    clearAuthCallbackFromUrl();
+    return true;
+  }
+
+  const code = qs.get('code');
+  if (code) {
+    showMessage('Confirming reset link…', 'info');
+    const { data, error } = await client.auth.exchangeCodeForSession(code);
+    if (error) {
+      showMessage('Reset link invalid or expired: ' + error.message, 'err');
+      clearAuthCallbackFromUrl();
+      return true;
+    }
+    if (data.session) {
+      showRecoveryPanel();
+      showMessage('Enter your new password below.', 'info');
+      clearAuthCallbackFromUrl();
+      return true;
+    }
+  }
+
+  const accessToken = hashParams.get('access_token');
+  const refreshToken = hashParams.get('refresh_token');
+  const type = hashParams.get('type');
+  if (accessToken && refreshToken) {
+    showMessage('Confirming reset link…', 'info');
+    const { error } = await client.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    });
+    if (error) {
+      showMessage('Reset link invalid or expired: ' + error.message, 'err');
+      clearAuthCallbackFromUrl();
+      return true;
+    }
+    showRecoveryPanel();
+    showMessage('Enter your new password below.', 'info');
+    clearAuthCallbackFromUrl();
+    return true;
+  }
+
+  if (type === 'recovery' || hashParams.get('access_token')) {
+    const { data: sessData } = await client.auth.getSession();
+    if (sessData.session) {
+      showRecoveryPanel();
+      showMessage('Enter your new password below.', 'info');
+      clearAuthCallbackFromUrl();
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function setMode(next) {
+  mode = next;
+  tabs.forEach((t) => {
+    const on = t.dataset.mode === mode;
+    t.classList.toggle('active', on);
+    t.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+
+  const isReset = mode === 'reset';
+  const isSignup = mode === 'signup';
+
+  panelSigninSignup.classList.toggle('hidden', isReset);
+  panelReset.classList.toggle('hidden', !isReset);
+  modeTabs.classList.toggle('hidden', false);
+
+  if (isReset) {
+    heroSub.textContent = 'Reset your password via email.';
+    const mainEmail = document.getElementById('email').value.trim();
+    if (mainEmail) document.getElementById('resetEmail').value = mainEmail;
+    return;
+  }
+
+  heroSub.textContent = isSignup
+    ? 'Create an account to save audits to the cloud.'
+    : 'Sign in to sync your supplement audits.';
+
+  document.getElementById('password').required = true;
+  passwordBlock.classList.remove('hidden');
+  forgotLinkRow.classList.toggle('hidden', mode !== 'signin');
+  submitBtn.textContent = mode === 'signin' ? 'Sign in' : 'Create account';
+  document.getElementById('password').setAttribute('autocomplete', mode === 'signin' ? 'current-password' : 'new-password');
+}
+
+function showRecoveryPanel() {
+  modeTabs.classList.add('hidden');
+  panelSigninSignup.classList.add('hidden');
+  panelReset.classList.add('hidden');
+  panelNewPassword.classList.remove('hidden');
+  heroSub.textContent = 'Set a new password for your account.';
+}
+
+tabs.forEach((t) => {
+  t.addEventListener('click', () => setMode(t.dataset.mode));
+});
+
+document.getElementById('gotoReset').addEventListener('click', () => setMode('reset'));
+document.getElementById('backToSignIn').addEventListener('click', () => setMode('signin'));
+
+document.getElementById('sendResetBtn').addEventListener('click', async () => {
+  if (!client) return;
+  const email = document.getElementById('resetEmail').value.trim();
+  if (!email) {
+    showMessage('Enter your email address.', 'err');
+    return;
+  }
+  const btn = document.getElementById('sendResetBtn');
+  btn.disabled = true;
+  try {
+    const { error } = await client.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectAfterAuth(),
+    });
+    if (error) throw error;
+    showMessage(
+      'If an account exists for ' + email + ', you will receive a reset link shortly. Check spam, then open the link on this device.',
+      'ok'
+    );
+  } catch (err) {
+    showMessage(err.message || String(err), 'err');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('savePasswordBtn').addEventListener('click', async () => {
+  if (!client) return;
+  const p1 = document.getElementById('newPassword').value;
+  const p2 = document.getElementById('confirmPassword').value;
+  if (p1.length < 6) {
+    showMessage('Password must be at least 6 characters.', 'err');
+    return;
+  }
+  if (p1 !== p2) {
+    showMessage('Passwords do not match.', 'err');
+    return;
+  }
+  const btn = document.getElementById('savePasswordBtn');
+  btn.disabled = true;
+  try {
+    const { error } = await client.auth.updateUser({ password: p1 });
+    if (error) throw error;
+    showMessage('Password updated. You can sign in with your new password.', 'ok');
+    history.replaceState(null, '', '/auth');
+    panelNewPassword.classList.add('hidden');
+    modeTabs.classList.remove('hidden');
+    setMode('signin');
+  } catch (err) {
+    showMessage(err.message || String(err), 'err');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+async function init() {
+  let data;
+  try {
+    const res = await fetch('/config');
+    data = await res.json();
+  } catch (e) {
+    showMessage('Could not load configuration. Is the server running?', 'err');
+    return;
+  }
+  const url = (data.supabase_url || '').trim();
+  const key = (data.supabase_anon_key || '').trim();
+  if (!url || !key) {
+    showMessage('Supabase is not configured. Set SUPABASE_URL and SUPABASE_ANON_KEY in .env and restart the server.', 'err');
+    return;
+  }
+  client = createClient(url, key, {
+    auth: {
+      flowType: 'implicit',
+      detectSessionInUrl: true,
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  });
+
+  client.auth.onAuthStateChange((event) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      showRecoveryPanel();
+      showMessage('Enter your new password below.', 'info');
+    }
+  });
+
+  const hadCallback =
+    (window.location.hash && window.location.hash.length > 1) ||
+    (window.location.search && window.location.search.length > 1);
+  if (hadCallback) {
+    const handled = await handleAuthCallback();
+    if (handled) return;
+  }
+
+  const { data: sess } = await client.auth.getSession();
+  if (sess.session && panelNewPassword.classList.contains('hidden')) {
+    showMessage('You are already signed in as ' + (sess.session.user.email || sess.session.user.id) + '.', 'ok');
+  }
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!client || mode === 'reset') return;
+  msg.classList.remove('show');
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  submitBtn.disabled = true;
+  try {
+    if (mode === 'signin') {
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      showMessage('Signed in successfully. You can return to Elthio.', 'ok');
+    } else {
+      const { data, error } = await client.auth.signUp({ email, password });
+      if (error) throw error;
+      if (data.session) {
+        showMessage('Account created and you are signed in.', 'ok');
+      } else {
+        showMessage('Account created. If email confirmation is enabled, check your inbox before signing in.', 'ok');
+      }
+    }
+  } catch (err) {
+    showMessage(err.message || String(err), 'err');
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+
+init();
+setMode('signin');
+</script>
+</body>
+</html>

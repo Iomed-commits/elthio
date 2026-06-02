@@ -1,0 +1,10 @@
+# Railway deploy config — https://docs.railway.com/guides/config-as-code
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "python Server.PY"
+healthcheckPath = "/"
+healthcheckTimeout = 120
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5

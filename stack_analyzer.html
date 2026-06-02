@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elthio — Stack Analyzer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0A0A0A;
+    --surface: #111111;
+    --border: #222222;
+    --text: #E8E8E0;
+    --muted: #555555;
+    --green: #A8FF3E;
+    --yellow: #FFD93E;
+    --red: #FF3E6C;
+    --blue: #3EDBFF;
+    --purple: #C03EFF;
+  }
+
+  body {
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  /* Header */
+  .header { margin-bottom: 40px; }
+  .header-label { font-size: 10px; color: var(--muted); letter-spacing: 0.2em; margin-bottom: 8px; }
+  .header h1 { font-size: clamp(20px, 4vw, 32px); font-weight: 600; letter-spacing: -0.02em; }
+  .header h1 span { color: var(--muted); font-weight: 300; }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; max-width: 1100px; }
+  @media (max-width: 768px) { .layout { grid-template-columns: 1fr; } }
+
+  /* Panels */
+  .panel { border: 1px solid var(--border); padding: 20px; }
+  .panel-title { font-size: 10px; color: var(--muted); letter-spacing: 0.15em; margin-bottom: 16px; }
+
+  /* Input area */
+  .url-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .url-input:focus { border-color: var(--green); }
+  .url-input::placeholder { color: var(--muted); }
+
+  .btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 10px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+    margin-bottom: 8px;
+  }
+  .btn:hover { background: var(--green); color: var(--bg); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn.secondary { border-color: var(--muted); color: var(--muted); }
+  .btn.secondary:hover { background: var(--muted); color: var(--bg); }
+  .btn.danger { border-color: var(--red); color: var(--red); }
+  .btn.danger:hover { background: var(--red); color: var(--bg); }
+
+  /* Product list */
+  .product-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    gap: 8px;
+  }
+  .product-name { color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .remove-btn {
+    background: none;
+    border: none;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* Alerts */
+  .alert {
+    padding: 10px 12px;
+    border-left: 3px solid;
+    margin-bottom: 8px;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .alert.exceeded { border-color: var(--red); background: #ff3e6c11; }
+  .alert.warning  { border-color: var(--yellow); background: #ffd93e11; }
+  .alert.duplicate { border-color: var(--purple); background: #c03eff11; }
+
+  /* Daily totals table */
+  .totals-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .totals-table th {
+    text-align: left;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+  }
+  .totals-table td { padding: 7px 8px; border-bottom: 1px solid #161616; }
+  .totals-table tr:last-child td { border-bottom: none; }
+
+  .status-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+  .status-ok       { background: #a8ff3e22; color: var(--green); }
+  .status-warning  { background: #ffd93e22; color: var(--yellow); }
+  .status-exceeded { background: #ff3e6c22; color: var(--red); }
+  .status-unknown  { background: #55555522; color: var(--muted); }
+
+  /* Dose bar */
+  .dose-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .dose-bar-bg { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .dose-bar-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+  .dose-val { font-size: 10px; color: var(--muted); min-width: 60px; text-align: right; }
+
+  /* Sources tags */
+  .source-tag {
+    display: inline-block;
+    font-size: 9px;
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    color: var(--muted);
+    margin: 1px;
+  }
+
+  /* Status bar */
+  .status-bar {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 8px;
+    min-height: 16px;
+  }
+
+  /* Empty state */
+  .empty {
+    color: var(--muted);
+    font-size: 11px;
+    padding: 24px;
+    text-align: center;
+    border: 1px dashed var(--border);
+  }
+
+  /* Summary strip */
+  .summary-strip {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .summary-stat { font-size: 11px; }
+  .summary-stat .val { font-size: 22px; font-weight: 600; display: block; line-height: 1; margin-bottom: 2px; }
+  .summary-stat .lbl { color: var(--muted); font-size: 9px; letter-spacing: 0.1em; }
+
+  .spinner { display: inline-block; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Manual add form */
+  .form-row { display: flex; gap: 6px; margin-bottom: 6px; }
+  .form-row input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 6px 8px;
+    outline: none;
+  }
+  .form-row input:focus { border-color: var(--blue); }
+  .form-row input::placeholder { color: var(--muted); }
+  .add-ing-btn {
+    background: none;
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+  .add-ing-btn:hover { background: var(--blue); color: var(--bg); }
+
+  .tab-bar { display: flex; gap: 4px; margin-bottom: 16px; }
+  .tab {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 5px 12px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  .tab.active { border-color: var(--green); color: var(--green); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">ELTHIO · STACK ANALYZER v1.0</div>
+  <h1>ELTHIO <span>/ SHOPPING ASSISTANT</span></h1>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT: Add products -->
+  <div>
+    <div class="panel" style="margin-bottom:16px">
+      <div class="panel-title">ADD TO STACK</div>
+
+      <div class="tab-bar">
+        <button class="tab active" onclick="switchTab('url')">BY URL</button>
+        <button class="tab" onclick="switchTab('manual')">MANUAL</button>
+        <button class="tab" onclick="switchTab('json')">GOLDEN RECORD</button>
+      </div>
+
+      <!-- URL tab -->
+      <div id="tab-url">
+        <input class="url-input" id="urlInput" type="text"
+          placeholder="https://www.iherb.com/pr/..."
+          onkeydown="if(event.key==='Enter') addByUrl()">
+        <button class="btn" onclick="addByUrl()" id="addUrlBtn">+ ADD PRODUCT</button>
+        <div class="status-bar" id="urlStatus"></div>
+      </div>
+
+      <!-- Manual tab -->
+      <div id="tab-manual" style="display:none">
+        <input class="url-input" id="manualName" type="text" placeholder="Product name">
+        <div id="manualIngredients"></div>
+        <div class="form-row">
+          <input type="text" id="ingName" placeholder="Ingredient name">
+          <input type="text" id="ingAmt" placeholder="Amount" style="max-width:70px">
+          <input type="text" id="ingUnit" placeholder="Unit" style="max-width:50px">
+          <button class="add-ing-btn" onclick="addIngredientRow()">+</button>
+        </div>
+        <button class="btn" onclick="addManual()">+ ADD PRODUCT</button>
+      </div>
+
+      <!-- JSON tab -->
+      <div id="tab-json" style="display:none">
+        <textarea class="url-input" id="jsonInput" rows="6"
+          placeholder='Paste golden_record.json contents here...'
+          style="resize:vertical; font-size:10px"></textarea>
+        <button class="btn" onclick="addFromJson()">+ ADD FROM JSON</button>
+      </div>
+    </div>
+
+    <!-- Product list -->
+    <div class="panel">
+      <div class="panel-title">YOUR STACK (<span id="productCount">0</span> products)</div>
+      <div id="productList"><div class="empty">No products added yet.</div></div>
+      <div style="margin-top:12px">
+        <button class="btn secondary" onclick="analyzeStack()">⚡ ANALYZE STACK</button>
+        <button class="btn danger" onclick="clearStack()">✕ CLEAR STACK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Analysis -->
+  <div>
+    <div id="analysisPanel">
+      <div class="empty">Add products to your stack and click ANALYZE STACK.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+let stack = JSON.parse(localStorage.getItem('elthio_stack') || '{}');
+// stack: { productName: [ {name, amount_mg, raw_amount, raw_unit, source_product} ] }
+
+let manualIngredients = [];
+
+const UPPER_LIMITS_MG = {
+  'vitamin a': 3.0, 'vitamin b3': 35.0, 'vitamin b6': 100.0,
+  'vitamin c': 2000.0, 'vitamin d': 0.1, 'vitamin d3': 0.1,
+  'vitamin e': 1000.0, 'folate': 1.0, 'folic acid': 1.0,
+  'calcium': 2500.0, 'iron': 45.0, 'magnesium': 350.0,
+  'zinc': 40.0, 'selenium': 0.4, 'iodine': 1.1,
+  'copper': 10.0, 'manganese': 11.0,
+};
+
+const UNIT_TO_MG = { 'mg': 1, 'g': 1000, 'mcg': 0.001, 'ug': 0.001 };
+const IU_FACTORS = { 'vitamin d': 0.000025, 'vitamin d3': 0.000025, 'vitamin a': 0.0003, 'vitamin e': 0.67 };
+
+// ---------------------------------------------------------------------------
+// Normalization
+// ---------------------------------------------------------------------------
+function normalizeMg(name, amount, unit) {
+  if (!amount || !unit) return null;
+  const u = unit.toLowerCase().trim();
+  const n = name.toLowerCase();
+  if (u === 'iu') {
+    for (const [key, factor] of Object.entries(IU_FACTORS)) {
+      if (n.includes(key)) return amount * factor;
+    }
+    return null;
+  }
+  const factor = UNIT_TO_MG[u];
+  return factor ? amount * factor : null;
+}
+
+// ---------------------------------------------------------------------------
+// Tabs
+// ---------------------------------------------------------------------------
+function switchTab(tab) {
+  ['url','manual','json'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((b,i) => {
+    b.classList.toggle('active', ['url','manual','json'][i] === tab);
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Add by URL (calls pipeline.py via a simple fetch — stubbed for now)
+// ---------------------------------------------------------------------------
+async function addByUrl() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) return;
+  const status = document.getElementById('urlStatus');
+  const btn = document.getElementById('addUrlBtn');
+
+  status.innerHTML = '<span class="spinner">⟳</span> Auditing product...';
+  btn.disabled = true;
+
+  // In production this calls your pipeline API endpoint
+  // For now we simulate with a demo product
+  await new Promise(r => setTimeout(r, 1500));
+
+  // Demo: parse product name from URL slug
+  const slug = url.split('/pr/')[1]?.split('/')[0] || 'unknown-product';
+  const name = slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const productName = `Demo — ${name}`;
+
+  // Demo ingredients derived from URL keywords
+  const ings = getDemoIngredients(url, productName);
+  stack[productName] = ings;
+  saveStack();
+  renderProductList();
+
+  status.innerHTML = `✅ Added: ${productName}`;
+  document.getElementById('urlInput').value = '';
+  btn.disabled = false;
+}
+
+function getDemoIngredients(url, productName) {
+  const u = url.toLowerCase();
+  if (u.includes('vitamin-d')) return [
+    {name:'Vitamin D3', amount_mg: 0.125, raw_amount: 5000, raw_unit: 'IU', source_product: productName},
+    {name:'Vitamin K2', amount_mg: 0.000045, raw_amount: 45, raw_unit: 'mcg', source_product: productName},
+  ];
+  if (u.includes('vitamin-c')) return [
+    {name:'Vitamin C', amount_mg: 1000, raw_amount: 1000, raw_unit: 'mg', source_product: productName},
+    {name:'Rose Hips', amount_mg: 25, raw_amount: 25, raw_unit: 'mg', source_product: productName},
+  ];
+  if (u.includes('magnesium')) return [
+    {name:'Magnesium', amount_mg: 400, raw_amount: 400, raw_unit: 'mg', source_product: productName},
+  ];
+  if (u.includes('zinc')) return [
+    {name:'Zinc', amount_mg: 30, raw_amount: 30, raw_unit: 'mg', source_product: productName},
+    {name:'Copper', amount_mg: 2, raw_amount: 2, raw_unit: 'mg', source_product: productName},
+  ];
+  return [
+    {name:'Vitamin C', amount_mg: 500, raw_amount: 500, raw_unit: 'mg', source_product: productName},
+    {name:'Zinc', amount_mg: 15, raw_amount: 15, raw_unit: 'mg', source_product: productName},
+  ];
+}
+
+// ---------------------------------------------------------------------------
+// Add from JSON (golden_record.json)
+// ---------------------------------------------------------------------------
+function addFromJson() {
+  const raw = document.getElementById('jsonInput').value.trim();
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    const productName = `${data.brand || 'Unknown'} — ${data.product_name || 'Unknown'}`;
+    const ings = (data.audit || [])
+      .filter(e => e.retail_amount != null)
+      .map(e => ({
+        name: e.name,
+        amount_mg: normalizeMg(e.name, e.retail_amount, e.retail_unit),
+        raw_amount: e.retail_amount,
+        raw_unit: e.retail_unit,
+        source_product: productName,
+      }));
+    stack[productName] = ings;
+    saveStack();
+    renderProductList();
+    document.getElementById('jsonInput').value = '';
+    alert(`✅ Added: ${productName} (${ings.length} ingredients)`);
+  } catch(e) {
+    alert('Invalid JSON. Paste the full contents of golden_record.json');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Manual add
+// ---------------------------------------------------------------------------
+function addIngredientRow() {
+  const name = document.getElementById('ingName').value.trim();
+  const amt  = parseFloat(document.getElementById('ingAmt').value);
+  const unit = document.getElementById('ingUnit').value.trim();
+  if (!name) return;
+  manualIngredients.push({name, amount: isNaN(amt) ? null : amt, unit: unit || null});
+  renderManualIngredients();
+  document.getElementById('ingName').value = '';
+  document.getElementById('ingAmt').value = '';
+  document.getElementById('ingUnit').value = '';
+}
+
+function renderManualIngredients() {
+  const el = document.getElementById('manualIngredients');
+  el.innerHTML = manualIngredients.map((i, idx) => `
+    <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:11px;border-bottom:1px solid var(--border)">
+      <span>${i.name} — ${i.amount ?? '?'} ${i.unit ?? ''}</span>
+      <button onclick="removeManualIng(${idx})" style="background:none;border:none;color:var(--red);cursor:pointer">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeManualIng(idx) {
+  manualIngredients.splice(idx, 1);
+  renderManualIngredients();
+}
+
+function addManual() {
+  const productName = document.getElementById('manualName').value.trim();
+  if (!productName || manualIngredients.length === 0) {
+    alert('Enter a product name and at least one ingredient.');
+    return;
+  }
+  const ings = manualIngredients.map(i => ({
+    name: i.name,
+    amount_mg: normalizeMg(i.name, i.amount, i.unit),
+    raw_amount: i.amount,
+    raw_unit: i.unit,
+    source_product: productName,
+  }));
+  stack[productName] = ings;
+  saveStack();
+  renderProductList();
+  document.getElementById('manualName').value = '';
+  manualIngredients = [];
+  renderManualIngredients();
+}
+
+// ---------------------------------------------------------------------------
+// Stack management
+// ---------------------------------------------------------------------------
+function saveStack() { localStorage.setItem('elthio_stack', JSON.stringify(stack)); }
+
+function removeProduct(name) {
+  delete stack[name];
+  saveStack();
+  renderProductList();
+}
+
+function clearStack() {
+  if (!confirm('Clear entire stack?')) return;
+  stack = {};
+  saveStack();
+  renderProductList();
+  document.getElementById('analysisPanel').innerHTML =
+    '<div class="empty">Add products to your stack and click ANALYZE STACK.</div>';
+}
+
+function renderProductList() {
+  const names = Object.keys(stack);
+  document.getElementById('productCount').textContent = names.length;
+  const el = document.getElementById('productList');
+  if (!names.length) {
+    el.innerHTML = '<div class="empty">No products added yet.</div>';
+    return;
+  }
+  el.innerHTML = names.map(n => `
+    <div class="product-item">
+      <span class="product-name" title="${n}">• ${n}</span>
+      <button class="remove-btn" onclick="removeProduct('${n.replace(/'/g,"\\'")}')">✕</button>
+    </div>
+  `).join('');
+}
+
+// ---------------------------------------------------------------------------
+// Analysis
+// ---------------------------------------------------------------------------
+function fuzzyMatch(a, b) {
+  a = a.toLowerCase(); b = b.toLowerCase();
+  if (a === b) return 100;
+  if (a.includes(b) || b.includes(a)) return 90;
+  const wordsA = a.split(/\s+/); const wordsB = b.split(/\s+/);
+  const shared = wordsA.filter(w => wordsB.includes(w)).length;
+  return Math.round(shared / Math.max(wordsA.length, wordsB.length) * 100);
+}
+
+function groupIngredients(allIngs) {
+  const groups = [];
+  for (const ing of allIngs) {
+    let matched = null;
+    for (const g of groups) {
+      if (fuzzyMatch(ing.name, g[0].name) >= 75) { matched = g; break; }
+    }
+    if (matched) matched.push(ing);
+    else groups.push([ing]);
+  }
+  return groups;
+}
+
+function analyzeStack() {
+  const names = Object.keys(stack);
+  if (!names.length) { alert('Add products first.'); return; }
+
+  const allIngs = names.flatMap(n => stack[n]);
+  const groups  = groupIngredients(allIngs);
+
+  const totals = groups.map(group => {
+    const displayName = group[0].name;
+    const key = displayName.toLowerCase();
+    const amounts = group.map(i => i.amount_mg).filter(a => a != null);
+    const total = amounts.length ? amounts.reduce((a,b) => a+b, 0) : null;
+    const sources = [...new Set(group.map(i => i.source_product))];
+
+    let ul = null;
+    for (const [k, v] of Object.entries(UPPER_LIMITS_MG)) {
+      if (key.includes(k) || k.includes(key)) { ul = v; break; }
+    }
+
+    let status = 'UNKNOWN';
+    if (total !== null) {
+      if (ul === null) status = 'OK';
+      else if (total > ul) status = 'EXCEEDED';
+      else if (total > ul * 0.8) status = 'WARNING';
+      else status = 'OK';
+    }
+
+    return { name: displayName, total, ul, sources, status };
+  }).sort((a,b) => {
+    const order = {EXCEEDED:0, WARNING:1, UNKNOWN:2, OK:3};
+    return (order[a.status]||3) - (order[b.status]||3);
+  });
+
+  const duplicates = groups
+    .filter(g => new Set(g.map(i => i.source_product)).size > 1)
+    .map(g => ({
+      name: g[0].name,
+      products: [...new Set(g.map(i => i.source_product))],
+      total: g.filter(i => i.amount_mg).reduce((s,i) => s + (i.amount_mg||0), 0),
+    }));
+
+  const exceeded = totals.filter(t => t.status === 'EXCEEDED');
+  const warnings = totals.filter(t => t.status === 'WARNING');
+
+  renderAnalysis(totals, duplicates, exceeded, warnings, names.length);
+}
+
+function fmtMg(mg) {
+  if (mg === null || mg === undefined) return 'N/A';
+  if (mg < 0.001) return (mg * 1000000).toFixed(1) + ' ng';
+  if (mg < 1) return (mg * 1000).toFixed(1) + ' mcg';
+  return mg.toFixed(1) + ' mg';
+}
+
+function renderAnalysis(totals, duplicates, exceeded, warnings, productCount) {
+  const uniqueIngs = totals.length;
+  const issues = exceeded.length + warnings.length + duplicates.length;
+
+  const badgeClass = {OK:'ok', WARNING:'warning', EXCEEDED:'exceeded', UNKNOWN:'unknown'};
+
+  const alertsHtml = [
+    ...exceeded.map(t => `
+      <div class="alert exceeded">
+        ❌ <strong>${t.name}</strong> — ${fmtMg(t.total)} exceeds NIH upper limit of ${fmtMg(t.ul)}/day
+      </div>`),
+    ...warnings.map(t => `
+      <div class="alert warning">
+        ⚡ <strong>${t.name}</strong> — ${fmtMg(t.total)} is approaching NIH limit of ${fmtMg(t.ul)}/day
+      </div>`),
+    ...duplicates.map(d => `
+      <div class="alert duplicate">
+        🔁 <strong>${d.name}</strong> appears in ${d.products.length} products (${fmtMg(d.total)} total combined)
+        <br><span style="color:var(--muted);font-size:10px">${d.products.join(' · ')}</span>
+      </div>`),
+  ].join('') || '<div style="color:var(--muted);font-size:11px;padding:8px 0">No alerts — stack looks clean.</div>';
+
+  const totalsHtml = totals.map(t => {
+    const pct = t.ul && t.total ? Math.min(t.total / t.ul * 100, 100) : 0;
+    const color = t.status === 'EXCEEDED' ? 'var(--red)' : t.status === 'WARNING' ? 'var(--yellow)' : 'var(--green)';
+    const sourceTags = t.sources.map(s => `<span class="source-tag">${s.split('—')[0].trim()}</span>`).join('');
+    return `
+      <tr>
+        <td><span class="status-badge status-${badgeClass[t.status]}">${t.status}</span></td>
+        <td>${t.name}</td>
+        <td>
+          <div class="dose-bar-wrap">
+            <div class="dose-bar-bg">
+              <div class="dose-bar-fill" style="width:${pct}%;background:${color}"></div>
+            </div>
+            <span class="dose-val">${fmtMg(t.total)}</span>
+          </div>
+        </td>
+        <td style="color:var(--muted)">${t.ul ? fmtMg(t.ul) : 'No UL'}</td>
+        <td>${sourceTags}</td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('analysisPanel').innerHTML = `
+    <div class="panel">
+      <div class="panel-title">STACK ANALYSIS REPORT</div>
+
+      <div class="summary-strip">
+        <div class="summary-stat">
+          <span class="val" style="color:var(--green)">${productCount}</span>
+          <span class="lbl">PRODUCTS</span>
+        </div>
+        <div class="summary-stat">
+          <span class="val" style="color:var(--blue)">${uniqueIngs}</span>
+          <span class="lbl">UNIQUE INGREDIENTS</span>
+        </div>
+        <div class="summary-stat">
+          <span class="val" style="color:${issues > 0 ? 'var(--red)' : 'var(--green)'}">${issues}</span>
+          <span class="lbl">ALERTS</span>
+        </div>
+        <div class="summary-stat">
+          <span class="val" style="color:${duplicates.length ? 'var(--purple)' : 'var(--green)'}">${duplicates.length}</span>
+          <span class="lbl">DUPLICATES</span>
+        </div>
+      </div>
+
+      <div class="panel-title">ALERTS</div>
+      <div style="margin-bottom:20px">${alertsHtml}</div>
+
+      <div class="panel-title">DAILY TOTALS</div>
+      <table class="totals-table">
+        <thead>
+          <tr>
+            <th>STATUS</th>
+            <th>INGREDIENT</th>
+            <th>DAILY DOSE</th>
+            <th>NIH UPPER LIMIT</th>
+            <th>SOURCE</th>
+          </tr>
+        </thead>
+        <tbody>${totalsHtml}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ---------------------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------------------
+renderProductList();
+</script>
+</body>
+</html>

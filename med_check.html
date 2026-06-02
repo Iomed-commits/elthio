@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+<title>Elthio — Med Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F7F5F0; --surface: #FFFFFF; --border: #E2DDD4;
+  --text: #1A1814; --muted: #9B9488;
+  --green: #2D6A4F; --green-light: #D8F3DC;
+  --amber: #B5560A; --amber-light: #FFF3E0;
+  --red: #C1292E; --red-light: #FDECEA;
+  --blue: #1B4F72; --blue-light: #EBF5FB;
+  --gold: #C9A84C;
+}
+body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; padding: 28px 20px; }
+.mc-wrap { max-width: 720px; margin: 0 auto; }
+.mc-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px; margin-bottom: 6px; }
+.mc-sub { font-size: 12px; color: var(--muted); line-height: 1.65; max-width: 480px; margin-bottom: 20px; }
+.section-label { font-size: 10px; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 8px; }
+.quick-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.quick-chip { font-size: 11px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; font-family: 'DM Mono', monospace; transition: all 0.12s; }
+.quick-chip:hover { border-color: var(--gold); color: var(--gold); }
+.quick-chip.is-med { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+.quick-chip.is-supp { background: var(--green-light); border-color: var(--green); color: var(--green); }
+.input-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 10px; }
+.input-label { font-size: 10px; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 8px; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; min-height: 26px; }
+.tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-family: 'DM Mono', monospace; }
+.tag.rx { background: var(--blue-light); border: 1px solid var(--blue); color: var(--blue); }
+.tag.supp { background: var(--green-light); border: 1px solid var(--green); color: var(--green); }
+.tag-x { cursor: pointer; font-size: 14px; line-height: 1; opacity: 0.6; }
+.tag-x:hover { opacity: 1; }
+.tag-empty { font-size: 11px; color: var(--muted); padding: 4px 0; }
+.add-row { display: flex; gap: 8px; }
+.add-input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px; padding: 8px 12px; outline: none; transition: border-color 0.15s; }
+.add-input:focus { border-color: var(--gold); }
+.add-input::placeholder { color: var(--muted); }
+.add-btn { background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 11px; padding: 8px 14px; cursor: pointer; white-space: nowrap; transition: all 0.12s; }
+.add-btn:hover { background: var(--surface); border-color: var(--gold); }
+.import-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.import-btn { font-size: 10px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; cursor: pointer; transition: all 0.12s; }
+.import-btn:hover { border-color: var(--gold); color: var(--gold); }
+#importedIngredients { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
+.check-btn { width: 100%; background: var(--text); color: var(--bg); border: none; border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 12px; padding: 12px; cursor: pointer; margin-top: 4px; letter-spacing: 0.05em; transition: opacity 0.15s; }
+.check-btn:hover { opacity: 0.85; }
+.check-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+@media (max-width: 480px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+.summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
+.summary-num { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; display: block; line-height: 1; margin-bottom: 3px; }
+.summary-lbl { font-size: 9px; letter-spacing: 0.12em; color: var(--muted); }
+.int-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+.int-card.critical { border-color: var(--red); }
+.int-card.high { border-color: var(--amber); }
+.int-card.moderate { border-color: var(--blue); }
+.int-card.informational { border-color: var(--green); }
+.int-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.sev-pill { font-size: 9px; font-weight: 600; padding: 3px 8px; border-radius: 20px; letter-spacing: 0.06em; flex-shrink: 0; }
+.sev-critical { background: var(--red-light); color: var(--red); }
+.sev-high { background: var(--amber-light); color: var(--amber); }
+.sev-moderate { background: var(--blue-light); color: var(--blue); }
+.sev-informational { background: var(--green-light); color: var(--green); }
+.int-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.int-body { padding: 12px 14px; }
+.int-detail { font-size: 12px; color: var(--muted); line-height: 1.65; margin-bottom: 8px; }
+.int-instruction { font-size: 12px; color: var(--text); line-height: 1.55; padding: 8px 10px; background: var(--bg); border-radius: 5px; border-left: 3px solid var(--gold); }
+.int-monitor { font-size: 10px; color: var(--muted); margin-top: 6px; }
+.int-source { font-size: 10px; color: var(--muted); margin-top: 6px; font-style: italic; }
+.all-clear { text-align: center; padding: 32px 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); margin-top: 16px; }
+.all-clear-icon { font-size: 32px; margin-bottom: 8px; }
+.all-clear-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--green); }
+.all-clear-sub { font-size: 11px; color: var(--muted); line-height: 1.65; max-width: 340px; margin: 0 auto; }
+.near-miss-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-top: 8px; }
+.near-miss-label { font-size: 10px; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 8px; }
+.near-miss-item { font-size: 11px; color: var(--muted); padding: 6px 0; border-bottom: 1px solid var(--border); line-height: 1.55; }
+.near-miss-item:last-child { border-bottom: none; padding-bottom: 0; }
+.coach-link-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--blue); background: none; border: none; font-family: 'DM Mono', monospace; cursor: pointer; margin-top: 12px; padding: 0; }
+.coach-link-btn:hover { text-decoration: underline; }
+.footer-note { font-size: 10px; color: var(--muted); margin-top: 20px; line-height: 1.65; padding: 10px 12px; background: var(--surface); border-radius: 6px; border: 1px solid var(--border); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { display: inline-block; animation: spin 0.8s linear infinite; }
+</style>
+</head>
+<body>
+<div class="mc-wrap">
+
+  <div class="mc-header">
+    <h1 class="mc-title">Med Check</h1>
+    <p class="mc-sub">Check how your medications and supplements interact. Curated, sourced rules only — not a replacement for your pharmacist.</p>
+  </div>
+
+  <p class="section-label">QUICK ADD</p>
+  <div class="quick-grid" id="quickGrid"></div>
+
+  <div class="input-card">
+    <p class="input-label">MEDICATIONS</p>
+    <div class="tag-row" id="medTags"></div>
+    <div class="add-row">
+      <input class="add-input" id="medInput" placeholder="Type a medication name..." autocomplete="off"
+             onkeydown="if(event.key==='Enter')addItem('med')">
+      <button type="button" class="add-btn" onclick="addItem('med')">+ Add</button>
+    </div>
+  </div>
+
+  <div class="input-card">
+    <p class="input-label">SUPPLEMENTS</p>
+    <div class="tag-row" id="suppTags"></div>
+    <div class="add-row">
+      <input class="add-input" id="suppInput" placeholder="Type a supplement name..." autocomplete="off"
+             onkeydown="if(event.key==='Enter')addItem('supp')">
+      <button type="button" class="add-btn" onclick="addItem('supp')">+ Add</button>
+    </div>
+    <div class="import-row">
+      <button type="button" class="import-btn" onclick="importFromStack()">Import My Stack</button>
+      <button type="button" class="import-btn" onclick="importFromAudits()">Import audits</button>
+      <button type="button" class="import-btn" id="clearAuditBtn" onclick="clearAuditIngredients()" style="display:none">Clear audits</button>
+    </div>
+    <div id="importedIngredients"></div>
+  </div>
+
+  <button type="button" class="check-btn" id="checkBtn" onclick="runCheck()">
+    🛡 Check interactions
+  </button>
+
+  <div id="results"></div>
+
+  <p class="footer-note">
+    Educational only — not medical advice. Always follow your prescription label
+    and consult your pharmacist or doctor before changing anything.
+  </p>
+
+</div>
+
+<script>
+const QUICK_MEDS = ['Warfarin', 'Atorvastatin', 'Levothyroxine', 'Metformin', 'Sertraline', 'Lisinopril', 'Omeprazole', 'Amlodipine'];
+const QUICK_SUPPS = ['Vitamin K2', 'Omega-3', 'Magnesium', "St. John's Wort", 'CoQ10', 'Vitamin D3', 'Iron', 'Calcium', 'Vitamin B12', 'Zinc'];
+
+let meds = [];
+let supps = [];
+let auditIngredients = [];
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function apiBase() {
+  try {
+    if (window.parent && window.parent !== window && typeof window.parent.apiOrigin === 'function') {
+      return window.parent.apiOrigin();
+    }
+    const p = window.location && window.location.protocol;
+    if (p === 'http:' || p === 'https:') return window.location.origin;
+  } catch (e) {}
+  return 'http://127.0.0.1:8765';
+}
+
+function apiOrigin() {
+  return apiBase();
+}
+
+function hasMed(name) {
+  const n = (name || '').toLowerCase();
+  return meds.some((m) => m.toLowerCase() === n);
+}
+
+function hasSupp(name) {
+  const n = (name || '').toLowerCase();
+  return supps.some((s) => s.toLowerCase() === n);
+}
+
+function buildQuickGrid() {
+  const el = document.getElementById('quickGrid');
+  if (!el) return;
+  el.innerHTML = '';
+  QUICK_MEDS.forEach((m) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'quick-chip' + (hasMed(m) ? ' is-med' : '');
+    btn.textContent = m;
+    btn.onclick = () => quickAdd(m, 'med');
+    el.appendChild(btn);
+  });
+  QUICK_SUPPS.forEach((s) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'quick-chip' + (hasSupp(s) ? ' is-supp' : '');
+    btn.textContent = s;
+    btn.onclick = () => quickAdd(s, 'supp');
+    el.appendChild(btn);
+  });
+}
+
+function renderTags() {
+  const mt = document.getElementById('medTags');
+  const st = document.getElementById('suppTags');
+  mt.innerHTML = meds.length
+    ? meds.map((m, i) => `<span class="tag rx">${escHtml(m)}<span class="tag-x" onclick="removeItem('med',${i})">×</span></span>`).join('')
+    : '<span class="tag-empty">None added yet</span>';
+  st.innerHTML = supps.length
+    ? supps.map((s, i) => `<span class="tag supp">${escHtml(s)}<span class="tag-x" onclick="removeItem('supp',${i})">×</span></span>`).join('')
+    : '<span class="tag-empty">None added yet</span>';
+  buildQuickGrid();
+}
+
+function addItem(type) {
+  const input = document.getElementById(type === 'med' ? 'medInput' : 'suppInput');
+  const val = (input.value || '').trim();
+  if (!val) return;
+  if (type === 'med' && !hasMed(val)) {
+    meds.push(val);
+    saveMeds();
+  }
+  if (type === 'supp' && !hasSupp(val)) {
+    supps.push(val);
+    saveSupps();
+  }
+  input.value = '';
+  renderTags();
+}
+
+function removeItem(type, i) {
+  if (type === 'med') meds.splice(i, 1);
+  else supps.splice(i, 1);
+  if (type === 'med') saveMeds();
+  else saveSupps();
+  renderTags();
+}
+
+function quickAdd(name, type) {
+  if (type === 'med') {
+    const idx = meds.findIndex((m) => m.toLowerCase() === name.toLowerCase());
+    if (idx >= 0) meds.splice(idx, 1);
+    else meds.push(name);
+    saveMeds();
+  } else {
+    const idx = supps.findIndex((s) => s.toLowerCase() === name.toLowerCase());
+    if (idx >= 0) supps.splice(idx, 1);
+    else supps.push(name);
+    saveSupps();
+  }
+  renderTags();
+}
+
+function saveMeds() {
+  try {
+    localStorage.setItem('elthio_meds', JSON.stringify(meds));
+  } catch (e) {}
+  try {
+    if (window.parent && window.parent !== window && typeof window.parent.coachSyncToCloudSilent === 'function') {
+      window.parent.coachSyncToCloudSilent();
+    }
+  } catch (e) {}
+}
+
+function saveSupps() {
+  try {
+    localStorage.setItem('bio_med_supps', JSON.stringify(supps));
+  } catch (e) {}
+  try {
+    if (window.parent && window.parent !== window && typeof window.parent.coachSyncToCloudSilent === 'function') {
+      window.parent.coachSyncToCloudSilent();
+    }
+  } catch (e) {}
+}
+
+function saveAuditIngredients() {
+  try {
+    localStorage.setItem('bio_med_ingredients', JSON.stringify(auditIngredients));
+  } catch (e) {}
+}
+
+function loadLocal() {
+  try {
+    const m = JSON.parse(localStorage.getItem('elthio_meds') || '[]');
+    const s = JSON.parse(localStorage.getItem('bio_med_supps') || '[]');
+    const ing = JSON.parse(localStorage.getItem('bio_med_ingredients') || '[]');
+    if (Array.isArray(m)) meds = m;
+    if (Array.isArray(s)) supps = s;
+    if (Array.isArray(ing)) auditIngredients = ing;
+  } catch (e) {}
+}
+
+function addSuppIfNew(name) {
+  const n = (name || '').trim();
+  if (!n || hasSupp(n)) return;
+  supps.push(n);
+  saveSupps();
+  renderTags();
+}
+
+function formatAuditIngredient(ing) {
+  const name = (ing.name || '').trim();
+  let line = name;
+  if (ing.amount != null && String(ing.amount).trim() !== '') {
+    line += ' ' + ing.amount + (ing.unit ? ' ' + ing.unit : '');
+  }
+  if (ing.source) line += ' (' + ing.source + ')';
+  return line.trim();
+}
+
+function dedupeAuditIngredients(list) {
+  const seen = new Set();
+  const out = [];
+  for (const ing of list || []) {
+    const key = formatAuditIngredient(ing).toLowerCase();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(ing);
+  }
+  return out;
+}
+
+function clearAuditIngredients() {
+  auditIngredients = [];
+  saveAuditIngredients();
+  renderImportedIngredients();
+}
+
+function renderImportedIngredients() {
+  const el = document.getElementById('importedIngredients');
+  const clearBtn = document.getElementById('clearAuditBtn');
+  if (!el) return;
+  if (!auditIngredients.length) {
+    el.innerHTML = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+    return;
+  }
+  if (clearBtn) clearBtn.style.display = '';
+  const lines = dedupeAuditIngredients(auditIngredients).map(formatAuditIngredient);
+  el.innerHTML =
+    '<details class="audit-ing-details" open>' +
+    '<summary><strong style="color:var(--text)">From recent audits</strong> (' + lines.length + ' unique)</summary>' +
+    '<p style="margin:8px 0 0;font-size:11px;line-height:1.6">' +
+    lines.map((line) => escHtml(line)).join('<br>') +
+  '</p></details>';
+}
+
+function importFromStack() {
+  const stack = JSON.parse(localStorage.getItem('elthio_stack') || '[]');
+  if (!stack.length) {
+    alert('My Stack is empty. Add supplements on the My Stack tab first.');
+    return;
+  }
+  stack.forEach((row) => addSuppIfNew(row.name));
+  alert('Imported ' + stack.length + ' item(s) from My Stack.');
+}
+
+async function importFromAudits() {
+  try {
+    const listRes = await fetch(apiOrigin() + '/records');
+    const listJson = await listRes.json();
+    const files = (listJson.records || []).slice(0, 8);
+    if (!files.length) {
+      alert('No golden records on this computer yet. Run an audit first.');
+      return;
+    }
+    auditIngredients = [];
+    for (const row of files) {
+      const recRes = await fetch(apiOrigin() + '/record/' + encodeURIComponent(row.file));
+      if (!recRes.ok) continue;
+      const rec = await recRes.json();
+      const label = [rec.brand, rec.product_name].filter(Boolean).join(' — ');
+      (rec.audit || []).forEach((a) => {
+        if (!a || !a.name) return;
+        auditIngredients.push({
+          name: a.name,
+          amount: a.retail_amount,
+          unit: a.retail_unit,
+          source: label || rec.product_name || row.file,
+        });
+        addSuppIfNew(a.name);
+      });
+    }
+    auditIngredients = dedupeAuditIngredients(auditIngredients);
+    saveAuditIngredients();
+    renderImportedIngredients();
+    alert('Imported ingredients from ' + files.length + ' recent audit(s).');
+  } catch (e) {
+    alert('Could not load audits. Open Elthio from http://127.0.0.1:8765 and ensure the server is running.');
+  }
+}
+
+function mapFindingSeverity(sev) {
+  const s = (sev || '').toLowerCase();
+  if (s === 'severe' || s === 'critical') return 'critical';
+  if (s === 'high') return 'high';
+  if (s === 'moderate') return 'moderate';
+  if (s === 'mild' || s === 'informational' || s === 'info') return 'informational';
+  return s || 'moderate';
+}
+
+function normalizeInteractions(data) {
+  let interactions = data.interactions || [];
+  if (!interactions.length && Array.isArray(data.findings) && data.findings.length) {
+    interactions = data.findings.map((f) => ({
+      id: f.id,
+      title: f.title,
+      severity: mapFindingSeverity(f.severity),
+      detail: f.detail,
+      instruction: f.instruction || f.action,
+      monitor: f.monitor,
+      source: f.source || ((f.sources && f.sources[0]) ? (f.sources[0].label || f.sources[0].url) : ''),
+    }));
+  }
+  return interactions;
+}
+
+function sevClass(sev) {
+  return { critical: 'sev-critical', high: 'sev-high', moderate: 'sev-moderate', informational: 'sev-informational' }[sev] || 'sev-moderate';
+}
+
+function sevLabel(sev) {
+  return { critical: 'Critical', high: 'High', moderate: 'Moderate', informational: 'Informational' }[sev] || sev;
+}
+
+function renderResults(data) {
+  const el = document.getElementById('results');
+  if (!data) { el.innerHTML = ''; return; }
+
+  const interactions = normalizeInteractions(data);
+  const nearMisses = data.near_misses || [];
+  const critCount = interactions.filter((i) => i.severity === 'critical').length;
+  const highCount = interactions.filter((i) => i.severity === 'high').length;
+  const rulesChecked = (data.rules_checked != null) ? data.rules_checked : ((data.meta && data.meta.curated_interactions) || 75);
+
+  let html = '<div class="summary-grid">' +
+    '<div class="summary-box"><span class="summary-num" style="color:var(--red)">' + critCount + '</span><span class="summary-lbl">CRITICAL</span></div>' +
+    '<div class="summary-box"><span class="summary-num" style="color:var(--amber)">' + highCount + '</span><span class="summary-lbl">HIGH</span></div>' +
+    '<div class="summary-box"><span class="summary-num">' + interactions.length + '</span><span class="summary-lbl">TOTAL FLAGS</span></div>' +
+    '<div class="summary-box"><span class="summary-num" style="font-size:16px;padding-top:6px">' + escHtml(String(rulesChecked)) + '</span><span class="summary-lbl">RULES CHECKED</span></div>' +
+    '</div>';
+
+  if (!interactions.length) {
+    html += '<div class="all-clear">' +
+      '<div class="all-clear-icon">✅</div>' +
+      '<div class="all-clear-title">No interactions found</div>' +
+      '<div class="all-clear-sub">Nothing matched in our ' + escHtml(String(rulesChecked)) + '-rule database. This does not mean the combination is safe — always confirm with your pharmacist.</div>' +
+      '</div>';
+  } else {
+    const order = ['critical', 'high', 'moderate', 'informational'];
+    const sorted = interactions.slice().sort((a, b) => order.indexOf(a.severity) - order.indexOf(b.severity));
+    sorted.forEach((item) => {
+      const monitor = item.monitor
+        ? '<div class="int-monitor">Monitor: ' + escHtml(item.monitor) + '</div>' : '';
+      html += '<div class="int-card ' + escHtml(item.severity) + '">' +
+        '<div class="int-header">' +
+        '<span class="sev-pill ' + sevClass(item.severity) + '">' + sevLabel(item.severity) + '</span>' +
+        '<span class="int-title">' + escHtml(item.title) + '</span>' +
+        '</div>' +
+        '<div class="int-body">' +
+        '<div class="int-detail">' + escHtml(item.detail) + '</div>' +
+        '<div class="int-instruction">' + escHtml(item.instruction) + '</div>' +
+        monitor +
+        '<div class="int-source">Source: ' + escHtml(item.source || '') + '</div>' +
+        '</div></div>';
+    });
+  }
+
+  if (nearMisses.length) {
+    html += '<div class="near-miss-card">' +
+      '<div class="near-miss-label">RELATED ENTRIES IN OUR DATABASE</div>' +
+      nearMisses.map((m) => '<div class="near-miss-item">' + escHtml(m) + '</div>').join('') +
+      '</div>';
+  }
+
+  html += '<button type="button" class="coach-link-btn" onclick="openCoachTab()">' +
+    '⏱ See timing advice in Separation Coach →' +
+    '</button>';
+
+  el.innerHTML = html;
+}
+
+function openCoachTab() {
+  try {
+    if (window.parent && window.parent !== window) {
+      if (typeof window.parent.openCoachWithStack === 'function') {
+        window.parent.openCoachWithStack(meds, supps);
+        return;
+      }
+      if (typeof window.parent.showTab === 'function') {
+        window.parent.showTab('coach');
+        return;
+      }
+    }
+    window.top.location.href = apiBase() + '/?tab=coach';
+  } catch (e) {
+    window.location.href = apiBase();
+  }
+}
+
+async function runCheck() {
+  const hasSupps = supps.length > 0 || auditIngredients.length > 0;
+  if (!meds.length || !hasSupps) {
+    alert('Add at least one medication and one supplement (or import audited ingredients).');
+    return;
+  }
+  const btn = document.getElementById('checkBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">↻</span> Checking...';
+  document.getElementById('results').innerHTML = '';
+
+  try {
+    const resp = await fetch(apiBase() + '/med-check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        medications: meds,
+        supplements: supps,
+        ingredients: auditIngredients,
+      }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.error) throw new Error(data.error || 'Request failed');
+    renderResults(data);
+  } catch (e) {
+    document.getElementById('results').innerHTML =
+      '<div class="all-clear">' +
+      '<div class="all-clear-icon">⚠️</div>' +
+      '<div class="all-clear-title">Could not run check</div>' +
+      '<div class="all-clear-sub">' + escHtml(String(e.message || e)) + ' — make sure the server is running at ' + escHtml(apiBase()) + '.</div>' +
+      '</div>';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🛡 Check interactions';
+  }
+}
+
+loadLocal();
+auditIngredients = dedupeAuditIngredients(auditIngredients);
+if (auditIngredients.length) saveAuditIngredients();
+buildQuickGrid();
+renderTags();
+renderImportedIngredients();
+</script>
+</body>
+</html>

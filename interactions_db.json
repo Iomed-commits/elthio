@@ -1,0 +1,2959 @@
+[
+  {
+    "id": "warfarin-vitamin-k",
+    "title": "Warfarin ↔ vitamin K",
+    "severity": "critical",
+    "med_keywords": [
+      "warfarin",
+      "coumadin",
+      "jantoven"
+    ],
+    "supp_keywords": [
+      "vitamin k",
+      "vitamin k1",
+      "vitamin k2",
+      "mk-7",
+      "mk-4",
+      "menaquinone",
+      "phylloquinone",
+      "k2",
+      "k1",
+      "greens powder",
+      "kale powder",
+      "spinach powder",
+      "chlorophyll supplement"
+    ],
+    "detail": "Vitamin K opposes warfarin's anticoagulant effect and can shift INR unpredictably.",
+    "instruction": "Keep vitamin K intake consistent; do not start or stop K supplements without prescriber guidance and INR monitoring.",
+    "source": "FDA warfarin label / MedlinePlus",
+    "monitor": "INR"
+  },
+  {
+    "id": "warfarin-omega3-high",
+    "title": "Warfarin ↔ high-dose omega-3",
+    "severity": "high",
+    "med_keywords": [
+      "warfarin",
+      "coumadin",
+      "jantoven"
+    ],
+    "supp_keywords": [
+      "fish oil",
+      "omega-3",
+      "omega 3",
+      "epa",
+      "dha",
+      "cod liver oil"
+    ],
+    "detail": "High-dose omega-3 fatty acids may add to antiplatelet effects and increase bleeding risk with warfarin.",
+    "instruction": "Discuss fish oil dose with your clinician; report bruising or bleeding; INR may need monitoring.",
+    "source": "NIH ODS omega-3 / MedlinePlus warfarin",
+    "monitor": "INR, bleeding signs"
+  },
+  {
+    "id": "warfarin-vitamin-e-high",
+    "title": "Warfarin ↔ vitamin E (>400 IU/day)",
+    "severity": "high",
+    "med_keywords": [
+      "warfarin",
+      "coumadin",
+      "jantoven"
+    ],
+    "supp_keywords": [
+      "vitamin e",
+      "tocopherol",
+      "tocotrienol"
+    ],
+    "detail": "Vitamin E at higher doses may increase bleeding risk when combined with warfarin.",
+    "instruction": "Avoid high-dose vitamin E unless your care team approves; monitor for bruising or bleeding.",
+    "source": "NIH ODS vitamin E / MedlinePlus"
+  },
+  {
+    "id": "warfarin-coq10",
+    "title": "Warfarin ↔ CoQ10",
+    "severity": "informational",
+    "med_keywords": [
+      "warfarin",
+      "coumadin",
+      "jantoven"
+    ],
+    "supp_keywords": [
+      "coq10",
+      "coenzyme q10",
+      "ubiquinol",
+      "ubiquinone"
+    ],
+    "detail": "Some reports suggest CoQ10 may reduce warfarin effect but evidence is inconsistent and weak.",
+    "instruction": "If you use CoQ10, inform your prescriber. INR monitoring when starting or stopping is prudent.",
+    "source": "MedlinePlus / FDA label interactions — evidence mixed"
+  },
+  {
+    "id": "warfarin-garlic",
+    "title": "Warfarin ↔ garlic supplement",
+    "severity": "moderate",
+    "med_keywords": [
+      "warfarin",
+      "coumadin",
+      "jantoven"
+    ],
+    "supp_keywords": [
+      "garlic",
+      "allicin",
+      "aged garlic"
+    ],
+    "detail": "Garlic supplements may increase bleeding risk with anticoagulants.",
+    "instruction": "Discuss garlic supplements with your pharmacist; watch for unusual bruising or bleeding.",
+    "source": "NIH ODS garlic / MedlinePlus"
+  },
+  {
+    "id": "warfarin-ginkgo",
+    "title": "Warfarin ↔ ginkgo biloba",
+    "severity": "high",
+    "med_keywords": [
+      "warfarin",
+      "coumadin",
+      "jantoven"
+    ],
+    "supp_keywords": [
+      "ginkgo",
+      "ginkgo biloba",
+      "egb"
+    ],
+    "detail": "Ginkgo may inhibit platelet function and increase bleeding risk with warfarin.",
+    "instruction": "Avoid combining unless your clinician directs otherwise; report bleeding promptly.",
+    "source": "MedlinePlus ginkgo / FDA safety communications"
+  },
+  {
+    "id": "warfarin-turmeric",
+    "title": "Warfarin ↔ turmeric/curcumin",
+    "severity": "moderate",
+    "med_keywords": [
+      "warfarin",
+      "coumadin",
+      "jantoven"
+    ],
+    "supp_keywords": [
+      "turmeric",
+      "curcumin",
+      "curcuma"
+    ],
+    "detail": "Turmeric/curcumin may have antiplatelet activity and affect bleeding risk with warfarin.",
+    "instruction": "Discuss turmeric supplements with your care team; monitor INR if you start or stop.",
+    "source": "NIH NCCIH turmeric / MedlinePlus"
+  },
+  {
+    "id": "warfarin-st-johns-wort",
+    "title": "Warfarin ↔ St. John's Wort",
+    "severity": "critical",
+    "med_keywords": [
+      "warfarin",
+      "coumadin",
+      "jantoven"
+    ],
+    "supp_keywords": [
+      "st. john's wort",
+      "st johns wort",
+      "hypericum"
+    ],
+    "detail": "St. John's Wort induces drug-metabolizing enzymes and can markedly lower warfarin levels.",
+    "instruction": "Avoid St. John's Wort with warfarin unless explicitly approved with INR monitoring.",
+    "source": "FDA drug interactions / MedlinePlus"
+  },
+  {
+    "id": "warfarin-vitamin-c-high",
+    "title": "Warfarin ↔ high-dose vitamin C",
+    "severity": "moderate",
+    "med_keywords": [
+      "warfarin",
+      "coumadin",
+      "jantoven"
+    ],
+    "supp_keywords": [
+      "vitamin c",
+      "ascorbic acid",
+      "ester-c"
+    ],
+    "detail": "Very high doses of vitamin C have been associated with altered warfarin response in some reports.",
+    "instruction": "Discuss megadose vitamin C with your prescriber; maintain consistent intake if approved.",
+    "source": "MedlinePlus / clinical references"
+  },
+  {
+    "id": "apixaban-omega3",
+    "title": "Apixaban ↔ omega-3",
+    "severity": "high",
+    "med_keywords": [
+      "apixaban",
+      "eliquis"
+    ],
+    "supp_keywords": [
+      "fish oil",
+      "omega-3",
+      "omega 3",
+      "epa",
+      "dha"
+    ],
+    "detail": "Omega-3 supplements may add to bleeding risk with apixaban.",
+    "instruction": "Discuss dose with your clinician; seek care for major bleeding or prolonged bruising.",
+    "source": "FDA apixaban label / NIH ODS"
+  },
+  {
+    "id": "apixaban-vitamin-e",
+    "title": "Apixaban ↔ vitamin E",
+    "severity": "moderate",
+    "med_keywords": [
+      "apixaban",
+      "eliquis"
+    ],
+    "supp_keywords": [
+      "vitamin e",
+      "tocopherol"
+    ],
+    "detail": "Higher-dose vitamin E may increase bleeding risk with anticoagulants including apixaban.",
+    "instruction": "Use vitamin E doses only as directed by your care team; report bleeding symptoms.",
+    "source": "NIH ODS vitamin E"
+  },
+  {
+    "id": "rivaroxaban-omega3",
+    "title": "Rivaroxaban ↔ omega-3",
+    "severity": "high",
+    "med_keywords": [
+      "rivaroxaban",
+      "xarelto"
+    ],
+    "supp_keywords": [
+      "fish oil",
+      "omega-3",
+      "omega 3",
+      "epa",
+      "dha"
+    ],
+    "detail": "Omega-3 may increase bleeding risk when taken with rivaroxaban.",
+    "instruction": "Discuss fish oil with your prescriber; report signs of bleeding.",
+    "source": "FDA rivaroxaban label / NIH ODS"
+  },
+  {
+    "id": "dabigatran-omega3",
+    "title": "Dabigatran ↔ omega-3",
+    "severity": "high",
+    "med_keywords": [
+      "dabigatran",
+      "pradaxa"
+    ],
+    "supp_keywords": [
+      "fish oil",
+      "omega-3",
+      "omega 3",
+      "epa",
+      "dha"
+    ],
+    "detail": "Omega-3 may add to bleeding risk with dabigatran.",
+    "instruction": "Discuss supplement use with your clinician before starting high-dose fish oil.",
+    "source": "FDA dabigatran label / NIH ODS"
+  },
+  {
+    "id": "statin-coq10",
+    "title": "Statin ↔ CoQ10",
+    "severity": "informational",
+    "med_keywords": [
+      "statin",
+      "atorvastatin",
+      "lipitor",
+      "simvastatin",
+      "zocor",
+      "rosuvastatin",
+      "crestor",
+      "pravastatin",
+      "lovastatin",
+      "fluvastatin",
+      "pitavastatin"
+    ],
+    "supp_keywords": [
+      "coq10",
+      "coenzyme q10",
+      "ubiquinol"
+    ],
+    "detail": "Statins lower CoQ10 synthesis; supplementation is commonly discussed for muscle symptoms.",
+    "instruction": "Discuss whether CoQ10 fits your plan; report unexplained muscle pain to your clinician.",
+    "source": "NIH ODS CoQ10 / MedlinePlus statins"
+  },
+  {
+    "id": "statin-grapefruit",
+    "title": "Simvastatin/lovastatin ↔ grapefruit",
+    "severity": "high",
+    "med_keywords": [
+      "simvastatin",
+      "zocor",
+      "lovastatin",
+      "mevacor",
+      "statin"
+    ],
+    "supp_keywords": [
+      "grapefruit",
+      "grapefruit juice"
+    ],
+    "detail": "Grapefruit inhibits CYP3A4 and can raise blood levels of simvastatin and lovastatin, increasing myopathy risk.",
+    "instruction": "Avoid grapefruit and grapefruit juice with these statins unless your prescriber advises otherwise.",
+    "source": "FDA statin labels / MedlinePlus"
+  },
+  {
+    "id": "statin-niacin-high",
+    "title": "Statin ↔ high-dose niacin",
+    "severity": "high",
+    "med_keywords": [
+      "statin",
+      "atorvastatin",
+      "lipitor",
+      "simvastatin",
+      "zocor",
+      "rosuvastatin",
+      "crestor",
+      "pravastatin",
+      "lovastatin",
+      "fluvastatin",
+      "pitavastatin"
+    ],
+    "supp_keywords": [
+      "niacin",
+      "nicotinic acid",
+      "niaspan",
+      "inositol hexanicotinate"
+    ],
+    "detail": "Combined statin and high-dose niacin may increase risk of muscle injury (myopathy/rhabdomyolysis).",
+    "instruction": "Do not add high-dose niacin to a statin without medical supervision and monitoring.",
+    "source": "FDA label / MedlinePlus"
+  },
+  {
+    "id": "statin-red-yeast-rice",
+    "title": "Statin ↔ red yeast rice",
+    "severity": "critical",
+    "med_keywords": [
+      "statin",
+      "atorvastatin",
+      "lipitor",
+      "simvastatin",
+      "zocor",
+      "rosuvastatin",
+      "crestor",
+      "pravastatin",
+      "lovastatin",
+      "fluvastatin",
+      "pitavastatin"
+    ],
+    "supp_keywords": [
+      "red yeast rice",
+      "red yeast",
+      "monacolin"
+    ],
+    "detail": "Red yeast rice contains monacolin K (a lovastatin-like compound) and can double statin exposure.",
+    "instruction": "Do not combine red yeast rice with prescription statins unless directed by your prescriber.",
+    "source": "FDA / NIH NCCIH red yeast rice",
+    "monitor": "CK, muscle pain"
+  },
+  {
+    "id": "levothyroxine-calcium",
+    "title": "Levothyroxine ↔ calcium",
+    "severity": "critical",
+    "med_keywords": [
+      "levothyroxine",
+      "synthroid",
+      "levoxyl",
+      "tirosint",
+      "unithroid",
+      "thyroid medication",
+      "hypothyroid",
+      "nature-throid",
+      "np thyroid",
+      "wp thyroid",
+      "armour thyroid",
+      "desiccated thyroid",
+      "liothyronine",
+      "cytomel",
+      "t3",
+      "t4"
+    ],
+    "supp_keywords": [
+      "calcium",
+      "calcium carbonate",
+      "calcium citrate",
+      "tums",
+      "antacid"
+    ],
+    "detail": "Calcium binds levothyroxine in the gut and reduces absorption.",
+    "instruction": "Separate levothyroxine and calcium by at least 4 hours.",
+    "source": "FDA levothyroxine label / MedlinePlus",
+    "monitor": "TSH"
+  },
+  {
+    "id": "levothyroxine-iron",
+    "title": "Levothyroxine ↔ iron",
+    "severity": "critical",
+    "med_keywords": [
+      "levothyroxine",
+      "synthroid",
+      "levoxyl",
+      "tirosint",
+      "unithroid",
+      "thyroid medication",
+      "hypothyroid",
+      "nature-throid",
+      "np thyroid",
+      "wp thyroid",
+      "armour thyroid",
+      "desiccated thyroid",
+      "liothyronine",
+      "cytomel",
+      "t3",
+      "t4"
+    ],
+    "supp_keywords": [
+      "iron",
+      "ferrous sulfate",
+      "ferrous gluconate",
+      "ferrous fumarate"
+    ],
+    "detail": "Iron reduces levothyroxine absorption when taken together.",
+    "instruction": "Take levothyroxine at least 4 hours apart from iron supplements.",
+    "source": "FDA label / MedlinePlus",
+    "monitor": "TSH"
+  },
+  {
+    "id": "levothyroxine-magnesium",
+    "title": "Levothyroxine ↔ magnesium",
+    "severity": "critical",
+    "med_keywords": [
+      "levothyroxine",
+      "synthroid",
+      "levoxyl",
+      "tirosint",
+      "unithroid",
+      "thyroid medication",
+      "hypothyroid",
+      "nature-throid",
+      "np thyroid",
+      "wp thyroid",
+      "armour thyroid",
+      "desiccated thyroid",
+      "liothyronine",
+      "cytomel",
+      "t3",
+      "t4"
+    ],
+    "supp_keywords": [
+      "magnesium",
+      "magnesium oxide",
+      "magnesium citrate",
+      "magnesium glycinate"
+    ],
+    "detail": "Magnesium can reduce levothyroxine absorption.",
+    "instruction": "Separate doses by at least 4 hours.",
+    "source": "FDA label / MedlinePlus",
+    "monitor": "TSH"
+  },
+  {
+    "id": "levothyroxine-zinc",
+    "title": "Levothyroxine ↔ zinc",
+    "severity": "moderate",
+    "med_keywords": [
+      "levothyroxine",
+      "synthroid",
+      "levoxyl",
+      "tirosint",
+      "unithroid",
+      "thyroid medication",
+      "hypothyroid",
+      "nature-throid",
+      "np thyroid",
+      "wp thyroid",
+      "armour thyroid",
+      "desiccated thyroid",
+      "liothyronine",
+      "cytomel",
+      "t3",
+      "t4"
+    ],
+    "supp_keywords": [
+      "zinc",
+      "zinc gluconate",
+      "zinc picolinate"
+    ],
+    "detail": "Zinc may reduce levothyroxine absorption.",
+    "instruction": "Take levothyroxine at least 4 hours apart from zinc.",
+    "source": "FDA label / MedlinePlus",
+    "monitor": "TSH"
+  },
+  {
+    "id": "levothyroxine-fiber",
+    "title": "Levothyroxine ↔ fiber/psyllium",
+    "severity": "moderate",
+    "med_keywords": [
+      "levothyroxine",
+      "synthroid",
+      "levoxyl",
+      "tirosint",
+      "unithroid",
+      "thyroid medication",
+      "hypothyroid",
+      "nature-throid",
+      "np thyroid",
+      "wp thyroid",
+      "armour thyroid",
+      "desiccated thyroid",
+      "liothyronine",
+      "cytomel",
+      "t3",
+      "t4"
+    ],
+    "supp_keywords": [
+      "fiber",
+      "psyllium",
+      "metamucil",
+      "methylcellulose"
+    ],
+    "detail": "Fiber supplements can reduce levothyroxine absorption.",
+    "instruction": "Separate by at least 2 hours from levothyroxine.",
+    "source": "FDA label / MedlinePlus"
+  },
+  {
+    "id": "levothyroxine-soy",
+    "title": "Levothyroxine ↔ soy",
+    "severity": "moderate",
+    "med_keywords": [
+      "levothyroxine",
+      "synthroid",
+      "levoxyl",
+      "tirosint",
+      "unithroid",
+      "thyroid medication",
+      "hypothyroid",
+      "nature-throid",
+      "np thyroid",
+      "wp thyroid",
+      "armour thyroid",
+      "desiccated thyroid",
+      "liothyronine",
+      "cytomel",
+      "t3",
+      "t4"
+    ],
+    "supp_keywords": [
+      "soy",
+      "soy protein",
+      "soy isoflavone",
+      "genistein"
+    ],
+    "detail": "Soy products may reduce levothyroxine absorption in some patients.",
+    "instruction": "Keep soy intake consistent and separate large soy doses from thyroid medication when possible.",
+    "source": "MedlinePlus / FDA label"
+  },
+  {
+    "id": "levothyroxine-coffee",
+    "title": "Levothyroxine ↔ coffee",
+    "severity": "moderate",
+    "med_keywords": [
+      "levothyroxine",
+      "synthroid",
+      "levoxyl",
+      "tirosint",
+      "unithroid",
+      "thyroid medication",
+      "hypothyroid",
+      "nature-throid",
+      "np thyroid",
+      "wp thyroid",
+      "armour thyroid",
+      "desiccated thyroid",
+      "liothyronine",
+      "cytomel",
+      "t3",
+      "t4"
+    ],
+    "supp_keywords": [
+      "coffee",
+      "caffeine beverage"
+    ],
+    "detail": "Coffee taken with levothyroxine can reduce absorption.",
+    "instruction": "Take levothyroxine with water; wait 30–60 minutes before coffee.",
+    "source": "Clinical studies cited in thyroid drug labeling"
+  },
+  {
+    "id": "levothyroxine-biotin-high",
+    "title": "Levothyroxine ↔ high-dose biotin",
+    "severity": "moderate",
+    "med_keywords": [
+      "levothyroxine",
+      "synthroid",
+      "levoxyl",
+      "tirosint",
+      "unithroid",
+      "thyroid medication",
+      "hypothyroid",
+      "nature-throid",
+      "np thyroid",
+      "wp thyroid",
+      "armour thyroid",
+      "desiccated thyroid",
+      "liothyronine",
+      "cytomel",
+      "t3",
+      "t4"
+    ],
+    "supp_keywords": [
+      "biotin",
+      "high dose biotin"
+    ],
+    "detail": "High-dose biotin can interfere with some thyroid blood tests (false results).",
+    "instruction": "Tell your lab and clinician if you take biotin; stop high-dose biotin before labs if directed.",
+    "source": "FDA biotin lab interference alert",
+    "monitor": "TSH, free T4 assays"
+  },
+  {
+    "id": "ssri-st-johns-wort",
+    "title": "SSRI/SNRI ↔ St. John's Wort",
+    "severity": "critical",
+    "med_keywords": [
+      "ssri",
+      "sertraline",
+      "zoloft",
+      "fluoxetine",
+      "prozac",
+      "escitalopram",
+      "lexapro",
+      "citalopram",
+      "celexa",
+      "paroxetine",
+      "paxil",
+      "fluvoxamine",
+      "vortioxetine",
+      "trintellix",
+      "vilazodone",
+      "viibryd",
+      "snri",
+      "venlafaxine",
+      "effexor",
+      "duloxetine",
+      "cymbalta",
+      "desvenlafaxine",
+      "pristiq",
+      "levomilnacipran",
+      "fetzima",
+      "bupropion",
+      "wellbutrin",
+      "zyban",
+      "mirtazapine",
+      "remeron",
+      "trazodone",
+      "nefazodone"
+    ],
+    "supp_keywords": [
+      "st. john's wort",
+      "st johns wort",
+      "hypericum"
+    ],
+    "detail": "Combining serotonergic antidepressants with St. John's Wort increases serotonin syndrome risk.",
+    "instruction": "Do not combine without medical supervision; seek care for agitation, fever, or rapid heartbeat.",
+    "source": "FDA / MedlinePlus serotonin syndrome"
+  },
+  {
+    "id": "ssri-5htp",
+    "title": "SSRI/SNRI ↔ 5-HTP",
+    "severity": "critical",
+    "med_keywords": [
+      "ssri",
+      "sertraline",
+      "zoloft",
+      "fluoxetine",
+      "prozac",
+      "escitalopram",
+      "lexapro",
+      "citalopram",
+      "celexa",
+      "paroxetine",
+      "paxil",
+      "fluvoxamine",
+      "vortioxetine",
+      "trintellix",
+      "vilazodone",
+      "viibryd",
+      "snri",
+      "venlafaxine",
+      "effexor",
+      "duloxetine",
+      "cymbalta",
+      "desvenlafaxine",
+      "pristiq",
+      "levomilnacipran",
+      "fetzima",
+      "bupropion",
+      "wellbutrin",
+      "zyban",
+      "mirtazapine",
+      "remeron",
+      "trazodone",
+      "nefazodone"
+    ],
+    "supp_keywords": [
+      "5-htp",
+      "5 htp",
+      "oxitriptan"
+    ],
+    "detail": "5-HTP adds serotonergic activity and can increase serotonin syndrome risk with SSRIs/SNRIs.",
+    "instruction": "Avoid combining unless explicitly directed by a psychiatrist or prescriber.",
+    "source": "MedlinePlus / FDA safety communications"
+  },
+  {
+    "id": "ssri-same",
+    "title": "SSRI/SNRI ↔ SAMe",
+    "severity": "high",
+    "med_keywords": [
+      "ssri",
+      "sertraline",
+      "zoloft",
+      "fluoxetine",
+      "prozac",
+      "escitalopram",
+      "lexapro",
+      "citalopram",
+      "celexa",
+      "paroxetine",
+      "paxil",
+      "fluvoxamine",
+      "vortioxetine",
+      "trintellix",
+      "vilazodone",
+      "viibryd",
+      "snri",
+      "venlafaxine",
+      "effexor",
+      "duloxetine",
+      "cymbalta",
+      "desvenlafaxine",
+      "pristiq",
+      "levomilnacipran",
+      "fetzima",
+      "bupropion",
+      "wellbutrin",
+      "zyban",
+      "mirtazapine",
+      "remeron",
+      "trazodone",
+      "nefazodone"
+    ],
+    "supp_keywords": [
+      "same",
+      "s-adenosylmethionine",
+      "sam-e"
+    ],
+    "detail": "SAMe may increase serotonergic activity when combined with antidepressants.",
+    "instruction": "Discuss SAMe with your prescriber before use; report anxiety, tremor, or insomnia.",
+    "source": "MedlinePlus SAMe"
+  },
+  {
+    "id": "ssri-tryptophan",
+    "title": "SSRI/SNRI ↔ tryptophan",
+    "severity": "high",
+    "med_keywords": [
+      "ssri",
+      "sertraline",
+      "zoloft",
+      "fluoxetine",
+      "prozac",
+      "escitalopram",
+      "lexapro",
+      "citalopram",
+      "celexa",
+      "paroxetine",
+      "paxil",
+      "fluvoxamine",
+      "vortioxetine",
+      "trintellix",
+      "vilazodone",
+      "viibryd",
+      "snri",
+      "venlafaxine",
+      "effexor",
+      "duloxetine",
+      "cymbalta",
+      "desvenlafaxine",
+      "pristiq",
+      "levomilnacipran",
+      "fetzima",
+      "bupropion",
+      "wellbutrin",
+      "zyban",
+      "mirtazapine",
+      "remeron",
+      "trazodone",
+      "nefazodone"
+    ],
+    "supp_keywords": [
+      "tryptophan",
+      "l-tryptophan"
+    ],
+    "detail": "Tryptophan increases serotonin precursor load and may raise serotonin syndrome risk with SSRIs.",
+    "instruction": "Avoid tryptophan supplements with SSRIs unless your clinician approves.",
+    "source": "MedlinePlus"
+  },
+  {
+    "id": "ssri-omega3",
+    "title": "SSRI/SNRI ↔ omega-3",
+    "severity": "informational",
+    "med_keywords": [
+      "ssri",
+      "sertraline",
+      "zoloft",
+      "fluoxetine",
+      "prozac",
+      "escitalopram",
+      "lexapro",
+      "citalopram",
+      "celexa",
+      "paroxetine",
+      "paxil",
+      "fluvoxamine",
+      "vortioxetine",
+      "trintellix",
+      "vilazodone",
+      "viibryd",
+      "snri",
+      "venlafaxine",
+      "effexor",
+      "duloxetine",
+      "cymbalta",
+      "desvenlafaxine",
+      "pristiq",
+      "levomilnacipran",
+      "fetzima",
+      "bupropion",
+      "wellbutrin",
+      "zyban",
+      "mirtazapine",
+      "remeron",
+      "trazodone",
+      "nefazodone"
+    ],
+    "supp_keywords": [
+      "fish oil",
+      "omega-3",
+      "omega 3",
+      "epa",
+      "dha"
+    ],
+    "detail": "Omega-3 fatty acids are often studied as adjuncts to antidepressants with generally favorable safety profiles.",
+    "instruction": "Continue prescribed antidepressants; discuss omega-3 dose with your care team.",
+    "source": "NIH ODS omega-3"
+  },
+  {
+    "id": "ssri-melatonin",
+    "title": "SSRI/SNRI ↔ melatonin",
+    "severity": "moderate",
+    "med_keywords": [
+      "ssri",
+      "sertraline",
+      "zoloft",
+      "fluoxetine",
+      "prozac",
+      "escitalopram",
+      "lexapro",
+      "citalopram",
+      "celexa",
+      "paroxetine",
+      "paxil",
+      "fluvoxamine",
+      "vortioxetine",
+      "trintellix",
+      "vilazodone",
+      "viibryd",
+      "snri",
+      "venlafaxine",
+      "effexor",
+      "duloxetine",
+      "cymbalta",
+      "desvenlafaxine",
+      "pristiq",
+      "levomilnacipran",
+      "fetzima",
+      "bupropion",
+      "wellbutrin",
+      "zyban",
+      "mirtazapine",
+      "remeron",
+      "trazodone",
+      "nefazodone"
+    ],
+    "supp_keywords": [
+      "melatonin"
+    ],
+    "detail": "Melatonin may add to sedation or sleepiness with some antidepressants.",
+    "instruction": "Use lowest effective melatonin dose; avoid driving if overly sedated.",
+    "source": "MedlinePlus melatonin"
+  },
+  {
+    "id": "metformin-b12",
+    "title": "Metformin ↔ vitamin B12",
+    "severity": "high",
+    "med_keywords": [
+      "metformin",
+      "glucophage"
+    ],
+    "supp_keywords": [
+      "vitamin b12",
+      "b12",
+      "cobalamin",
+      "methylcobalamin",
+      "cyanocobalamin"
+    ],
+    "detail": "Long-term metformin use is associated with lower vitamin B12 levels.",
+    "instruction": "Discuss B12 monitoring or supplementation with your clinician.",
+    "source": "NIH ODS / MedlinePlus metformin",
+    "monitor": "B12 level"
+  },
+  {
+    "id": "metformin-chromium",
+    "title": "Metformin ↔ chromium",
+    "severity": "moderate",
+    "med_keywords": [
+      "metformin",
+      "glucophage"
+    ],
+    "supp_keywords": [
+      "chromium",
+      "chromium picolinate"
+    ],
+    "detail": "Chromium may affect glucose; combined use can increase hypoglycemia risk.",
+    "instruction": "Monitor blood sugar if adding chromium; report dizziness or sweating.",
+    "source": "NIH ODS chromium",
+    "monitor": "blood glucose"
+  },
+  {
+    "id": "metformin-berberine",
+    "title": "Metformin ↔ berberine",
+    "severity": "high",
+    "med_keywords": [
+      "metformin",
+      "glucophage"
+    ],
+    "supp_keywords": [
+      "berberine"
+    ],
+    "detail": "Berberine and metformin both lower blood glucose and may have additive effects.",
+    "instruction": "Do not combine without medical supervision; monitor glucose closely.",
+    "source": "NIH NCCIH / clinical literature",
+    "monitor": "blood glucose"
+  },
+  {
+    "id": "metformin-ala",
+    "title": "Metformin ↔ alpha-lipoic acid",
+    "severity": "moderate",
+    "med_keywords": [
+      "metformin",
+      "glucophage"
+    ],
+    "supp_keywords": [
+      "alpha lipoic acid",
+      "alpha-lipoic acid",
+      "ala",
+      "thioctic acid"
+    ],
+    "detail": "Alpha-lipoic acid may lower blood glucose and add to metformin's effect.",
+    "instruction": "Monitor blood sugar when starting ALA; discuss dose with your clinician.",
+    "source": "MedlinePlus / NIH ODS"
+  },
+  {
+    "id": "diabetes-magnesium",
+    "title": "Diabetes medication ↔ magnesium",
+    "severity": "informational",
+    "med_keywords": [
+      "metformin",
+      "glucophage",
+      "glipizide",
+      "glyburide",
+      "glimepiride",
+      "insulin",
+      "sitagliptin",
+      "januvia",
+      "empagliflozin",
+      "jardiance",
+      "dapagliflozin",
+      "farxiga",
+      "canagliflozin",
+      "invokana",
+      "liraglutide",
+      "ozempic",
+      "semaglutide",
+      "dulaglutide",
+      "trulicity"
+    ],
+    "supp_keywords": [
+      "magnesium",
+      "magnesium glycinate",
+      "magnesium citrate"
+    ],
+    "detail": "Magnesium is involved in glucose metabolism; supplementation may affect insulin sensitivity.",
+    "instruction": "Monitor glucose if you add magnesium; keep your diabetes team informed.",
+    "source": "NIH ODS magnesium",
+    "monitor": "blood glucose"
+  },
+  {
+    "id": "sulfonylurea-chromium",
+    "title": "Sulfonylurea ↔ chromium",
+    "severity": "high",
+    "med_keywords": [
+      "glipizide",
+      "glyburide",
+      "glimepiride"
+    ],
+    "supp_keywords": [
+      "chromium",
+      "chromium picolinate"
+    ],
+    "detail": "Chromium may enhance insulin action and increase hypoglycemia risk with sulfonylureas.",
+    "instruction": "Monitor blood sugar closely if using chromium; know hypoglycemia symptoms.",
+    "source": "NIH ODS chromium",
+    "monitor": "blood glucose"
+  },
+  {
+    "id": "ace-potassium",
+    "title": "ACE inhibitor ↔ potassium",
+    "severity": "high",
+    "med_keywords": [
+      "ace inhibitor",
+      "lisinopril",
+      "enalapril",
+      "ramipril",
+      "benazepril",
+      "captopril",
+      "quinapril",
+      "perindopril"
+    ],
+    "supp_keywords": [
+      "potassium",
+      "potassium chloride",
+      "potassium citrate",
+      "salt substitute"
+    ],
+    "detail": "ACE inhibitors reduce potassium loss and supplementation can cause hyperkalemia.",
+    "instruction": "Avoid potassium supplements or salt substitutes unless prescribed; check potassium labs.",
+    "source": "FDA ACE inhibitor labels / MedlinePlus",
+    "monitor": "serum potassium"
+  },
+  {
+    "id": "ace-magnesium",
+    "title": "ACE inhibitor ↔ magnesium",
+    "severity": "moderate",
+    "med_keywords": [
+      "ace inhibitor",
+      "lisinopril",
+      "enalapril",
+      "ramipril",
+      "benazepril",
+      "captopril",
+      "quinapril",
+      "perindopril"
+    ],
+    "supp_keywords": [
+      "magnesium",
+      "magnesium supplement"
+    ],
+    "detail": "Magnesium may add to blood pressure lowering with ACE inhibitors.",
+    "instruction": "Monitor blood pressure when starting magnesium; report dizziness.",
+    "source": "MedlinePlus"
+  },
+  {
+    "id": "bb-coq10",
+    "title": "Beta blocker ↔ CoQ10",
+    "severity": "informational",
+    "med_keywords": [
+      "beta blocker",
+      "metoprolol",
+      "atenolol",
+      "propranolol",
+      "carvedilol",
+      "bisoprolol",
+      "nebivolol"
+    ],
+    "supp_keywords": [
+      "coq10",
+      "coenzyme q10",
+      "ubiquinol"
+    ],
+    "detail": "CoQ10 is sometimes used alongside heart medications; evidence for harm with beta blockers is limited.",
+    "instruction": "Discuss supplements with your cardiologist; do not stop beta blockers abruptly.",
+    "source": "NIH ODS CoQ10"
+  },
+  {
+    "id": "ccb-grapefruit",
+    "title": "Calcium channel blocker ↔ grapefruit",
+    "severity": "high",
+    "med_keywords": [
+      "calcium channel blocker",
+      "amlodipine",
+      "norvasc",
+      "diltiazem",
+      "verapamil",
+      "nifedipine",
+      "felodipine"
+    ],
+    "supp_keywords": [
+      "grapefruit",
+      "grapefruit juice"
+    ],
+    "detail": "Grapefruit inhibits intestinal metabolism and can raise levels of many calcium channel blockers.",
+    "instruction": "Avoid grapefruit with felodipine/nifedipine-like agents unless your prescriber approves.",
+    "source": "FDA CCB labels / MedlinePlus"
+  },
+  {
+    "id": "ccb-calcium-supplement",
+    "title": "CCB ↔ calcium supplements",
+    "severity": "moderate",
+    "med_keywords": [
+      "calcium channel blocker",
+      "amlodipine",
+      "norvasc",
+      "diltiazem",
+      "verapamil",
+      "nifedipine",
+      "felodipine"
+    ],
+    "supp_keywords": [
+      "calcium",
+      "calcium carbonate",
+      "calcium citrate"
+    ],
+    "detail": "High calcium intake does not replace CCB therapy and very high doses may affect mineral balance.",
+    "instruction": "Take calcium as directed; do not use calcium to replace blood pressure medication.",
+    "source": "MedlinePlus"
+  },
+  {
+    "id": "bp-licorice",
+    "title": "Blood pressure medication ↔ licorice root",
+    "severity": "high",
+    "med_keywords": [
+      "ace inhibitor",
+      "lisinopril",
+      "enalapril",
+      "ramipril",
+      "benazepril",
+      "captopril",
+      "quinapril",
+      "perindopril",
+      "beta blocker",
+      "metoprolol",
+      "atenolol",
+      "propranolol",
+      "carvedilol",
+      "bisoprolol",
+      "nebivolol",
+      "calcium channel blocker",
+      "amlodipine",
+      "norvasc",
+      "diltiazem",
+      "verapamil",
+      "nifedipine",
+      "felodipine",
+      "losartan",
+      "valsartan",
+      "irbesartan",
+      "olmesartan",
+      "hydrochlorothiazide",
+      "hctz",
+      "chlorthalidone"
+    ],
+    "supp_keywords": [
+      "licorice",
+      "licorice root",
+      "glycyrrhizin",
+      "deglycyrrhizinated licorice"
+    ],
+    "detail": "Licorice can raise blood pressure and oppose antihypertensive therapy.",
+    "instruction": "Avoid licorice supplements with hypertension unless your clinician approves.",
+    "source": "NIH NCCIH licorice / MedlinePlus"
+  },
+  {
+    "id": "bp-caffeine-high",
+    "title": "Blood pressure medication ↔ high-dose caffeine",
+    "severity": "moderate",
+    "med_keywords": [
+      "ace inhibitor",
+      "lisinopril",
+      "enalapril",
+      "ramipril",
+      "benazepril",
+      "captopril",
+      "quinapril",
+      "perindopril",
+      "beta blocker",
+      "metoprolol",
+      "atenolol",
+      "propranolol",
+      "carvedilol",
+      "bisoprolol",
+      "nebivolol",
+      "calcium channel blocker",
+      "amlodipine",
+      "norvasc",
+      "diltiazem",
+      "verapamil",
+      "nifedipine",
+      "felodipine",
+      "losartan",
+      "valsartan",
+      "irbesartan",
+      "olmesartan",
+      "hydrochlorothiazide",
+      "hctz",
+      "chlorthalidone"
+    ],
+    "supp_keywords": [
+      "caffeine",
+      "energy drink",
+      "guarana",
+      "high dose coffee"
+    ],
+    "detail": "High caffeine intake can transiently raise blood pressure and blunt medication control.",
+    "instruction": "Limit large caffeine doses; monitor home blood pressure.",
+    "source": "MedlinePlus caffeine"
+  },
+  {
+    "id": "ppi-iron",
+    "title": "PPI ↔ iron",
+    "severity": "moderate",
+    "med_keywords": [
+      "ppi",
+      "omeprazole",
+      "prilosec",
+      "esomeprazole",
+      "nexium",
+      "pantoprazole",
+      "lansoprazole",
+      "rabeprazole",
+      "h2 blocker",
+      "famotidine",
+      "pepcid",
+      "ranitidine",
+      "cimetidine"
+    ],
+    "supp_keywords": [
+      "iron",
+      "ferrous sulfate",
+      "ferrous gluconate"
+    ],
+    "detail": "PPIs reduce stomach acid needed for optimal iron absorption.",
+    "instruction": "Separate iron from PPI when possible; discuss labs if on long-term PPI.",
+    "source": "MedlinePlus PPI / NIH ODS iron",
+    "monitor": "ferritin, CBC"
+  },
+  {
+    "id": "ppi-magnesium",
+    "title": "PPI ↔ magnesium",
+    "severity": "high",
+    "med_keywords": [
+      "ppi",
+      "omeprazole",
+      "prilosec",
+      "esomeprazole",
+      "nexium",
+      "pantoprazole",
+      "lansoprazole",
+      "rabeprazole",
+      "h2 blocker",
+      "famotidine",
+      "pepcid",
+      "ranitidine",
+      "cimetidine"
+    ],
+    "supp_keywords": [
+      "magnesium",
+      "magnesium oxide",
+      "magnesium citrate"
+    ],
+    "detail": "Long-term PPI use is associated with hypomagnesemia in some patients.",
+    "instruction": "Discuss magnesium monitoring with your clinician if on PPIs long term.",
+    "source": "FDA PPI labeling / MedlinePlus",
+    "monitor": "serum magnesium"
+  },
+  {
+    "id": "ppi-b12",
+    "title": "PPI ↔ vitamin B12",
+    "severity": "moderate",
+    "med_keywords": [
+      "ppi",
+      "omeprazole",
+      "prilosec",
+      "esomeprazole",
+      "nexium",
+      "pantoprazole",
+      "lansoprazole",
+      "rabeprazole",
+      "h2 blocker",
+      "famotidine",
+      "pepcid",
+      "ranitidine",
+      "cimetidine"
+    ],
+    "supp_keywords": [
+      "vitamin b12",
+      "b12",
+      "cobalamin"
+    ],
+    "detail": "Reduced acid can impair B12 absorption over time with PPI therapy.",
+    "instruction": "Consider B12 status monitoring with long-term PPI use.",
+    "source": "FDA PPI labeling / MedlinePlus",
+    "monitor": "B12 level"
+  },
+  {
+    "id": "ppi-calcium",
+    "title": "PPI ↔ calcium carbonate",
+    "severity": "moderate",
+    "med_keywords": [
+      "ppi",
+      "omeprazole",
+      "prilosec",
+      "esomeprazole",
+      "nexium",
+      "pantoprazole",
+      "lansoprazole",
+      "rabeprazole",
+      "h2 blocker",
+      "famotidine",
+      "pepcid",
+      "ranitidine",
+      "cimetidine"
+    ],
+    "supp_keywords": [
+      "calcium carbonate",
+      "calcium antacid",
+      "tums"
+    ],
+    "detail": "Calcium carbonate needs acid for absorption; PPIs may reduce its effectiveness.",
+    "instruction": "Consider calcium citrate with low acid states; separate timing from PPI if advised.",
+    "source": "NIH ODS calcium"
+  },
+  {
+    "id": "ppi-zinc",
+    "title": "PPI ↔ zinc",
+    "severity": "moderate",
+    "med_keywords": [
+      "ppi",
+      "omeprazole",
+      "prilosec",
+      "esomeprazole",
+      "nexium",
+      "pantoprazole",
+      "lansoprazole",
+      "rabeprazole",
+      "h2 blocker",
+      "famotidine",
+      "pepcid",
+      "ranitidine",
+      "cimetidine"
+    ],
+    "supp_keywords": [
+      "zinc",
+      "zinc gluconate"
+    ],
+    "detail": "Low stomach acid may reduce zinc absorption during long-term acid suppression.",
+    "instruction": "Discuss zinc needs with your clinician if on chronic PPI therapy.",
+    "source": "MedlinePlus"
+  },
+  {
+    "id": "fluoroquinolone-calcium",
+    "title": "Fluoroquinolone ↔ calcium",
+    "severity": "high",
+    "med_keywords": [
+      "fluoroquinolone",
+      "ciprofloxacin",
+      "cipro",
+      "levofloxacin",
+      "moxifloxacin",
+      "ofloxacin"
+    ],
+    "supp_keywords": [
+      "calcium",
+      "calcium carbonate",
+      "calcium citrate",
+      "antacid"
+    ],
+    "detail": "Calcium chelates fluoroquinolones and reduces antibiotic absorption.",
+    "instruction": "Separate fluoroquinolone and calcium by at least 2 hours.",
+    "source": "FDA fluoroquinolone label / MedlinePlus"
+  },
+  {
+    "id": "fluoroquinolone-magnesium",
+    "title": "Fluoroquinolone ↔ magnesium",
+    "severity": "high",
+    "med_keywords": [
+      "fluoroquinolone",
+      "ciprofloxacin",
+      "cipro",
+      "levofloxacin",
+      "moxifloxacin",
+      "ofloxacin"
+    ],
+    "supp_keywords": [
+      "magnesium",
+      "magnesium oxide",
+      "magnesium citrate"
+    ],
+    "detail": "Magnesium reduces fluoroquinolone absorption.",
+    "instruction": "Take antibiotic 2 hours before or 6 hours after magnesium.",
+    "source": "FDA label / MedlinePlus"
+  },
+  {
+    "id": "fluoroquinolone-iron",
+    "title": "Fluoroquinolone ↔ iron",
+    "severity": "high",
+    "med_keywords": [
+      "fluoroquinolone",
+      "ciprofloxacin",
+      "cipro",
+      "levofloxacin",
+      "moxifloxacin",
+      "ofloxacin"
+    ],
+    "supp_keywords": [
+      "iron",
+      "ferrous sulfate",
+      "ferrous gluconate"
+    ],
+    "detail": "Iron binds fluoroquinolones and reduces absorption.",
+    "instruction": "Separate doses by at least 2 hours.",
+    "source": "FDA label / MedlinePlus"
+  },
+  {
+    "id": "fluoroquinolone-zinc",
+    "title": "Fluoroquinolone ↔ zinc",
+    "severity": "high",
+    "med_keywords": [
+      "fluoroquinolone",
+      "ciprofloxacin",
+      "cipro",
+      "levofloxacin",
+      "moxifloxacin",
+      "ofloxacin"
+    ],
+    "supp_keywords": [
+      "zinc"
+    ],
+    "detail": "Zinc can reduce fluoroquinolone absorption.",
+    "instruction": "Separate zinc and fluoroquinolone by several hours.",
+    "source": "FDA label / MedlinePlus"
+  },
+  {
+    "id": "tetracycline-calcium",
+    "title": "Tetracycline ↔ calcium",
+    "severity": "high",
+    "med_keywords": [
+      "tetracycline",
+      "doxycycline",
+      "minocycline"
+    ],
+    "supp_keywords": [
+      "calcium",
+      "calcium carbonate",
+      "dairy",
+      "milk",
+      "yogurt",
+      "cheese"
+    ],
+    "detail": "Calcium and dairy reduce tetracycline absorption.",
+    "instruction": "Avoid calcium/dairy within 2 hours of tetracycline doses.",
+    "source": "FDA tetracycline label / MedlinePlus"
+  },
+  {
+    "id": "tetracycline-iron",
+    "title": "Tetracycline ↔ iron",
+    "severity": "high",
+    "med_keywords": [
+      "tetracycline",
+      "doxycycline",
+      "minocycline"
+    ],
+    "supp_keywords": [
+      "iron",
+      "ferrous sulfate"
+    ],
+    "detail": "Iron reduces tetracycline absorption.",
+    "instruction": "Separate iron and tetracycline by at least 2 hours.",
+    "source": "FDA label / MedlinePlus"
+  },
+  {
+    "id": "tetracycline-dairy",
+    "title": "Tetracycline ↔ dairy",
+    "severity": "high",
+    "med_keywords": [
+      "tetracycline",
+      "doxycycline",
+      "minocycline"
+    ],
+    "supp_keywords": [
+      "dairy",
+      "milk",
+      "calcium-rich food"
+    ],
+    "detail": "Dairy calcium binds tetracycline and lowers antibiotic levels.",
+    "instruction": "Take tetracycline 1 hour before or 2 hours after dairy meals.",
+    "source": "FDA label / MedlinePlus"
+  },
+  {
+    "id": "antibiotic-probiotic",
+    "title": "Antibiotic ↔ probiotics",
+    "severity": "moderate",
+    "med_keywords": [
+      "antibiotic",
+      "amoxicillin",
+      "azithromycin",
+      "doxycycline",
+      "ciprofloxacin",
+      "fluoroquinolone",
+      "ciprofloxacin",
+      "cipro",
+      "levofloxacin",
+      "moxifloxacin",
+      "ofloxacin",
+      "tetracycline",
+      "doxycycline",
+      "minocycline"
+    ],
+    "supp_keywords": [
+      "probiotic",
+      "lactobacillus",
+      "saccharomyces boulardii",
+      "acidophilus"
+    ],
+    "detail": "Antibiotics can kill probiotic bacteria if taken at the same time.",
+    "instruction": "Take probiotic at least 2 hours apart from antibiotic doses.",
+    "source": "MedlinePlus / clinical practice references"
+  },
+  {
+    "id": "cyclosporine-st-johns-wort",
+    "title": "Cyclosporine ↔ St. John's Wort",
+    "severity": "critical",
+    "med_keywords": [
+      "cyclosporine",
+      "neoral",
+      "sandimmune"
+    ],
+    "supp_keywords": [
+      "st. john's wort",
+      "st johns wort",
+      "hypericum"
+    ],
+    "detail": "St. John's Wort induces metabolism and can drastically lower cyclosporine levels.",
+    "instruction": "Avoid St. John's Wort with transplant medications unless transplant team approves.",
+    "source": "FDA transplant drug labels / MedlinePlus",
+    "monitor": "drug levels"
+  },
+  {
+    "id": "cyclosporine-grapefruit",
+    "title": "Cyclosporine ↔ grapefruit",
+    "severity": "critical",
+    "med_keywords": [
+      "cyclosporine"
+    ],
+    "supp_keywords": [
+      "grapefruit",
+      "grapefruit juice"
+    ],
+    "detail": "Grapefruit inhibits metabolism and can raise cyclosporine to toxic levels.",
+    "instruction": "Avoid grapefruit completely with cyclosporine unless transplant team directs otherwise.",
+    "source": "FDA label / MedlinePlus",
+    "monitor": "drug levels, kidney function"
+  },
+  {
+    "id": "tacrolimus-st-johns-wort",
+    "title": "Tacrolimus ↔ St. John's Wort",
+    "severity": "critical",
+    "med_keywords": [
+      "tacrolimus",
+      "prograf",
+      "envarsus"
+    ],
+    "supp_keywords": [
+      "st. john's wort",
+      "st johns wort"
+    ],
+    "detail": "St. John's Wort can lower tacrolimus concentrations and risk transplant rejection.",
+    "instruction": "Do not use St. John's Wort with tacrolimus.",
+    "source": "FDA label / MedlinePlus",
+    "monitor": "tacrolimus level"
+  },
+  {
+    "id": "immunosuppressant-echinacea",
+    "title": "Immunosuppressant ↔ echinacea",
+    "severity": "high",
+    "med_keywords": [
+      "cyclosporine",
+      "tacrolimus",
+      "prograf",
+      "mycophenolate",
+      "azathioprine"
+    ],
+    "supp_keywords": [
+      "echinacea"
+    ],
+    "detail": "Echinacea may stimulate immune activity and oppose immunosuppressive therapy.",
+    "instruction": "Avoid echinacea with transplant or autoimmune immunosuppression unless approved.",
+    "source": "NIH NCCIH echinacea / MedlinePlus"
+  },
+  {
+    "id": "levodopa-iron",
+    "title": "Levodopa ↔ iron",
+    "severity": "high",
+    "med_keywords": [
+      "levodopa",
+      "carbidopa",
+      "sinemet",
+      "rytary",
+      "duopa"
+    ],
+    "supp_keywords": [
+      "iron",
+      "ferrous sulfate",
+      "multivitamin with iron"
+    ],
+    "detail": "Iron chelates levodopa in the gut and reduces absorption.",
+    "instruction": "Separate levodopa and iron by at least 2 hours.",
+    "source": "MedlinePlus levodopa / FDA label"
+  },
+  {
+    "id": "levodopa-b6-high",
+    "title": "Levodopa ↔ high-dose vitamin B6",
+    "severity": "high",
+    "med_keywords": [
+      "levodopa",
+      "carbidopa",
+      "sinemet",
+      "rytary",
+      "duopa"
+    ],
+    "supp_keywords": [
+      "vitamin b6",
+      "pyridoxine",
+      "b6"
+    ],
+    "detail": "High-dose vitamin B6 can accelerate peripheral metabolism of levodopa and reduce effect.",
+    "instruction": "Avoid high-dose B6 unless your neurologist prescribes it.",
+    "source": "MedlinePlus / FDA label",
+    "monitor": "Parkinson symptoms"
+  },
+  {
+    "id": "levodopa-protein",
+    "title": "Levodopa ↔ protein supplements",
+    "severity": "high",
+    "med_keywords": [
+      "levodopa",
+      "carbidopa",
+      "sinemet",
+      "rytary",
+      "duopa"
+    ],
+    "supp_keywords": [
+      "protein powder",
+      "whey protein",
+      "amino acid",
+      "bcaa",
+      "protein shake"
+    ],
+    "detail": "Large protein loads compete for brain uptake of levodopa.",
+    "instruction": "Time protein supplements away from levodopa per your movement-disorder specialist.",
+    "source": "MedlinePlus / clinical guidelines"
+  },
+  {
+    "id": "calcium-iron",
+    "title": "Calcium ↔ iron",
+    "severity": "high",
+    "med_keywords": [
+      "calcium",
+      "calcium carbonate",
+      "calcium citrate"
+    ],
+    "supp_keywords": [
+      "iron",
+      "ferrous sulfate",
+      "ferrous gluconate"
+    ],
+    "detail": "Calcium inhibits iron absorption when taken together.",
+    "instruction": "Take iron and calcium at least 2 hours apart.",
+    "source": "NIH ODS iron / NIH ODS calcium",
+    "pair_type": "supplement_supplement"
+  },
+  {
+    "id": "calcium-magnesium-high",
+    "title": "Calcium ↔ magnesium (high dose)",
+    "severity": "informational",
+    "med_keywords": [
+      "calcium",
+      "calcium carbonate"
+    ],
+    "supp_keywords": [
+      "magnesium",
+      "magnesium oxide",
+      "magnesium citrate"
+    ],
+    "detail": "At typical supplement doses calcium and magnesium compete minimally for absorption. Very high combined doses may reduce uptake of both.",
+    "instruction": "At standard doses this is not a significant concern. If taking high doses of both, split across meals.",
+    "source": "NIH ODS",
+    "pair_type": "supplement_supplement"
+  },
+  {
+    "id": "zinc-copper",
+    "title": "Zinc ↔ copper",
+    "severity": "high",
+    "med_keywords": [
+      "zinc",
+      "zinc gluconate",
+      "zinc picolinate"
+    ],
+    "supp_keywords": [
+      "copper",
+      "cupric oxide"
+    ],
+    "detail": "Long-term high-dose zinc can deplete copper and cause deficiency.",
+    "instruction": "Discuss zinc dose and copper monitoring with your clinician for prolonged use.",
+    "source": "NIH ODS zinc / copper",
+    "monitor": "copper level",
+    "pair_type": "supplement_supplement"
+  },
+  {
+    "id": "zinc-iron",
+    "title": "Zinc ↔ iron",
+    "severity": "moderate",
+    "med_keywords": [
+      "zinc"
+    ],
+    "supp_keywords": [
+      "iron",
+      "ferrous sulfate"
+    ],
+    "detail": "Zinc and iron compete for absorption when taken together.",
+    "instruction": "Separate zinc and iron by at least 2 hours.",
+    "source": "NIH ODS",
+    "pair_type": "supplement_supplement"
+  },
+  {
+    "id": "iron-vitamin-c",
+    "title": "Iron ↔ vitamin C",
+    "severity": "informational",
+    "med_keywords": [
+      "iron",
+      "ferrous sulfate",
+      "ferrous gluconate"
+    ],
+    "supp_keywords": [
+      "vitamin c",
+      "ascorbic acid"
+    ],
+    "detail": "Vitamin C enhances non-heme iron absorption when taken together.",
+    "instruction": "Pair iron with vitamin C for absorption unless your clinician advises otherwise.",
+    "source": "NIH ODS iron",
+    "pair_type": "supplement_supplement"
+  },
+  {
+    "id": "benzo-melatonin",
+    "title": "Benzodiazepine ↔ melatonin",
+    "severity": "moderate",
+    "med_keywords": [
+      "benzodiazepine",
+      "lorazepam",
+      "ativan",
+      "alprazolam",
+      "xanax",
+      "diazepam",
+      "valium",
+      "clonazepam",
+      "klonopin",
+      "temazepam",
+      "oxazepam",
+      "gabapentin",
+      "neurontin",
+      "pregabalin",
+      "lyrica",
+      "zolpidem",
+      "ambien"
+    ],
+    "supp_keywords": [
+      "melatonin"
+    ],
+    "detail": "Melatonin may add to sedation with benzodiazepines.",
+    "instruction": "Use lowest doses; avoid alcohol; do not drive if impaired.",
+    "source": "MedlinePlus"
+  },
+  {
+    "id": "benzo-valerian",
+    "title": "Benzodiazepine ↔ valerian",
+    "severity": "moderate",
+    "med_keywords": [
+      "benzodiazepine",
+      "lorazepam",
+      "ativan",
+      "alprazolam",
+      "xanax",
+      "diazepam",
+      "valium",
+      "clonazepam",
+      "klonopin",
+      "temazepam",
+      "oxazepam",
+      "gabapentin",
+      "neurontin",
+      "pregabalin",
+      "lyrica",
+      "zolpidem",
+      "ambien"
+    ],
+    "supp_keywords": [
+      "valerian",
+      "valeriana"
+    ],
+    "detail": "Valerian may increase sedation with benzodiazepines.",
+    "instruction": "Avoid combining sedative herbs with benzodiazepines unless approved.",
+    "source": "NIH NCCIH valerian"
+  },
+  {
+    "id": "benzo-kava",
+    "title": "Benzodiazepine ↔ kava",
+    "severity": "high",
+    "med_keywords": [
+      "benzodiazepine",
+      "lorazepam",
+      "ativan",
+      "alprazolam",
+      "xanax",
+      "diazepam",
+      "valium",
+      "clonazepam",
+      "klonopin",
+      "temazepam",
+      "oxazepam",
+      "gabapentin",
+      "neurontin",
+      "pregabalin",
+      "lyrica",
+      "zolpidem",
+      "ambien"
+    ],
+    "supp_keywords": [
+      "kava",
+      "kava kava",
+      "piper methysticum"
+    ],
+    "detail": "Kava adds sedation and carries liver toxicity risk, worsened with CNS depressants.",
+    "instruction": "Avoid kava with benzodiazepines.",
+    "source": "FDA kava advisory / MedlinePlus"
+  },
+  {
+    "id": "zolpidem-melatonin",
+    "title": "Zolpidem ↔ melatonin",
+    "severity": "moderate",
+    "med_keywords": [
+      "zolpidem",
+      "ambien",
+      "eszopiclone",
+      "lunesta",
+      "zaleplon"
+    ],
+    "supp_keywords": [
+      "melatonin"
+    ],
+    "detail": "Melatonin may increase sedation with sedative-hypnotics.",
+    "instruction": "Use cautiously; avoid alcohol the same night.",
+    "source": "MedlinePlus"
+  },
+  {
+    "id": "alendronate-calcium",
+    "title": "Bisphosphonate ↔ calcium",
+    "severity": "critical",
+    "med_keywords": [
+      "alendronate",
+      "fosamax",
+      "risedronate",
+      "actonel",
+      "ibandronate",
+      "boniva",
+      "zoledronic acid"
+    ],
+    "supp_keywords": [
+      "calcium",
+      "calcium carbonate",
+      "calcium citrate",
+      "antacid"
+    ],
+    "detail": "Calcium and food substantially reduce bisphosphonate absorption.",
+    "instruction": "Take bisphosphonate on empty stomach with plain water; delay calcium per label instructions.",
+    "source": "FDA bisphosphonate labels / MedlinePlus"
+  },
+  {
+    "id": "alendronate-iron",
+    "title": "Bisphosphonate ↔ iron",
+    "severity": "high",
+    "med_keywords": [
+      "alendronate",
+      "fosamax",
+      "risedronate",
+      "actonel",
+      "ibandronate",
+      "boniva",
+      "zoledronic acid"
+    ],
+    "supp_keywords": [
+      "iron",
+      "ferrous sulfate"
+    ],
+    "detail": "Iron and minerals reduce bisphosphonate absorption.",
+    "instruction": "Do not take iron within several hours of oral bisphosphonate.",
+    "source": "FDA label / MedlinePlus"
+  },
+  {
+    "id": "alendronate-magnesium",
+    "title": "Bisphosphonate ↔ magnesium",
+    "severity": "high",
+    "med_keywords": [
+      "alendronate",
+      "fosamax",
+      "risedronate",
+      "actonel",
+      "ibandronate",
+      "boniva",
+      "zoledronic acid"
+    ],
+    "supp_keywords": [
+      "magnesium",
+      "magnesium oxide"
+    ],
+    "detail": "Magnesium reduces bisphosphonate absorption.",
+    "instruction": "Separate magnesium from oral bisphosphonate by several hours.",
+    "source": "FDA label / MedlinePlus"
+  },
+  {
+    "id": "lithium-sodium-restriction",
+    "title": "Lithium ↔ low sodium / salt restriction",
+    "severity": "critical",
+    "med_keywords": [
+      "lithium",
+      "lithobid",
+      "eskalith",
+      "lithium carbonate",
+      "lithium citrate"
+    ],
+    "supp_keywords": [
+      "low sodium diet",
+      "sodium restriction",
+      "salt substitute",
+      "no-salt",
+      "nosalt",
+      "nu-salt",
+      "potassium chloride salt"
+    ],
+    "detail": "Sodium and lithium compete for kidney reabsorption. Low sodium intake causes lithium to accumulate to potentially toxic levels.",
+    "instruction": "Never start a low-sodium diet or use salt substitutes without telling your prescriber. Maintain consistent sodium intake. Report tremor, confusion, or nausea immediately.",
+    "source": "FDA lithium label / MedlinePlus",
+    "monitor": "lithium level, kidney function"
+  },
+  {
+    "id": "lithium-caffeine-high",
+    "title": "Lithium ↔ high-dose caffeine",
+    "severity": "moderate",
+    "med_keywords": [
+      "lithium",
+      "lithobid",
+      "eskalith",
+      "lithium carbonate",
+      "lithium citrate"
+    ],
+    "supp_keywords": [
+      "caffeine",
+      "energy drink",
+      "guarana",
+      "high dose coffee"
+    ],
+    "detail": "Sudden changes in caffeine intake can shift lithium levels — caffeine increases kidney lithium clearance.",
+    "instruction": "Keep caffeine intake consistent. Do not suddenly start or stop high caffeine use while on lithium.",
+    "source": "MedlinePlus / lithium pharmacokinetics literature",
+    "monitor": "lithium level"
+  },
+  {
+    "id": "lithium-magnesium",
+    "title": "Lithium ↔ magnesium",
+    "severity": "moderate",
+    "med_keywords": [
+      "lithium",
+      "lithobid",
+      "eskalith",
+      "lithium carbonate",
+      "lithium citrate"
+    ],
+    "supp_keywords": [
+      "magnesium",
+      "magnesium citrate",
+      "magnesium glycinate",
+      "magnesium oxide"
+    ],
+    "detail": "Magnesium and lithium share some renal handling pathways. High-dose magnesium may affect lithium clearance in some patients.",
+    "instruction": "Discuss magnesium supplementation with your prescriber if you take lithium. Keep your psychiatry team informed of all supplements.",
+    "source": "MedlinePlus / clinical case literature",
+    "monitor": "lithium level"
+  },
+  {
+    "id": "maoi-5htp",
+    "title": "MAOI ↔ 5-HTP",
+    "severity": "critical",
+    "med_keywords": [
+      "maoi",
+      "phenelzine",
+      "nardil",
+      "tranylcypromine",
+      "parnate",
+      "isocarboxazid",
+      "marplan",
+      "selegiline",
+      "emsam"
+    ],
+    "supp_keywords": [
+      "5-htp",
+      "5 htp",
+      "hydroxytryptophan",
+      "oxitriptan"
+    ],
+    "detail": "5-HTP combined with MAOIs can cause severe serotonin syndrome — a potentially life-threatening condition with fever, seizures, and cardiovascular instability.",
+    "instruction": "Never combine 5-HTP with MAOIs. Seek emergency care for agitation, fever, rigid muscles, or rapid heart rate.",
+    "source": "FDA / MedlinePlus serotonin syndrome"
+  },
+  {
+    "id": "maoi-tryptophan",
+    "title": "MAOI ↔ tryptophan",
+    "severity": "critical",
+    "med_keywords": [
+      "maoi",
+      "phenelzine",
+      "nardil",
+      "tranylcypromine",
+      "parnate",
+      "isocarboxazid",
+      "marplan",
+      "selegiline",
+      "emsam"
+    ],
+    "supp_keywords": [
+      "tryptophan",
+      "l-tryptophan"
+    ],
+    "detail": "Tryptophan with MAOIs can precipitate serotonin syndrome.",
+    "instruction": "Do not combine tryptophan supplements with MAOIs under any circumstances.",
+    "source": "FDA / MedlinePlus"
+  },
+  {
+    "id": "maoi-tyrosine",
+    "title": "MAOI ↔ tyrosine",
+    "severity": "critical",
+    "med_keywords": [
+      "maoi",
+      "phenelzine",
+      "nardil",
+      "tranylcypromine",
+      "parnate",
+      "isocarboxazid",
+      "marplan",
+      "selegiline",
+      "emsam"
+    ],
+    "supp_keywords": [
+      "tyrosine",
+      "l-tyrosine",
+      "phenylalanine",
+      "l-phenylalanine"
+    ],
+    "detail": "Tyrosine is a precursor to tyramine. MAOIs block tyramine breakdown and combined with tyrosine supplements can trigger hypertensive crisis.",
+    "instruction": "Avoid tyrosine and phenylalanine supplements with MAOIs. Report sudden severe headache immediately — this is a medical emergency.",
+    "source": "FDA MAOI labels / MedlinePlus",
+    "monitor": "blood pressure"
+  },
+  {
+    "id": "maoi-ginseng",
+    "title": "MAOI ↔ ginseng",
+    "severity": "high",
+    "med_keywords": [
+      "maoi",
+      "phenelzine",
+      "nardil",
+      "tranylcypromine",
+      "parnate",
+      "isocarboxazid",
+      "marplan",
+      "selegiline",
+      "emsam"
+    ],
+    "supp_keywords": [
+      "ginseng",
+      "panax ginseng",
+      "korean ginseng",
+      "american ginseng"
+    ],
+    "detail": "Ginseng may have serotonergic and stimulant properties that interact with MAOIs.",
+    "instruction": "Avoid ginseng supplements with MAOIs unless your psychiatrist approves.",
+    "source": "NIH NCCIH ginseng / MedlinePlus"
+  },
+  {
+    "id": "digoxin-hawthorn",
+    "title": "Digoxin ↔ hawthorn",
+    "severity": "high",
+    "med_keywords": [
+      "digoxin",
+      "lanoxin",
+      "digitalis"
+    ],
+    "supp_keywords": [
+      "hawthorn",
+      "crataegus",
+      "hawthorn berry",
+      "hawthorn extract"
+    ],
+    "detail": "Hawthorn has cardiac glycoside-like activity and can add to digoxin's effects, potentially causing toxicity.",
+    "instruction": "Do not combine hawthorn with digoxin without cardiology approval. Report nausea, visual disturbance, or irregular heartbeat immediately.",
+    "source": "NIH NCCIH hawthorn / MedlinePlus",
+    "monitor": "digoxin level, heart rate"
+  },
+  {
+    "id": "digoxin-magnesium",
+    "title": "Digoxin ↔ magnesium",
+    "severity": "high",
+    "med_keywords": [
+      "digoxin",
+      "lanoxin",
+      "digitalis"
+    ],
+    "supp_keywords": [
+      "magnesium",
+      "magnesium oxide",
+      "magnesium citrate",
+      "magnesium glycinate"
+    ],
+    "detail": "Low magnesium increases digoxin toxicity risk. High-dose magnesium supplements can affect cardiac conduction in digoxin-treated patients.",
+    "instruction": "Maintain adequate magnesium but avoid high-dose supplementation without cardiology guidance. Report palpitations or visual changes.",
+    "source": "FDA digoxin label / MedlinePlus",
+    "monitor": "serum magnesium, digoxin level"
+  },
+  {
+    "id": "digoxin-st-johns-wort",
+    "title": "Digoxin ↔ St. John's Wort",
+    "severity": "critical",
+    "med_keywords": [
+      "digoxin",
+      "lanoxin",
+      "digitalis"
+    ],
+    "supp_keywords": [
+      "st. john's wort",
+      "st johns wort",
+      "hypericum"
+    ],
+    "detail": "St. John's Wort induces P-glycoprotein and CYP enzymes, significantly reducing digoxin levels and risking loss of cardiac control.",
+    "instruction": "Do not use St. John's Wort with digoxin.",
+    "source": "FDA drug interaction labeling / MedlinePlus",
+    "monitor": "digoxin level"
+  },
+  {
+    "id": "phenytoin-folic-acid",
+    "title": "Phenytoin ↔ folic acid",
+    "severity": "high",
+    "med_keywords": [
+      "phenytoin",
+      "dilantin",
+      "fosphenytoin",
+      "cerebyx"
+    ],
+    "supp_keywords": [
+      "folic acid",
+      "folate",
+      "methylfolate",
+      "5-mthf",
+      "vitamin b9"
+    ],
+    "detail": "Phenytoin lowers folate levels. However high-dose folic acid can also lower phenytoin levels and increase seizure risk.",
+    "instruction": "Take only the folic acid dose your neurologist recommends. Do not self-supplement with high-dose folate on phenytoin.",
+    "source": "FDA phenytoin label / MedlinePlus",
+    "monitor": "phenytoin level, seizure frequency"
+  },
+  {
+    "id": "phenytoin-vitamin-d",
+    "title": "Phenytoin ↔ vitamin D",
+    "severity": "high",
+    "med_keywords": [
+      "phenytoin",
+      "dilantin",
+      "fosphenytoin",
+      "cerebyx"
+    ],
+    "supp_keywords": [
+      "vitamin d",
+      "vitamin d3",
+      "cholecalciferol",
+      "vitamin d2",
+      "ergocalciferol"
+    ],
+    "detail": "Phenytoin accelerates vitamin D metabolism and can cause deficiency over time, leading to bone loss.",
+    "instruction": "Discuss vitamin D monitoring and supplementation with your neurologist. Annual bone density review is advisable for long-term phenytoin users.",
+    "source": "FDA label / NIH ODS vitamin D",
+    "monitor": "vitamin D level, bone density"
+  },
+  {
+    "id": "phenytoin-calcium",
+    "title": "Phenytoin ↔ calcium",
+    "severity": "moderate",
+    "med_keywords": [
+      "phenytoin",
+      "dilantin",
+      "fosphenytoin",
+      "cerebyx"
+    ],
+    "supp_keywords": [
+      "calcium",
+      "calcium carbonate",
+      "calcium citrate"
+    ],
+    "detail": "Calcium can reduce phenytoin absorption when taken at the same time.",
+    "instruction": "Separate calcium supplements from phenytoin by at least 2 hours.",
+    "source": "FDA label / MedlinePlus"
+  },
+  {
+    "id": "steroid-calcium-vitd",
+    "title": "Corticosteroid ↔ calcium + vitamin D",
+    "severity": "high",
+    "med_keywords": [
+      "prednisone",
+      "prednisolone",
+      "dexamethasone",
+      "methylprednisolone",
+      "medrol",
+      "cortisone",
+      "hydrocortisone",
+      "budesonide",
+      "corticosteroid",
+      "steroid"
+    ],
+    "supp_keywords": [
+      "calcium",
+      "calcium carbonate",
+      "calcium citrate",
+      "vitamin d",
+      "vitamin d3",
+      "cholecalciferol"
+    ],
+    "detail": "Corticosteroids deplete calcium and interfere with vitamin D metabolism, significantly increasing osteoporosis risk with long-term use.",
+    "instruction": "Calcium and vitamin D supplementation is generally recommended for patients on long-term corticosteroids. Discuss doses with your prescriber.",
+    "source": "NIH ODS calcium / NIH ODS vitamin D / ACR guidelines",
+    "monitor": "bone density, calcium, vitamin D level"
+  },
+  {
+    "id": "steroid-potassium",
+    "title": "Corticosteroid ↔ potassium",
+    "severity": "high",
+    "med_keywords": [
+      "prednisone",
+      "prednisolone",
+      "dexamethasone",
+      "methylprednisolone",
+      "medrol",
+      "cortisone",
+      "hydrocortisone",
+      "budesonide",
+      "corticosteroid",
+      "steroid"
+    ],
+    "supp_keywords": [
+      "potassium",
+      "potassium chloride",
+      "potassium citrate",
+      "potassium gluconate"
+    ],
+    "detail": "Corticosteroids cause potassium loss through the kidneys. Low potassium can cause muscle weakness and heart rhythm problems.",
+    "instruction": "Discuss potassium monitoring with your clinician if on long-term steroids. Eat potassium-rich foods or supplement as directed.",
+    "source": "FDA corticosteroid labels / MedlinePlus",
+    "monitor": "serum potassium"
+  },
+  {
+    "id": "steroid-zinc",
+    "title": "Corticosteroid ↔ zinc",
+    "severity": "moderate",
+    "med_keywords": [
+      "prednisone",
+      "prednisolone",
+      "dexamethasone",
+      "methylprednisolone",
+      "medrol",
+      "cortisone",
+      "hydrocortisone",
+      "budesonide",
+      "corticosteroid",
+      "steroid"
+    ],
+    "supp_keywords": [
+      "zinc",
+      "zinc gluconate",
+      "zinc picolinate",
+      "zinc citrate"
+    ],
+    "detail": "Long-term corticosteroid use may increase zinc excretion and contribute to deficiency over time.",
+    "instruction": "Discuss zinc monitoring with your clinician if on long-term steroids.",
+    "source": "NIH ODS zinc / MedlinePlus"
+  },
+  {
+    "id": "clopidogrel-omega3",
+    "title": "Clopidogrel ↔ omega-3",
+    "severity": "high",
+    "med_keywords": [
+      "clopidogrel",
+      "plavix"
+    ],
+    "supp_keywords": [
+      "fish oil",
+      "omega-3",
+      "omega 3",
+      "epa",
+      "dha",
+      "cod liver oil"
+    ],
+    "detail": "Omega-3 fatty acids have antiplatelet properties that may add to clopidogrel's blood-thinning effects.",
+    "instruction": "Discuss fish oil dose with your cardiologist. Report unusual bruising or bleeding.",
+    "source": "FDA clopidogrel label / NIH ODS",
+    "monitor": "bleeding signs"
+  },
+  {
+    "id": "clopidogrel-vitamin-e",
+    "title": "Clopidogrel ↔ vitamin E",
+    "severity": "moderate",
+    "med_keywords": [
+      "clopidogrel",
+      "plavix"
+    ],
+    "supp_keywords": [
+      "vitamin e",
+      "tocopherol",
+      "tocotrienol"
+    ],
+    "detail": "High-dose vitamin E has antiplatelet activity and may add to clopidogrel's effect.",
+    "instruction": "Avoid high-dose vitamin E with antiplatelet therapy unless your cardiologist approves.",
+    "source": "NIH ODS vitamin E / MedlinePlus"
+  },
+  {
+    "id": "clopidogrel-ginkgo",
+    "title": "Clopidogrel ↔ ginkgo biloba",
+    "severity": "high",
+    "med_keywords": [
+      "clopidogrel",
+      "plavix"
+    ],
+    "supp_keywords": [
+      "ginkgo",
+      "ginkgo biloba",
+      "egb 761"
+    ],
+    "detail": "Ginkgo inhibits platelet aggregation and can add to clopidogrel's antiplatelet effect.",
+    "instruction": "Avoid ginkgo with antiplatelet medications. Report bleeding or unusual bruising.",
+    "source": "MedlinePlus ginkgo / FDA safety communications"
+  },
+  {
+    "id": "tamoxifen-black-cohosh",
+    "title": "Tamoxifen ↔ black cohosh",
+    "severity": "high",
+    "med_keywords": [
+      "tamoxifen",
+      "nolvadex",
+      "soltamox"
+    ],
+    "supp_keywords": [
+      "black cohosh",
+      "actaea racemosa",
+      "cimicifuga"
+    ],
+    "detail": "Black cohosh may have oestrogenic activity and could interfere with tamoxifen's mechanism in oestrogen-sensitive cancers.",
+    "instruction": "Do not use black cohosh with tamoxifen without explicit oncology approval.",
+    "source": "NIH NCCIH black cohosh / oncology literature"
+  },
+  {
+    "id": "tamoxifen-soy-isoflavones",
+    "title": "Tamoxifen ↔ soy isoflavones",
+    "severity": "high",
+    "med_keywords": [
+      "tamoxifen",
+      "nolvadex",
+      "soltamox"
+    ],
+    "supp_keywords": [
+      "soy isoflavone",
+      "isoflavone",
+      "genistein",
+      "daidzein",
+      "phytoestrogen"
+    ],
+    "detail": "Soy isoflavones are phytoestrogens that may theoretically interfere with tamoxifen in oestrogen receptor-positive cancers.",
+    "instruction": "Discuss soy supplement use with your oncologist. Dietary soy is generally considered different from concentrated isoflavone supplements.",
+    "source": "NIH NCCIH / oncology clinical guidelines"
+  },
+  {
+    "id": "methotrexate-folic-acid",
+    "title": "Methotrexate ↔ folic acid",
+    "severity": "high",
+    "med_keywords": [
+      "methotrexate",
+      "rheumatrex",
+      "trexall",
+      "otrexup"
+    ],
+    "supp_keywords": [
+      "folic acid",
+      "folate",
+      "methylfolate",
+      "5-mthf"
+    ],
+    "detail": "Methotrexate works partly by blocking folate pathways. Supplemental folate is often prescribed to reduce side effects but must be dosed carefully — too much may reduce methotrexate's effectiveness.",
+    "instruction": "Only take the folic acid dose your rheumatologist or oncologist prescribes. Do not self-supplement beyond the recommended amount.",
+    "source": "ACR methotrexate guidelines / MedlinePlus",
+    "monitor": "LFTs, CBC"
+  },
+  {
+    "id": "methotrexate-vitamin-c-high",
+    "title": "Methotrexate ↔ high-dose vitamin C",
+    "severity": "high",
+    "med_keywords": [
+      "methotrexate",
+      "rheumatrex",
+      "trexall",
+      "otrexup"
+    ],
+    "supp_keywords": [
+      "vitamin c",
+      "ascorbic acid",
+      "high dose vitamin c",
+      "megadose vitamin c"
+    ],
+    "detail": "High-dose vitamin C may reduce kidney clearance of methotrexate and increase toxicity risk.",
+    "instruction": "Avoid high-dose vitamin C supplements with methotrexate. Discuss any supplementation with your rheumatologist.",
+    "source": "Clinical pharmacology literature / MedlinePlus",
+    "monitor": "methotrexate level, LFTs"
+  },
+  {
+    "id": "hiv-st-johns-wort",
+    "title": "HIV medication ↔ St. John's Wort",
+    "severity": "critical",
+    "med_keywords": [
+      "hiv medication",
+      "antiretroviral",
+      "atripla",
+      "efavirenz",
+      "ritonavir",
+      "lopinavir",
+      "darunavir",
+      "atazanavir",
+      "elvitegravir",
+      "dolutegravir",
+      "biktarvy",
+      "genvoya",
+      "stribild"
+    ],
+    "supp_keywords": [
+      "st. john's wort",
+      "st johns wort",
+      "hypericum"
+    ],
+    "detail": "St. John's Wort potently induces CYP3A4 and P-glycoprotein, dramatically reducing antiretroviral drug levels and risking HIV resistance.",
+    "instruction": "St. John's Wort is absolutely contraindicated with antiretroviral therapy. This is not a 'discuss with your doctor' situation — do not combine.",
+    "source": "FDA / WHO antiretroviral guidelines / MedlinePlus"
+  },
+  {
+    "id": "hiv-garlic-high",
+    "title": "HIV medication ↔ high-dose garlic",
+    "severity": "high",
+    "med_keywords": [
+      "hiv medication",
+      "antiretroviral",
+      "atripla",
+      "efavirenz",
+      "ritonavir",
+      "lopinavir",
+      "darunavir",
+      "atazanavir",
+      "elvitegravir",
+      "dolutegravir",
+      "biktarvy",
+      "genvoya",
+      "stribild"
+    ],
+    "supp_keywords": [
+      "garlic",
+      "garlic supplement",
+      "aged garlic",
+      "allicin",
+      "garlic extract"
+    ],
+    "detail": "High-dose garlic supplements may reduce levels of some protease inhibitors through enzyme induction.",
+    "instruction": "Discuss garlic supplement use with your HIV specialist. Dietary garlic is generally not a concern at normal food amounts.",
+    "source": "NIH NCCIH garlic / HIV pharmacology literature"
+  },
+  {
+    "id": "adhd-vitamin-c",
+    "title": "ADHD stimulant ↔ vitamin C",
+    "severity": "moderate",
+    "med_keywords": [
+      "adderall",
+      "amphetamine",
+      "methylphenidate",
+      "ritalin",
+      "concerta",
+      "vyvanse",
+      "lisdexamfetamine",
+      "dextroamphetamine",
+      "dexedrine",
+      "strattera",
+      "atomoxetine"
+    ],
+    "supp_keywords": [
+      "vitamin c",
+      "ascorbic acid",
+      "citric acid",
+      "orange juice"
+    ],
+    "detail": "Vitamin C acidifies urine and accelerates elimination of amphetamine-based ADHD medications, reducing their duration and effectiveness.",
+    "instruction": "Avoid large vitamin C doses or acidic drinks around the time of stimulant doses. Take vitamin C at a different time of day.",
+    "source": "FDA amphetamine label / MedlinePlus"
+  },
+  {
+    "id": "adhd-zinc",
+    "title": "ADHD stimulant ↔ zinc",
+    "severity": "informational",
+    "med_keywords": [
+      "adderall",
+      "amphetamine",
+      "methylphenidate",
+      "ritalin",
+      "concerta",
+      "vyvanse",
+      "lisdexamfetamine",
+      "dextroamphetamine",
+      "dexedrine",
+      "strattera",
+      "atomoxetine"
+    ],
+    "supp_keywords": [
+      "zinc",
+      "zinc gluconate",
+      "zinc picolinate"
+    ],
+    "detail": "Zinc deficiency has been associated with poorer ADHD symptom control. Some evidence suggests zinc may modulate stimulant response.",
+    "instruction": "Discuss zinc status with your prescriber. Do not self-supplement zinc as a substitute for prescribed medication.",
+    "source": "NIH ODS zinc / ADHD clinical literature"
+  },
+  {
+    "id": "antipsychotic-melatonin",
+    "title": "Antipsychotic ↔ melatonin",
+    "severity": "moderate",
+    "med_keywords": [
+      "antipsychotic",
+      "quetiapine",
+      "seroquel",
+      "olanzapine",
+      "zyprexa",
+      "risperidone",
+      "risperdal",
+      "aripiprazole",
+      "abilify",
+      "haloperidol",
+      "haldol",
+      "clozapine",
+      "clozaril",
+      "ziprasidone",
+      "geodon",
+      "lurasidone",
+      "latuda"
+    ],
+    "supp_keywords": [
+      "melatonin"
+    ],
+    "detail": "Melatonin may add to sedation with antipsychotics. Some antipsychotics already affect melatonin pathways.",
+    "instruction": "Use lowest effective melatonin dose. Avoid driving or operating machinery if sedation increases.",
+    "source": "MedlinePlus melatonin / clinical literature"
+  },
+  {
+    "id": "antipsychotic-caffeine",
+    "title": "Antipsychotic ↔ high caffeine",
+    "severity": "moderate",
+    "med_keywords": [
+      "antipsychotic",
+      "quetiapine",
+      "seroquel",
+      "olanzapine",
+      "zyprexa",
+      "risperidone",
+      "risperdal",
+      "aripiprazole",
+      "abilify",
+      "haloperidol",
+      "haldol",
+      "clozapine",
+      "clozaril",
+      "ziprasidone",
+      "geodon",
+      "lurasidone",
+      "latuda"
+    ],
+    "supp_keywords": [
+      "caffeine",
+      "energy drink",
+      "guarana"
+    ],
+    "detail": "High caffeine intake can interact with some antipsychotics — caffeine inhibits adenosine receptors and may affect drug metabolism.",
+    "instruction": "Avoid very high caffeine intake with antipsychotics. Keep intake consistent.",
+    "source": "Clinical pharmacology literature / MedlinePlus"
+  },
+  {
+    "id": "spironolactone-potassium",
+    "title": "Spironolactone ↔ potassium",
+    "severity": "critical",
+    "med_keywords": [
+      "spironolactone",
+      "aldactone",
+      "eplerenone",
+      "inspra"
+    ],
+    "supp_keywords": [
+      "potassium",
+      "potassium chloride",
+      "potassium citrate",
+      "potassium gluconate",
+      "salt substitute",
+      "nosalt",
+      "nu-salt",
+      "potassium supplement"
+    ],
+    "detail": "Spironolactone is a potassium-sparing diuretic. Added potassium supplements can cause dangerous hyperkalemia — high potassium can stop the heart.",
+    "instruction": "Do not take potassium supplements or potassium-containing salt substitutes with spironolactone unless your doctor prescribes them. Report muscle weakness, numbness, or irregular heartbeat immediately.",
+    "source": "FDA spironolactone label / MedlinePlus",
+    "monitor": "serum potassium, ECG"
+  },
+  {
+    "id": "spironolactone-licorice",
+    "title": "Spironolactone ↔ licorice root",
+    "severity": "high",
+    "med_keywords": [
+      "spironolactone",
+      "aldactone",
+      "eplerenone",
+      "inspra"
+    ],
+    "supp_keywords": [
+      "licorice",
+      "licorice root",
+      "glycyrrhizin"
+    ],
+    "detail": "Licorice has mineralocorticoid-like activity and opposes spironolactone's mechanism, potentially causing sodium retention and potassium loss.",
+    "instruction": "Avoid licorice supplements with spironolactone.",
+    "source": "NIH NCCIH licorice / MedlinePlus"
+  },
+  {
+    "id": "contraceptive-st-johns-wort",
+    "title": "Hormonal contraceptive ↔ St. John's Wort",
+    "severity": "high",
+    "med_keywords": [
+      "oral contraceptive",
+      "birth control",
+      "the pill",
+      "ethinyl estradiol",
+      "drospirenone",
+      "levonorgestrel",
+      "norethindrone",
+      "norgestimate",
+      "yaz",
+      "yasmin",
+      "ortho tri-cyclen",
+      "loestrin",
+      "nuvaring",
+      "etonogestrel",
+      "estrogen",
+      "estradiol",
+      "hormone replacement",
+      "premarin"
+    ],
+    "supp_keywords": [
+      "st. john's wort",
+      "st johns wort",
+      "hypericum"
+    ],
+    "detail": "St. John's Wort induces liver enzymes that break down contraceptive hormones, reducing their levels and risking breakthrough bleeding and unintended pregnancy.",
+    "instruction": "Use a reliable backup method or avoid St. John's Wort while on hormonal contraception. Discuss alternatives with your prescriber.",
+    "source": "FDA / MedlinePlus drug interaction labeling"
+  },
+  {
+    "id": "diuretic-licorice",
+    "title": "Diuretic ↔ licorice root",
+    "severity": "high",
+    "med_keywords": [
+      "furosemide",
+      "lasix",
+      "bumetanide",
+      "torsemide",
+      "ethacrynic acid",
+      "hydrochlorothiazide",
+      "hctz",
+      "chlorthalidone",
+      "indapamide",
+      "metolazone",
+      "thiazide",
+      "loop diuretic"
+    ],
+    "supp_keywords": [
+      "licorice",
+      "licorice root",
+      "glycyrrhizin"
+    ],
+    "detail": "Licorice promotes potassium loss and sodium retention, worsening the potassium depletion caused by loop and thiazide diuretics — raising arrhythmia risk.",
+    "instruction": "Avoid licorice supplements with diuretics. Report muscle cramps, weakness, or palpitations.",
+    "source": "NIH NCCIH licorice / MedlinePlus",
+    "monitor": "serum potassium"
+  },
+  {
+    "id": "thiazide-calcium",
+    "title": "Thiazide diuretic ↔ calcium + vitamin D",
+    "severity": "moderate",
+    "med_keywords": [
+      "hydrochlorothiazide",
+      "hctz",
+      "chlorthalidone",
+      "indapamide",
+      "metolazone",
+      "thiazide"
+    ],
+    "supp_keywords": [
+      "calcium",
+      "calcium carbonate",
+      "calcium citrate",
+      "vitamin d",
+      "vitamin d3"
+    ],
+    "detail": "Thiazides reduce calcium excretion. With high-dose calcium plus vitamin D this can raise blood calcium to abnormal levels (hypercalcemia).",
+    "instruction": "Keep calcium and vitamin D within recommended amounts and tell your clinician. Report nausea, constipation, or confusion.",
+    "source": "MedlinePlus / FDA thiazide labeling",
+    "monitor": "serum calcium"
+  },
+  {
+    "id": "diuretic-magnesium",
+    "title": "Loop/thiazide diuretic ↔ magnesium",
+    "severity": "informational",
+    "med_keywords": [
+      "furosemide",
+      "lasix",
+      "bumetanide",
+      "torsemide",
+      "ethacrynic acid",
+      "hydrochlorothiazide",
+      "hctz",
+      "chlorthalidone",
+      "indapamide",
+      "metolazone",
+      "thiazide",
+      "loop diuretic"
+    ],
+    "supp_keywords": [
+      "magnesium",
+      "magnesium citrate",
+      "magnesium glycinate",
+      "magnesium oxide"
+    ],
+    "detail": "Loop and thiazide diuretics increase magnesium loss; supplementation is often appropriate but should be guided by lab values.",
+    "instruction": "Discuss magnesium monitoring with your clinician. Magnesium supplementation is commonly recommended rather than avoided.",
+    "source": "NIH ODS magnesium / MedlinePlus",
+    "monitor": "serum magnesium"
+  },
+  {
+    "id": "aspirin-omega3",
+    "title": "Aspirin ↔ omega-3",
+    "severity": "moderate",
+    "med_keywords": [
+      "aspirin",
+      "acetylsalicylic acid",
+      "asa",
+      "ecotrin",
+      "bayer aspirin",
+      "low-dose aspirin",
+      "baby aspirin"
+    ],
+    "supp_keywords": [
+      "fish oil",
+      "omega-3",
+      "omega 3",
+      "epa",
+      "dha",
+      "cod liver oil"
+    ],
+    "detail": "Omega-3 has mild antiplatelet activity that can add to aspirin's blood-thinning effect, especially at high fish-oil doses.",
+    "instruction": "Low-dose aspirin with moderate fish oil is common, but tell your clinician and report unusual bruising or bleeding.",
+    "source": "NIH ODS omega-3 / MedlinePlus",
+    "monitor": "bleeding signs"
+  },
+  {
+    "id": "aspirin-ginkgo",
+    "title": "Aspirin ↔ ginkgo biloba",
+    "severity": "high",
+    "med_keywords": [
+      "aspirin",
+      "acetylsalicylic acid",
+      "asa",
+      "ecotrin",
+      "bayer aspirin",
+      "low-dose aspirin",
+      "baby aspirin"
+    ],
+    "supp_keywords": [
+      "ginkgo",
+      "ginkgo biloba",
+      "egb 761"
+    ],
+    "detail": "Ginkgo inhibits platelet aggregation and combined with aspirin can meaningfully increase bleeding risk, including rare reports of intracranial bleeding.",
+    "instruction": "Avoid ginkgo with aspirin. Report any unusual bruising, nosebleeds, or bleeding.",
+    "source": "MedlinePlus ginkgo / FDA safety communications"
+  },
+  {
+    "id": "iron-coffee-tea",
+    "title": "Iron ↔ coffee / tea (tannins)",
+    "severity": "moderate",
+    "med_keywords": [
+      "coffee",
+      "black tea",
+      "green tea",
+      "tea",
+      "tannins"
+    ],
+    "supp_keywords": [
+      "iron",
+      "ferrous sulfate",
+      "ferrous gluconate",
+      "ferrous fumarate",
+      "ferrous bisglycinate"
+    ],
+    "detail": "Tannins and polyphenols in coffee and tea bind non-heme iron and can substantially reduce its absorption when taken together.",
+    "instruction": "Separate iron supplements from coffee or tea by at least 1–2 hours. Pairing iron with vitamin C improves absorption.",
+    "source": "NIH ODS iron / MedlinePlus",
+    "pair_type": "supplement_supplement"
+  },
+  {
+    "id": "aspirin-garlic",
+    "title": "Aspirin ↔ high-dose garlic",
+    "severity": "moderate",
+    "med_keywords": [
+      "aspirin",
+      "acetylsalicylic acid",
+      "asa",
+      "ecotrin",
+      "bayer aspirin",
+      "low-dose aspirin",
+      "baby aspirin"
+    ],
+    "supp_keywords": [
+      "garlic",
+      "garlic supplement",
+      "aged garlic",
+      "allicin",
+      "garlic extract"
+    ],
+    "detail": "High-dose garlic supplements have mild antiplatelet activity that can add to aspirin's effect on bleeding.",
+    "instruction": "Normal dietary garlic is fine. Discuss high-dose garlic supplements with your clinician and report unusual bruising or bleeding.",
+    "source": "NIH NCCIH garlic / MedlinePlus"
+  },
+  {
+    "id": "aspirin-vitamin-e",
+    "title": "Aspirin ↔ high-dose vitamin E",
+    "severity": "moderate",
+    "med_keywords": [
+      "aspirin",
+      "acetylsalicylic acid",
+      "asa",
+      "ecotrin",
+      "bayer aspirin",
+      "low-dose aspirin",
+      "baby aspirin"
+    ],
+    "supp_keywords": [
+      "vitamin e",
+      "tocopherol",
+      "tocotrienol"
+    ],
+    "detail": "High-dose vitamin E has antiplatelet activity that may add to aspirin and increase bleeding risk.",
+    "instruction": "Avoid high-dose vitamin E with regular aspirin unless your clinician approves.",
+    "source": "NIH ODS vitamin E / MedlinePlus"
+  },
+  {
+    "id": "ssri-ginkgo",
+    "title": "SSRI/SNRI ↔ ginkgo biloba",
+    "severity": "moderate",
+    "med_keywords": [
+      "ssri",
+      "sertraline",
+      "zoloft",
+      "fluoxetine",
+      "prozac",
+      "escitalopram",
+      "lexapro",
+      "citalopram",
+      "celexa",
+      "paroxetine",
+      "paxil",
+      "fluvoxamine",
+      "vortioxetine",
+      "trintellix",
+      "vilazodone",
+      "viibryd",
+      "snri",
+      "venlafaxine",
+      "effexor",
+      "duloxetine",
+      "cymbalta",
+      "desvenlafaxine",
+      "pristiq",
+      "levomilnacipran",
+      "fetzima",
+      "bupropion",
+      "wellbutrin",
+      "zyban",
+      "mirtazapine",
+      "remeron",
+      "trazodone",
+      "nefazodone"
+    ],
+    "supp_keywords": [
+      "ginkgo",
+      "ginkgo biloba",
+      "egb 761"
+    ],
+    "detail": "SSRIs and SNRIs can impair platelet function; ginkgo adds antiplatelet activity, modestly increasing bleeding risk.",
+    "instruction": "Discuss ginkgo use with your prescriber. Report unusual bruising, nosebleeds, or bleeding.",
+    "source": "MedlinePlus ginkgo / clinical bleeding-risk literature"
+  },
+  {
+    "id": "diuretic-potassium",
+    "title": "Loop/thiazide diuretic ↔ potassium",
+    "severity": "informational",
+    "med_keywords": [
+      "furosemide",
+      "lasix",
+      "bumetanide",
+      "torsemide",
+      "ethacrynic acid",
+      "hydrochlorothiazide",
+      "hctz",
+      "chlorthalidone",
+      "indapamide",
+      "metolazone",
+      "thiazide",
+      "loop diuretic"
+    ],
+    "supp_keywords": [
+      "potassium",
+      "potassium chloride",
+      "potassium citrate",
+      "potassium gluconate",
+      "potassium supplement"
+    ],
+    "detail": "Unlike potassium-sparing diuretics, loop and thiazide diuretics cause potassium loss. Supplemental potassium is sometimes prescribed — but only under guidance.",
+    "instruction": "Take potassium only as directed by your clinician, who will monitor your levels. Do not start potassium supplements on your own.",
+    "source": "FDA diuretic labeling / MedlinePlus",
+    "monitor": "serum potassium"
+  }
+]

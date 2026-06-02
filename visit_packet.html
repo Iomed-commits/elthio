@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+<title>Elthio — Visit Packet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #1A1814; --paper: #F9F6EF; --line: #E2DDD4;
+  --muted: #7A7060; --gold: #C9A84C; --blue: #1B4F72;
+  --red: #C1292E; --amber: #B5560A; --green: #2D6A4F;
+}
+body { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink); background: #F0EBE0; line-height: 1.55; }
+.no-print {
+  max-width: 920px; margin: 0 auto; padding: 16px 20px;
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  border-bottom: 1px solid var(--line); background: #fff;
+}
+.no-print a, .no-print button {
+  font-family: inherit; font-size: 11px; padding: 10px 16px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--paper); cursor: pointer; text-decoration: none; color: var(--ink);
+}
+.no-print button.gold, .no-print a.gold { background: var(--gold); color: #fff; border-color: var(--gold); }
+.no-print #cloudStatus { font-size: 10px; color: var(--muted); max-width: 220px; line-height: 1.4; }
+.packet {
+  max-width: 800px; margin: 24px auto; padding: 32px 36px;
+  background: #fff; border: 1px solid var(--line); box-shadow: 0 2px 16px rgba(26,24,20,0.06);
+}
+.packet h1 {
+  font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 6px;
+}
+.packet .sub { color: var(--muted); font-size: 11px; margin-bottom: 20px; }
+.emergency {
+  background: #FDECEA; border: 1px solid #F0A0A0; color: var(--red);
+  padding: 10px 14px; border-radius: 6px; font-size: 11px; margin-bottom: 20px;
+}
+.section { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.section h2 {
+  font-family: 'Syne', sans-serif; font-size: 13px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+}
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+@media (max-width: 600px) { .row2 { grid-template-columns: 1fr; } }
+label { display: block; font-size: 10px; color: var(--muted); margin-bottom: 4px; letter-spacing: 0.08em; }
+input[type="text"], textarea {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px;
+  font-family: inherit; font-size: 12px;
+}
+table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
+th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+th { background: var(--paper); font-weight: 600; }
+ul.plain { margin: 8px 0 0 18px; }
+.q-list { list-style: none; margin: 0; padding: 0; }
+.q-list li { margin: 8px 0; display: flex; gap: 8px; align-items: flex-start; }
+.q-list input { margin-top: 3px; }
+.foot {
+  margin-top: 24px; padding: 14px; background: #EBF5FB; border: 1px solid #A8C4D5;
+  border-radius: 6px; font-size: 10px; color: var(--blue); line-height: 1.65;
+}
+.flag { padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; border: 1px solid var(--line); }
+.flag.severe { background: #FDF2F2; border-color: #F0A0A0; }
+.flag.moderate { background: #FFFBF0; border-color: #F5C97A; }
+.flag.mild { background: #F0FAF3; border-color: #A8D5B5; }
+.flag .t { font-weight: 600; margin-bottom: 4px; }
+.muted { color: var(--muted); font-size: 10px; margin-top: 8px; }
+@media print {
+  body { background: #fff; }
+  .no-print { display: none !important; }
+  .packet { box-shadow: none; margin: 0; max-width: 100%; padding: 0 12px; border: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="no-print">
+  <strong style="font-size:11px;letter-spacing:0.1em">VISIT PACKET</strong>
+  <span style="flex:1"></span>
+  <button type="button" class="gold" onclick="window.print()">Print for visit</button>
+  <button type="button" onclick="refreshPacket()">Refresh from saved data</button>
+  <button type="button" onclick="loadMedCheckTopics()">Update discussion topics</button>
+  <button type="button" onclick="saveToCloud()">Save to cloud</button>
+  <button type="button" onclick="loadLatestFromCloud()">Load from cloud</button>
+  <span id="cloudStatus"></span>
+  <a href="/auth">Sign in</a>
+  <a href="/">Elthio</a>
+  <a href="/passport">Passport</a>
+  <a href="/medcheck">Med Check</a>
+</div>
+
+<div class="packet" id="packetRoot">
+  <h1>Visit packet</h1>
+  <p class="sub">For your doctor or pharmacist — educational only. Bring a printed copy or show this on your phone.</p>
+  <div class="emergency"><strong>Emergency?</strong> Call 911 (or your local emergency number). This page is not for urgent medical problems.</div>
+  <div id="packetBody"></div>
+  <div class="foot" id="packetDisclaimer"></div>
+</div>
+
+<script>
+function apiOrigin() {
+  try {
+    const p = window.location && window.location.protocol;
+    if (p === 'http:' || p === 'https:') return window.location.origin;
+  } catch (e) {}
+  return 'http://127.0.0.1:8765';
+}
+
+function parseArr(key) {
+  try {
+    const v = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(v) ? v : [];
+  } catch (e) { return []; }
+}
+
+function uniqMeds(a, b) {
+  const out = [];
+  const seen = new Set();
+  [...a, ...b].forEach((m) => {
+    const s = String(m || '').trim();
+    if (!s) return;
+    const k = s.toLowerCase();
+    if (seen.has(k)) return;
+    seen.add(k);
+    out.push(s);
+  });
+  return out;
+}
+
+function suppNamesFromPassport(rows) {
+  return rows.map((r) => (r && r.name ? String(r.name).trim() : '')).filter(Boolean);
+}
+
+function mergeSuppStrings(passRows, bioSupps) {
+  const names = new Set(suppNamesFromPassport(passRows).map((x) => x.toLowerCase()));
+  const out = suppNamesFromPassport(passRows).slice();
+  bioSupps.forEach((s) => {
+    const t = String(s || '').trim();
+    if (!t) return;
+    if (!names.has(t.toLowerCase())) {
+      names.add(t.toLowerCase());
+      out.push(t);
+    }
+  });
+  return out;
+}
+
+let lastMedCheckHtml = '';
+
+function setCloudStatus(msg) {
+  const el = document.getElementById('cloudStatus');
+  if (el) el.textContent = msg || '';
+}
+
+async function getAuthHeader() {
+  try {
+    const cfg = await fetch(apiOrigin() + '/config', { cache: 'no-store' }).then((r) => r.json());
+    const url = (cfg.supabase_url || '').trim();
+    const key = (cfg.supabase_anon_key || '').trim();
+    if (!url || !key) return {};
+    const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    const sb = mod.createClient(url, key);
+    const { data: { session } } = await sb.auth.getSession();
+    if (session && session.access_token) {
+      return { Authorization: 'Bearer ' + session.access_token };
+    }
+  } catch (e) { /* offline or no Supabase */ }
+  return {};
+}
+
+function buildSnapshot() {
+  const nameEl = document.getElementById('vpName');
+  const dateEl = document.getElementById('vpDate');
+  const notesEl = document.getElementById('vpNotes');
+  return {
+    version: 1,
+    patient_name: nameEl ? nameEl.value.trim() : (localStorage.getItem('visit_packet_patient_name') || ''),
+    visit_date: dateEl ? dateEl.value.trim() : (localStorage.getItem('visit_packet_visit_date') || ''),
+    questions: notesEl ? notesEl.value : (localStorage.getItem('visit_packet_questions') || ''),
+    passport_supps: parseArr('passport_supps'),
+    passport_meds: parseArr('passport_meds'),
+    elthio_meds: parseArr('elthio_meds'),
+    bio_med_supps: parseArr('bio_med_supps'),
+    bio_med_ingredients: parseArr('bio_med_ingredients'),
+    med_check_html: lastMedCheckHtml || '',
+    saved_at: new Date().toISOString(),
+  };
+}
+
+function applySnapshot(snap) {
+  if (!snap || typeof snap !== 'object') return;
+  if (snap.patient_name != null) localStorage.setItem('visit_packet_patient_name', String(snap.patient_name));
+  if (snap.visit_date != null) localStorage.setItem('visit_packet_visit_date', String(snap.visit_date));
+  if (snap.questions != null) localStorage.setItem('visit_packet_questions', String(snap.questions));
+  if (Array.isArray(snap.passport_supps)) localStorage.setItem('passport_supps', JSON.stringify(snap.passport_supps));
+  if (Array.isArray(snap.passport_meds)) localStorage.setItem('passport_meds', JSON.stringify(snap.passport_meds));
+  if (Array.isArray(snap.elthio_meds)) localStorage.setItem('elthio_meds', JSON.stringify(snap.elthio_meds));
+  if (Array.isArray(snap.bio_med_supps)) localStorage.setItem('bio_med_supps', JSON.stringify(snap.bio_med_supps));
+  if (Array.isArray(snap.bio_med_ingredients)) localStorage.setItem('bio_med_ingredients', JSON.stringify(snap.bio_med_ingredients));
+  if (snap.med_check_html) lastMedCheckHtml = String(snap.med_check_html);
+}
+
+function saveSnapshotLocal(snap) {
+  try {
+    localStorage.setItem('visit_packet_snapshot', JSON.stringify(snap || buildSnapshot()));
+    setCloudStatus('Saved on this device.');
+  } catch (e) {
+    setCloudStatus('Could not save on this device.');
+  }
+}
+
+async function saveToCloud() {
+  const snap = buildSnapshot();
+  saveSnapshotLocal(snap);
+  const auth = await getAuthHeader();
+  if (!auth.Authorization) {
+    setCloudStatus('Sign in at /auth to save to the cloud.');
+    return;
+  }
+  setCloudStatus('Saving to cloud…');
+  try {
+    const resp = await fetch(apiOrigin() + '/visit-packets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...auth },
+      body: JSON.stringify({ snapshot: snap }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.error) {
+      setCloudStatus(data.error || 'Cloud save failed. Run visit_packets.sql in Supabase?');
+      return;
+    }
+    setCloudStatus('Saved to your account.');
+  } catch (e) {
+    setCloudStatus('Could not reach server.');
+  }
+}
+
+async function loadLatestFromCloud() {
+  const auth = await getAuthHeader();
+  if (!auth.Authorization) {
+    setCloudStatus('Sign in at /auth to load from cloud.');
+    return;
+  }
+  setCloudStatus('Loading…');
+  try {
+    const resp = await fetch(apiOrigin() + '/visit-packets', { headers: { ...auth }, cache: 'no-store' });
+    const data = await resp.json();
+    if (!resp.ok || data.error) {
+      setCloudStatus(data.error || 'Could not load.');
+      return;
+    }
+    const packets = data.packets || [];
+    if (!packets.length) {
+      setCloudStatus('No saved visit packets yet.');
+      return;
+    }
+    const latest = packets[0];
+    const snap = latest.snapshot || latest;
+    applySnapshot(snap);
+    refreshPacket();
+    const when = latest.created_at ? new Date(latest.created_at).toLocaleString() : '';
+    setCloudStatus('Loaded latest' + (when ? ' (' + when + ')' : '') + '.');
+  } catch (e) {
+    setCloudStatus('Could not reach server.');
+  }
+}
+
+function refreshPacket() {
+  const passportSupps = parseArr('passport_supps');
+  const passportMeds = parseArr('passport_meds');
+  const bioMeds = parseArr('elthio_meds');
+  const bioSupps = parseArr('bio_med_supps');
+  const ingredients = parseArr('bio_med_ingredients');
+
+  const meds = uniqMeds(passportMeds, bioMeds);
+  const suppStrings = mergeSuppStrings(passportSupps, bioSupps);
+
+  const savedName = localStorage.getItem('visit_packet_patient_name') || '';
+  const savedDate = localStorage.getItem('visit_packet_visit_date') || '';
+  const savedQuestions = localStorage.getItem('visit_packet_questions') || '';
+
+  const today = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+
+  let suppTable = '<p class="muted">No supplements found in Supplement Passport or Med Check. Add them in Passport or Med Check, then refresh.</p>';
+  if (passportSupps.length) {
+    suppTable = '<table><thead><tr><th>Supplement</th><th>Brand</th><th>Dose / form</th><th>Notes</th></tr></thead><tbody>';
+    passportSupps.forEach((s) => {
+      const dose = [s.dose, s.form].filter(Boolean).join(' · ');
+      const st = s.status === 'VERIFIED' ? 'Verified label' : s.status === 'MISMATCH' ? 'Label discrepancy' : 'Not verified';
+      suppTable += '<tr><td>' + esc(s.name || '') + '</td><td>' + esc(s.brand || '—') + '</td><td>' + esc(dose || '—') + '</td><td>' + esc(st) + '</td></tr>';
+    });
+    suppTable += '</tbody></table>';
+  }
+
+  let ingTable = '<p class="muted">No imported audit ingredients. Use Med Check → import from audits if you have audited products.</p>';
+  if (ingredients.length) {
+    ingTable = '<table><thead><tr><th>Ingredient</th><th>Amount</th><th>Source</th></tr></thead><tbody>';
+    ingredients.forEach((ing) => {
+      ingTable += '<tr><td>' + esc(ing.name || '') + '</td><td>' + esc(String(ing.amount ?? '') + ' ' + String(ing.unit || '')) + '</td><td>' + esc(ing.source || ing.source_product || '') + '</td></tr>';
+    });
+    ingTable += '</tbody></table>';
+  }
+
+  let medList = '<p class="muted">No medications listed. Add them in Supplement Passport or Med Check.</p>';
+  if (meds.length) {
+    medList = '<ul class="plain">' + meds.map((m) => '<li>' + esc(m) + '</li>').join('') + '</ul>';
+  }
+
+  document.getElementById('packetBody').innerHTML =
+    '<div class="row2">' +
+      '<div><label for="vpName">Your name (or initials)</label>' +
+      '<input type="text" id="vpName" value="' + escAttr(savedName) + '" placeholder="e.g. A.J."></div>' +
+      '<div><label for="vpDate">Visit date (or today)</label>' +
+      '<input type="text" id="vpDate" value="' + escAttr(savedDate || today) + '" placeholder="' + escAttr(today) + '"></div>' +
+    '</div>' +
+
+    '<div class="section"><h2>1 · What I take (supplements)</h2>' + suppTable +
+    '<p class="muted">Also sent to Med Check as separate names: ' + esc(suppStrings.join(', ') || '(none)') + '</p></div>' +
+
+    '<div class="section"><h2>2 · My medications (prescriptions you listed)</h2>' + medList + '</div>' +
+
+    '<div class="section"><h2>3 · Ingredients from recent audits (if any)</h2>' + ingTable + '</div>' +
+
+    '<div class="section"><h2>4 · Questions for my clinician</h2>' +
+    '<p class="muted" style="margin-bottom:10px">Check what applies. Add your own notes below.</p>' +
+    '<ul class="q-list">' +
+    ['Are my supplements OK with my current prescriptions?',
+     'Should I change timing (morning vs night) or spacing between meds and supplements?',
+     'Do I need any labs checked based on what I take?',
+     'I have a procedure or surgery coming up — what should I stop or disclose?',
+     'Is this dose appropriate for me?',
+     'Anything here that overlaps or duplicates another product?'].map((q, i) =>
+      '<li><input type="checkbox" id="vpq' + i + '"><label for="vpq' + i + '" style="margin:0;font-size:12px;color:var(--ink)">' + esc(q) + '</label></li>'
+    ).join('') +
+    '</ul>' +
+    '<label for="vpNotes" style="margin-top:14px">Your own questions</label>' +
+    '<textarea id="vpNotes" rows="4" placeholder="Write anything you want to ask…">' + escAttr(savedQuestions) + '</textarea></div>' +
+
+    '<div class="section"><h2>5 · Discussion topics (curated checklist)</h2>' +
+    '<p class="muted" style="margin-bottom:10px">Click <strong>Update discussion topics</strong> above. This uses the same small curated list as Med Check — not every interaction is covered. <strong>No topics does not mean you are safe.</strong></p>' +
+    '<div id="medCheckBlock">' + (lastMedCheckHtml || '<p class="muted">Not loaded yet.</p>') + '</div></div>';
+
+  document.getElementById('packetDisclaimer').innerHTML =
+    '<strong>Not medical advice.</strong> Elthio helps you prepare for conversations. It does not diagnose, treat, or clear you to take or stop any medication or supplement. Always follow your clinician’s instructions.';
+
+  const nameEl = document.getElementById('vpName');
+  const dateEl = document.getElementById('vpDate');
+  const notesEl = document.getElementById('vpNotes');
+  if (nameEl) nameEl.addEventListener('change', () => {
+    localStorage.setItem('visit_packet_patient_name', nameEl.value.trim());
+    saveSnapshotLocal(buildSnapshot());
+  });
+  if (dateEl) dateEl.addEventListener('change', () => {
+    localStorage.setItem('visit_packet_visit_date', dateEl.value.trim());
+    saveSnapshotLocal(buildSnapshot());
+  });
+  if (notesEl) notesEl.addEventListener('change', () => {
+    localStorage.setItem('visit_packet_questions', notesEl.value);
+    saveSnapshotLocal(buildSnapshot());
+  });
+  saveSnapshotLocal(buildSnapshot());
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+function escAttr(s) {
+  return esc(s).replace(/'/g, '&#39;');
+}
+
+async function loadMedCheckTopics() {
+  const passportSupps = parseArr('passport_supps');
+  const passportMeds = parseArr('passport_meds');
+  const bioMeds = parseArr('elthio_meds');
+  const bioSupps = parseArr('bio_med_supps');
+  const ingredients = parseArr('bio_med_ingredients');
+
+  const medications = uniqMeds(passportMeds, bioMeds);
+  const supplements = mergeSuppStrings(passportSupps, bioSupps);
+
+  const block = document.getElementById('medCheckBlock');
+  if (!block) {
+    refreshPacket();
+  }
+  const medBlock = document.getElementById('medCheckBlock');
+  if (!medBlock) return;
+  if (!medications.length || (!supplements.length && !ingredients.length)) {
+    medBlock.innerHTML = '<p class="muted">Add at least one medication and one supplement (or audit ingredients) in Med Check or Passport, then refresh this page and try again.</p>';
+    return;
+  }
+  medBlock.innerHTML = '<p class="muted">Loading curated topics…</p>';
+  try {
+    const resp = await fetch(apiOrigin() + '/med-check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ medications, supplements, ingredients }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.error) {
+      medBlock.innerHTML = '<p class="muted" style="color:var(--red)">' + esc(String(data.error || 'Request failed')) + '</p>';
+      return;
+    }
+    const findings = data.findings || [];
+    let rx = '';
+    (data.resolved_medications || []).forEach((m) => {
+      if (m.rxnorm_name && m.rxcui) rx += esc(m.input) + ' → ' + esc(m.rxnorm_name) + ' (RxCUI ' + esc(m.rxcui) + '). ';
+      else rx += esc(m.input) + ' (not resolved in RxNorm). ';
+    });
+    let html = rx ? '<p class="muted"><strong>RxNorm:</strong> ' + rx + '</p>' : '';
+
+    if (!findings.length) {
+      html += '<div class="flag moderate"><div class="t">No matches in the curated checklist</div>' +
+        '<div>RxNorm may still recognize your medications. This only searched a short, fixed list of documented drug–supplement topics. It is <strong>not</strong> proof your combination is safe.</div></div>';
+    } else {
+      findings.forEach((f) => {
+        const sev = esc(String(f.severity || 'info'));
+        html += '<div class="flag ' + sev + '"><div class="t">' + esc(f.title || '') + ' <span style="text-transform:uppercase;font-size:9px">(' + sev + ')</span></div>' +
+          '<div style="margin:6px 0">' + esc(f.detail || '') + '</div>' +
+          '<div><strong>Ask about:</strong> ' + esc(f.action || '') + '</div></div>';
+      });
+    }
+    html += '<p class="muted">' + esc(data.disclaimer || '') + '</p>';
+    if (data.meta && data.meta.curated_interactions != null) {
+      html += '<p class="muted">Checked ' + esc(String(data.meta.curated_interactions)) + ' curated records.</p>';
+    }
+    lastMedCheckHtml = html;
+    medBlock.innerHTML = html;
+    saveSnapshotLocal(buildSnapshot());
+  } catch (e) {
+    medBlock.innerHTML = '<p class="muted" style="color:var(--red)">Could not reach server. Open http://127.0.0.1:8765 and start Elthio.</p>';
+  }
+}
+
+(async function initVisitPacket() {
+  try {
+    const raw = localStorage.getItem('visit_packet_snapshot');
+    if (raw) {
+      const snap = JSON.parse(raw);
+      if (snap && snap.version) applySnapshot(snap);
+    }
+  } catch (e) { /* ignore */ }
+  refreshPacket();
+  const auth = await getAuthHeader();
+  if (auth.Authorization) {
+    setCloudStatus('Signed in — you can save to the cloud.');
+  } else {
+    setCloudStatus('Local save only — sign in to sync.');
+  }
+})();
+</script>
+</body>
+</html>

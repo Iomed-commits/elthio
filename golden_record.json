@@ -1,0 +1,23 @@
+{
+  "product_name": "Vitamin D-3, High Potency, 5,000 IU",
+  "brand": "NOW Foods",
+  "upc": "733739003737",
+  "dsld_id": "70194",
+  "source_url": "https://www.iherb.com/pr/now-foods-vitamin-d-3-high-potency-125-mcg-5-000-iu-240-softgels/22335",
+  "extraction_confidence": 0.88,
+  "servings_per_container": 240,
+  "price": 12.06,
+  "audit": [
+    {
+      "name": "Vitamin D",
+      "retail_amount": 125.0,
+      "retail_unit": "mcg",
+      "nih_amount": 125.0,
+      "nih_unit": "mcg",
+      "status": "MATCH",
+      "confidence": 0.9473684210526316,
+      "diff": "125.0 mcg matches NIH"
+    }
+  ],
+  "overall_status": "VERIFIED"
+}

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elthio — Supplement Passport</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Instrument+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #0F0E0C;
+  --paper: #F9F6EF;
+  --cream: #F0EBE0;
+  --gold: #B8942A;
+  --gold-light: #E8D98A;
+  --green: #1B4D2E;
+  --green-light: #D6EAD8;
+  --red: #8B1A1A;
+  --red-light: #F5E0E0;
+  --amber: #7A4B00;
+  --amber-light: #FFF0CC;
+  --border: #D4C9B0;
+  --muted: #7A7060;
+  --shadow: 0 4px 24px rgba(15,14,12,0.12);
+}
+
+body {
+  font-family: 'Instrument Mono', monospace;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, #E8D98A18 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, #1B4D2E0A 0%, transparent 60%);
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 48px 40px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 39px,
+    rgba(255,255,255,0.03) 39px, rgba(255,255,255,0.03) 40px
+  );
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 40px; right: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.header-inner { position: relative; max-width: 900px; margin: 0 auto; }
+.header-eyebrow {
+  font-size: 9px; letter-spacing: 0.35em; color: var(--gold-light);
+  text-transform: uppercase; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.header-eyebrow::before {
+  content: ''; width: 32px; height: 1px; background: var(--gold);
+}
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 700;
+  line-height: 1.05;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+.header h1 em {
+  color: var(--gold-light);
+  font-style: italic;
+}
+.header-sub {
+  font-size: 11px; color: #9B9080; line-height: 1.7;
+  max-width: 480px;
+}
+
+/* ── MAIN ── */
+.main { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+/* ── PASSPORT DOCUMENT ── */
+.passport {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  box-shadow: var(--shadow), inset 0 0 0 6px rgba(184,148,42,0.08);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.passport::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+}
+.passport-header {
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+.passport-title-block {}
+.passport-label {
+  font-size: 9px; letter-spacing: 0.25em; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.passport-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 700;
+  color: var(--ink); margin-bottom: 4px;
+}
+.passport-meta {
+  font-size: 10px; color: var(--muted);
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.passport-id {
+  text-align: right;
+  flex-shrink: 0;
+}
+.passport-id .id-label { font-size: 9px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 4px; }
+.passport-id .id-value {
+  font-family: 'Instrument Mono', monospace;
+  font-size: 13px; font-weight: 500;
+  color: var(--ink); letter-spacing: 0.05em;
+}
+.qr-placeholder {
+  width: 80px; height: 80px;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px; color: var(--paper);
+  margin-top: 8px; cursor: pointer;
+  position: relative;
+  border-radius: 2px;
+}
+.qr-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 2px solid var(--paper);
+  border-radius: 1px;
+}
+
+/* ── PASSPORT SECTIONS ── */
+.passport-section {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--border);
+}
+.passport-section:last-child { border-bottom: none; }
+.section-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-size: 10px; letter-spacing: 0.2em; color: var(--muted);
+  text-transform: uppercase; font-weight: 500;
+}
+.section-count {
+  font-size: 9px; padding: 2px 8px;
+  border-radius: 20px; font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.count-verified { background: var(--green-light); color: var(--green); }
+.count-warning  { background: var(--amber-light); color: var(--amber); }
+.count-error    { background: var(--red-light); color: var(--red); }
+
+/* ── SUPPLEMENT ROWS ── */
+.supplement-row {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(212,201,176,0.5);
+}
+.supplement-row:last-child { border-bottom: none; }
+.supp-status { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.supp-info { flex: 1; min-width: 0; }
+.supp-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px; font-weight: 600;
+  color: var(--ink); margin-bottom: 2px;
+}
+.supp-brand { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+.supp-details { display: flex; gap: 12px; flex-wrap: wrap; }
+.supp-detail {
+  font-size: 10px; color: var(--ink);
+  background: var(--cream);
+  padding: 2px 8px; border-radius: 2px;
+  border: 1px solid var(--border);
+}
+.supp-verify {
+  text-align: right; flex-shrink: 0; font-size: 10px;
+}
+.verify-badge {
+  display: inline-block; padding: 3px 10px;
+  border-radius: 2px; font-size: 9px;
+  font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.badge-verified { background: var(--green-light); color: var(--green); }
+.badge-discrepancy { background: var(--amber-light); color: var(--amber); }
+.badge-unverified { background: var(--cream); color: var(--muted); border: 1px solid var(--border); }
+
+/* ── INTERACTION ALERTS ── */
+.interaction-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid rgba(212,201,176,0.5);
+}
+.interaction-row:last-child { border-bottom: none; }
+.int-severity { font-size: 14px; flex-shrink: 0; }
+.int-info { flex: 1; }
+.int-title { font-size: 12px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+.int-title.severe { color: var(--red); }
+.int-title.moderate { color: var(--amber); }
+.int-action { font-size: 10px; color: var(--muted); line-height: 1.5; }
+
+/* ── FOOTER STRIP ── */
+.passport-footer {
+  padding: 16px 32px;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+}
+.passport-footer .footer-label {
+  font-size: 9px; color: #5A5040; letter-spacing: 0.15em;
+}
+.passport-footer .footer-value {
+  font-size: 10px; color: var(--gold-light);
+}
+.passport-footer .footer-disclaimer {
+  font-size: 9px; color: #5A5040; max-width: 400px; line-height: 1.5;
+}
+
+/* ── CONTROLS ── */
+.card {
+  background: var(--paper); border: 1px solid var(--border);
+  border-radius: 4px; padding: 24px; margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(15,14,12,0.06);
+}
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px; font-weight: 700;
+  margin-bottom: 16px; color: var(--ink);
+}
+.input {
+  background: var(--cream); border: 1px solid var(--border);
+  border-radius: 2px; color: var(--ink);
+  font-family: 'Instrument Mono', monospace; font-size: 12px;
+  padding: 10px 14px; outline: none; transition: border-color 0.15s;
+}
+.input:focus { border-color: var(--gold); }
+.input::placeholder { color: var(--muted); }
+
+.btn {
+  background: var(--ink); color: var(--paper);
+  border: none; border-radius: 2px;
+  font-family: 'Instrument Mono', monospace; font-size: 11px;
+  padding: 10px 20px; cursor: pointer;
+  letter-spacing: 0.08em; transition: opacity 0.15s;
+  text-transform: uppercase;
+}
+.btn:hover { opacity: 0.85; }
+.btn.gold { background: var(--gold); color: var(--ink); }
+.btn.outline {
+  background: transparent; border: 1px solid var(--border); color: var(--muted);
+}
+.btn.outline:hover { border-color: var(--ink); color: var(--ink); background: transparent; }
+
+.supp-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--cream); border: 1px solid var(--border);
+  border-radius: 2px; padding: 4px 10px; font-size: 11px; margin: 3px;
+}
+.supp-tag .rm { cursor: pointer; color: var(--muted); font-size: 13px; }
+.supp-tag .rm:hover { color: var(--red); }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+
+.share-box {
+  background: var(--ink); border-radius: 4px; padding: 20px 24px;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.share-url {
+  flex: 1; font-size: 11px; color: var(--gold-light);
+  word-break: break-all; min-width: 200px;
+}
+.copy-btn {
+  background: var(--gold); color: var(--ink); border: none;
+  border-radius: 2px; font-family: 'Instrument Mono', monospace;
+  font-size: 10px; padding: 8px 14px; cursor: pointer;
+  letter-spacing: 0.08em; text-transform: uppercase; flex-shrink: 0;
+}
+.copy-btn:hover { opacity: 0.85; }
+
+.section-label { font-size: 9px; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+
+.empty-passport {
+  text-align: center; padding: 60px 24px; color: var(--muted);
+}
+.empty-passport .ei {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px; margin-bottom: 12px; opacity: 0.3;
+}
+.empty-passport p { font-size: 12px; line-height: 1.7; max-width: 320px; margin: 0 auto; }
+
+/* ── PRINT STYLES ── */
+@media print {
+  body { background: white; }
+  .controls-section { display: none; }
+  .passport { box-shadow: none; border: 1px solid #ccc; }
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.passport { animation: fadeIn 0.4s ease; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-eyebrow">ELTHIO · SUPPLEMENT PASSPORT</div>
+    <h1>Your Verified<br><em>Supplement Record</em></h1>
+    <p class="header-sub">
+      A certified record of your supplements — verified against official government data —
+      designed to share with doctors, pharmacists, and surgeons.
+    </p>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- CONTROLS -->
+  <div class="controls-section">
+    <div class="grid2">
+      <!-- Left: Add supplements -->
+      <div class="card">
+        <div class="card-title">Build Your Passport</div>
+        <div class="section-label">Your Name</div>
+        <input class="input" id="passportName" placeholder="First name or initials" style="width:100%;margin-bottom:12px" onchange="try{localStorage.setItem('visit_packet_patient_name',this.value.trim())}catch(e){}">
+
+        <div class="section-label">Add Supplements</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input class="input" id="suppName" placeholder="Supplement name" style="flex:1" onkeydown="if(event.key==='Enter') addPassportSupp()">
+          <button class="btn" onclick="addPassportSupp()">Add</button>
+        </div>
+        <div id="passportSuppTags" style="min-height:28px;margin-bottom:12px"></div>
+
+        <div class="section-label">Your Medications (interactions + Separation Coach)</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input class="input" id="medName" placeholder="Medication name (optional)" style="flex:1" onkeydown="if(event.key==='Enter') addPassportMed()">
+          <button class="btn outline" onclick="addPassportMed()">Add</button>
+        </div>
+        <div id="passportMedTags" style="min-height:28px;margin-bottom:16px"></div>
+
+        <button class="btn gold" onclick="generatePassport()" style="width:100%">
+          Generate Passport
+        </button>
+        <p style="margin-top:14px;font-size:10px;color:var(--muted);line-height:1.6">
+          Going to an appointment? Open your <a href="/visit-packet" style="color:var(--blue);font-weight:600">Visit Packet</a> — one page to print for your clinician (pulls from Passport + Med Check where available).
+        </p>
+      </div>
+
+      <!-- Right: Load from Golden Records -->
+      <div class="card">
+        <div class="card-title">Import from Audits</div>
+        <div class="section-label">Paste Golden Record JSON</div>
+        <textarea class="input" id="jsonImport" rows="6"
+          placeholder="Paste golden_record.json contents here to import verified supplement data..."
+          style="width:100%;resize:vertical;font-size:10px;margin-bottom:8px"></textarea>
+        <button class="btn outline" onclick="importFromJson()" style="width:100%;margin-bottom:12px">
+          Import Verified Record
+        </button>
+
+        <div class="section-label">Or load demo passport</div>
+        <button class="btn outline" onclick="loadDemo()" style="width:100%">
+          Load Demo Passport
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="separationCoachSection" style="margin-bottom:24px">
+  <h2 class="section-title" style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:12px">⏱ Separation Coach</h2>
+  <p style="font-size:13px;color:#6B6560;margin-bottom:14px;line-height:1.6">
+    Your personalised daily timing schedule lives in the Separation Coach tab.
+    It reads your full medication and supplement stack automatically.
+  </p>
+  <a href="http://127.0.0.1:8765" target="_top"
+     style="display:inline-block;background:#1A1814;color:#F7F5F0;font-family:'DM Mono',monospace;
+            font-size:11px;padding:10px 18px;border-radius:6px;text-decoration:none;letter-spacing:0.05em">
+    Open Elthio → Separation Coach tab ↗
+  </a>
+  <p style="font-size:10px;color:#9B9488;margin-top:10px;line-height:1.5">
+    Educational timing guide only — not medical advice.
+    Always follow your prescription label and pharmacist instructions.
+  </p>
+</div>
+
+  <!-- PASSPORT DOCUMENT -->
+  <div id="passportDoc">
+    <div class="empty-passport">
+      <div class="ei">📋</div>
+      <p>Add your supplements above and click Generate Passport to create your verified supplement record.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// INTERACTION DATABASE (subset from Med Check)
+// ─────────────────────────────────────────────
+
+const INTERACTIONS = [
+  { drugs:['warfarin','coumadin','blood thinner'], supplements:['vitamin k','vitamin k2','mk-7'], severity:'severe', title:'Vitamin K directly opposes Warfarin', action:'Discuss with physician before taking. Frequent INR monitoring required.' },
+  { drugs:['warfarin','coumadin','blood thinner'], supplements:['fish oil','omega-3','omega 3'], severity:'severe', title:'High-dose Fish Oil increases bleeding risk with Warfarin', action:'Keep Fish Oil under 1g/day. Monitor INR more frequently.' },
+  { drugs:['ssri','antidepressant','prozac','zoloft','sertraline','fluoxetine'], supplements:["st. john's wort",'st johns wort'], severity:'severe', title:"St. John's Wort + SSRIs can cause Serotonin Syndrome", action:'Never combine. This is an absolute contraindication.' },
+  { drugs:['metformin','glucophage'], supplements:['vitamin b12','b12','methylcobalamin'], severity:'moderate', title:'Metformin depletes Vitamin B12 over time', action:'Take B12 supplements while on Metformin. Test B12 annually.' },
+  { drugs:['statin','lipitor','atorvastatin','rosuvastatin','simvastatin'], supplements:['coq10','coenzyme q10','ubiquinol'], severity:'moderate', title:'Statins deplete CoQ10', action:'Consider 100-200mg CoQ10 daily, especially if experiencing muscle pain.' },
+  { drugs:['thyroid','levothyroxine','synthroid'], supplements:['calcium','iron','magnesium'], severity:'moderate', title:'Calcium/Iron/Magnesium block thyroid medication', action:'Take thyroid medication 4 hours away from these supplements.' },
+  { drugs:['antibiotic','tetracycline','doxycycline','ciprofloxacin'], supplements:['calcium','iron','magnesium','zinc'], severity:'moderate', title:'Minerals block antibiotic absorption', action:'Take antibiotics 2 hours before or 6 hours after mineral supplements.' },
+  { drugs:['surgery','pre-surgery','pre-op'], supplements:['fish oil','omega-3','vitamin e','garlic','ginkgo','ginseng'], severity:'moderate', title:'Stop these supplements 2 weeks before surgery', action:'Disclose all supplements to your surgical team.' },
+];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+
+let passportSupps = JSON.parse(localStorage.getItem('passport_supps') || '[]');
+let passportMeds = JSON.parse(localStorage.getItem('passport_meds') || '[]');
+if (!Array.isArray(passportSupps)) passportSupps = [];
+if (!Array.isArray(passportMeds)) passportMeds = [];
+
+// { name, brand, dose, unit, form, status, dsld_id, source }
+
+function saveState() {
+  localStorage.setItem('passport_supps', JSON.stringify(passportSupps));
+  localStorage.setItem('passport_meds', JSON.stringify(passportMeds));
+  try {
+    if (window.parent && window.parent !== window && window.parent._supabase && typeof window.parent.syncStackToCloud === 'function') {
+      window.parent.syncStackToCloud().catch(function () {});
+    }
+  } catch (e) { /* ignore */ }
+}
+
+// ─────────────────────────────────────────────
+// ADD SUPPLEMENTS
+// ─────────────────────────────────────────────
+
+function addPassportSupp() {
+  const input = document.getElementById('suppName');
+  if (!input) {
+    console.error('addPassportSupp: #suppName not found');
+    return;
+  }
+  const val = input.value.trim();
+  console.log('Adding supplement:', val);
+  if (!val) return;
+  const dup = passportSupps.some(s => typeof s.name === 'string' && s.name.toLowerCase() === val.toLowerCase());
+  if (!dup) {
+    passportSupps.push({ name: val, brand: '', dose: '', unit: '', form: '', status: 'UNVERIFIED', dsld_id: '', source: 'manual' });
+    saveState();
+    renderSuppTags();
+  }
+  input.value = '';
+}
+
+function removePassportSupp(idx) {
+  passportSupps.splice(idx, 1);
+  saveState(); renderSuppTags();
+}
+
+function addPassportMed() {
+  const input = document.getElementById('medName');
+  if (!input) {
+    console.error('addPassportMed: #medName not found');
+    return;
+  }
+  const val = input.value.trim();
+  console.log('Adding medication:', val);
+  if (!val) return;
+  const dup = passportMeds.some(m => typeof m === 'string' && m.toLowerCase() === val.toLowerCase());
+  if (!dup) {
+    passportMeds.push(val);
+    saveState();
+    renderMedTags();
+  }
+  input.value = '';
+}
+
+function removePassportMed(idx) {
+  passportMeds.splice(idx, 1);
+  saveState(); renderMedTags();
+}
+
+function renderSuppTags() {
+  const el = document.getElementById('passportSuppTags');
+  if (!el) {
+    console.error('renderSuppTags: #passportSuppTags not found');
+    return;
+  }
+  el.innerHTML = passportSupps.length
+    ? passportSupps.map((s,i) => `
+        <span class="supp-tag">
+          ${s.status === 'VERIFIED' ? '✅' : s.status === 'MISMATCH' ? '⚠️' : '○'}
+          ${s.name}${s.brand ? ` · ${s.brand}` : ''}
+          <span class="rm" onclick="removePassportSupp(${i})">×</span>
+        </span>`).join('')
+    : '<span style="font-size:11px;color:var(--muted)">No supplements added</span>';
+}
+
+function renderMedTags() {
+  const el = document.getElementById('passportMedTags');
+  if (!el) {
+    console.error('renderMedTags: #passportMedTags not found');
+    return;
+  }
+  el.innerHTML = passportMeds.length
+    ? passportMeds.map((m,i) => `
+        <span class="supp-tag">
+          💊 ${m}
+          <span class="rm" onclick="removePassportMed(${i})">×</span>
+        </span>`).join('')
+    : '<span style="font-size:11px;color:var(--muted)">No medications added</span>';
+}
+
+// ─────────────────────────────────────────────
+// IMPORT FROM GOLDEN RECORD JSON
+// ─────────────────────────────────────────────
+
+function importFromJson() {
+  const raw = document.getElementById('jsonImport').value.trim();
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    const brand = data.brand || '';
+    const audit = data.audit || [];
+    const status = data.overall_status || 'UNVERIFIED';
+    const dsld_id = data.dsld_id || '';
+
+    // Extract primary ingredient name
+    const primary = audit.find(a => a.retail_amount != null);
+    const name = data.product_name || (primary ? primary.name : 'Unknown Supplement');
+
+    // Build ingredient detail
+    const ingredients = audit
+      .filter(a => a.retail_amount != null)
+      .map(a => `${a.name} ${a.retail_amount}${a.retail_unit || ''}`)
+      .join(', ');
+
+    const existing = passportSupps.findIndex(s => s.name === name && s.brand === brand);
+    const entry = {
+      name,
+      brand,
+      dose: primary ? `${primary.retail_amount} ${primary.retail_unit || ''}`.trim() : '',
+      unit: primary ? primary.retail_unit || '' : '',
+      form: primary ? primary.name : '',
+      status,
+      dsld_id,
+      ingredients,
+      source: 'verified',
+      price: data.price || null,
+    };
+
+    if (existing >= 0) passportSupps[existing] = entry;
+    else passportSupps.push(entry);
+
+    saveState(); renderSuppTags();
+    document.getElementById('jsonImport').value = '';
+    alert(`✅ Imported: ${brand} ${name} (${status})`);
+  } catch(e) {
+    alert('Invalid JSON. Paste the full contents of golden_record.json');
+  }
+}
+
+// ─────────────────────────────────────────────
+// DEMO DATA
+// ─────────────────────────────────────────────
+
+function loadDemo() {
+  document.getElementById('passportName').value = 'J. Smith';
+  passportSupps = [
+    { name:'Vitamin D-3, High Potency, 5,000 IU', brand:'NOW Foods', dose:'125 mcg', unit:'mcg', form:'Cholecalciferol', status:'VERIFIED', dsld_id:'70194', ingredients:'Vitamin D3 (Cholecalciferol) 125 mcg', source:'verified', price:12.06 },
+    { name:'Vitamins D and K with Sea-Iodine', brand:'Life Extension', dose:'125 mcg', unit:'mcg', form:'Cholecalciferol + MK-7', status:'MISMATCH', dsld_id:'59075', ingredients:'Vitamin D3 125mcg, Vitamin K1 1100mcg, Vitamin K2 45mcg, Iodine 1000mcg', source:'verified', price:18.00 },
+    { name:'Omega-3 Fish Oil 1000mg', brand:'Nordic Naturals', dose:'1000 mg', unit:'mg', form:'Triglyceride Form', status:'VERIFIED', dsld_id:'', ingredients:'EPA 500mg, DHA 250mg', source:'verified', price:29.95 },
+    { name:'Magnesium Glycinate', brand:"Doctor's Best", dose:'200 mg', unit:'mg', form:'Magnesium Bisglycinate', status:'UNVERIFIED', dsld_id:'', ingredients:'Magnesium 200mg', source:'manual', price:18.49 },
+  ];
+  passportMeds = ['Warfarin', 'Atorvastatin'];
+  saveState(); renderSuppTags(); renderMedTags();
+  generatePassport();
+}
+
+// ─────────────────────────────────────────────
+// INTERACTION CHECK
+// ─────────────────────────────────────────────
+
+function checkPassportInteractions() {
+  if (!passportMeds.length) return [];
+  const found = [];
+  for (const interaction of INTERACTIONS) {
+    const drugMatch = passportMeds.some(m =>
+      interaction.drugs.some(d => m.toLowerCase().includes(d.toLowerCase()))
+    );
+    const suppMatch = passportSupps.some(s =>
+      interaction.supplements.some(k => s.name.toLowerCase().includes(k.toLowerCase()) || s.ingredients?.toLowerCase().includes(k.toLowerCase()))
+    );
+    if (drugMatch && suppMatch) found.push(interaction);
+  }
+  return found.sort((a,b) => (a.severity==='severe'?0:a.severity==='moderate'?1:2) - (b.severity==='severe'?0:b.severity==='moderate'?1:2));
+}
+
+// ─────────────────────────────────────────────
+// GENERATE PASSPORT
+// ─────────────────────────────────────────────
+
+async function generatePassport() {
+  if (!passportSupps.length) {
+    alert('Add at least one supplement to generate a passport.');
+    return;
+  }
+
+  const name = document.getElementById('passportName').value.trim() || 'Patient';
+  try { localStorage.setItem('visit_packet_patient_name', name); } catch (e) {}
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const passportId = 'BIO-' + Math.random().toString(36).substr(2,8).toUpperCase();
+  const shareUrl = `https://elthio.health/passport/${passportId}`;
+
+  const verified   = passportSupps.filter(s => s.status === 'VERIFIED');
+  const mismatched = passportSupps.filter(s => s.status === 'MISMATCH');
+  const unverified = passportSupps.filter(s => s.status === 'UNVERIFIED');
+  const interactions = checkPassportInteractions();
+  const severeInt = interactions.filter(i => i.severity === 'severe');
+  // Status icon map
+  const statusIcon = { VERIFIED:'✅', MISMATCH:'⚠️', UNVERIFIED:'○', INCOMPLETE:'◑' };
+  const statusBadge = { VERIFIED:'badge-verified', MISMATCH:'badge-discrepancy', UNVERIFIED:'badge-unverified', INCOMPLETE:'badge-discrepancy' };
+  const statusText = { VERIFIED:'Label Verified', MISMATCH:'Label Discrepancy', UNVERIFIED:'Not Yet Verified', INCOMPLETE:'Partially Verified' };
+
+  // Supplement rows
+  const suppRows = passportSupps.map(s => `
+    <div class="supplement-row">
+      <div class="supp-status">${statusIcon[s.status] || '○'}</div>
+      <div class="supp-info">
+        <div class="supp-name">${s.name}</div>
+        <div class="supp-brand">${s.brand || 'Brand not specified'}</div>
+        <div class="supp-details">
+          ${s.dose ? `<span class="supp-detail">${s.dose}</span>` : ''}
+          ${s.form ? `<span class="supp-detail">${s.form}</span>` : ''}
+          ${s.dsld_id ? `<span class="supp-detail">Gov. ID: ${s.dsld_id}</span>` : ''}
+          ${s.price ? `<span class="supp-detail">$${parseFloat(s.price).toFixed(2)}</span>` : ''}
+        </div>
+      </div>
+      <div class="supp-verify">
+        <span class="verify-badge ${statusBadge[s.status] || 'badge-unverified'}">
+          ${statusText[s.status] || 'Not Verified'}
+        </span>
+        ${s.source === 'verified' ? '<div style="font-size:9px;color:var(--muted);margin-top:3px">Verified vs govt. database</div>' : ''}
+      </div>
+    </div>`).join('');
+
+  // Interaction rows
+  const intRows = interactions.length ? interactions.map(i => `
+    <div class="interaction-row">
+      <div class="int-severity">${i.severity === 'severe' ? '🚫' : i.severity === 'moderate' ? '⚡' : '💡'}</div>
+      <div class="int-info">
+        <div class="int-title ${i.severity}">${i.title}</div>
+        <div class="int-action">👉 ${i.action}</div>
+      </div>
+    </div>`).join('') : `
+    <div style="font-size:11px;color:var(--muted);padding:8px 0">
+      ✅ No known interactions detected between your supplements and medications.
+    </div>`;
+
+  // Medications section
+  const medsSection = passportMeds.length ? `
+    <div class="passport-section">
+      <div class="section-header">
+        <div class="section-title">Current Medications</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${passportMeds.map(m => `
+          <span style="background:var(--cream);border:1px solid var(--border);padding:4px 12px;font-size:11px;border-radius:2px">
+            💊 ${m}
+          </span>`).join('')}
+      </div>
+    </div>` : '';
+
+  // Alert banner for severe interactions
+  const alertBanner = severeInt.length ? `
+    <div style="background:var(--red);color:white;padding:12px 32px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:18px">🚨</span>
+      <div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.05em">
+          ${severeInt.length} SEVERE INTERACTION${severeInt.length>1?'S':''} — DISCLOSE TO ALL HEALTHCARE PROVIDERS
+        </div>
+        <div style="font-size:10px;opacity:0.85;margin-top:2px">
+          ${severeInt.map(i => i.title).join(' · ')}
+        </div>
+      </div>
+    </div>` : '';
+
+  document.getElementById('passportDoc').innerHTML = `
+    <div class="passport">
+      ${alertBanner}
+
+      <div class="passport-header">
+        <div class="passport-title-block">
+          <div class="passport-label">Elthio Supplement Passport</div>
+          <div class="passport-name">${name}</div>
+          <div class="passport-meta">
+            <span>Generated: ${dateStr}</span>
+            <span>${passportSupps.length} supplement${passportSupps.length!==1?'s':''}</span>
+            <span>${verified.length} verified · ${mismatched.length} discrepancies · ${unverified.length} unverified</span>
+          </div>
+        </div>
+        <div class="passport-id">
+          <div class="id-label">Passport ID</div>
+          <div class="id-value">${passportId}</div>
+          <div class="qr-placeholder" title="QR code — share with healthcare provider" onclick="copyShareLink('${shareUrl}')">
+            <span style="position:relative;z-index:1;font-size:9px;letter-spacing:0.05em">QR</span>
+          </div>
+          <div style="font-size:8px;color:var(--muted);margin-top:4px;text-align:center;max-width:80px">Tap to copy share link</div>
+        </div>
+      </div>
+
+      <div class="passport-section">
+        <div class="section-header">
+          <div class="section-title">Supplement Inventory</div>
+          ${verified.length ? `<span class="section-count count-verified">${verified.length} VERIFIED</span>` : ''}
+          ${mismatched.length ? `<span class="section-count count-warning">${mismatched.length} DISCREPANCY</span>` : ''}
+          ${unverified.length ? `<span class="section-count" style="background:var(--cream);color:var(--muted);border:1px solid var(--border)">${unverified.length} UNVERIFIED</span>` : ''}
+        </div>
+        ${suppRows}
+      </div>
+
+      ${medsSection}
+
+      ${passportMeds.length ? `
+      <div class="passport-section">
+        <div class="section-header">
+          <div class="section-title">Drug-Supplement Interactions</div>
+          ${interactions.length ? `<span class="section-count ${severeInt.length ? 'count-error' : 'count-warning'}">${interactions.length} FOUND</span>` : ''}
+        </div>
+        ${intRows}
+      </div>` : ''}
+
+      <div class="passport-footer">
+        <div>
+          <div class="footer-label">Verification Source</div>
+          <div class="footer-value">Official Government Supplement Database (NIH DSLD)</div>
+        </div>
+        <div class="footer-disclaimer">
+          For informational use only. Not medical advice. Share with your healthcare provider.
+          Always disclose all supplements before medical procedures.
+        </div>
+      </div>
+    </div>
+
+    <div class="share-box">
+      <div class="share-url">${shareUrl}</div>
+      <button class="copy-btn" onclick="copyShareLink('${shareUrl}')">📋 Copy Link</button>
+      <button class="copy-btn" style="background:var(--paper);color:var(--ink)" onclick="window.print()">🖨 Print</button>
+    </div>`;
+}
+
+function copyShareLink(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    alert('Share link copied to clipboard!\\n\\n' + url + '\\n\\nSend this to your doctor, pharmacist, or surgeon.');
+  }).catch(() => {
+    prompt('Copy this link to share your passport:', url);
+  });
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+try {
+  const vn = localStorage.getItem('visit_packet_patient_name');
+  if (vn) {
+    const el = document.getElementById('passportName');
+    if (el) el.value = vn;
+  }
+} catch (e) { /* private mode */ }
+renderSuppTags();
+renderMedTags();
+</script>
+</body>
+</html>
