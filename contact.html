@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Elthio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #F7F5F0;
+      --text:   #1A1814;
+      --muted:  #7A7468;
+      --gold:   #B8922E;
+      --border: #E2DDD4;
+      --surface:#FFFFFF;
+    }
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: #1A1814;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: #F7F5F0;
+      text-decoration: none;
+    }
+    .header-logo span { color: #B8922E; }
+    .header-back {
+      font-size: 12px;
+      color: #7A7468;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .header-back:hover { color: #F7F5F0; }
+    .main {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 48px 24px;
+      flex: 1;
+    }
+    .page-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .page-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 28px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .page-sub {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 36px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .contact-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .contact-icon {
+      font-size: 18px;
+      width: 32px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .contact-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+    .contact-value {
+      font-size: 13px;
+      color: var(--text);
+    }
+    .contact-value a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .contact-value a:hover { text-decoration: underline; }
+    .feedback-form { display: flex; flex-direction: column; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .form-input {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus { border-color: var(--gold); }
+    .form-input::placeholder { color: #B0A89A; }
+    textarea.form-input { resize: vertical; min-height: 100px; }
+    .submit-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      padding: 11px 20px;
+      background: #1A1814;
+      color: #F7F5F0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      align-self: flex-start;
+    }
+    .submit-btn:hover { opacity: 0.85; }
+    .success-msg {
+      display: none;
+      background: #F0FDF4;
+      border: 1px solid #86EFAC;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #166534;
+    }
+    .disclaimer {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.65;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .footer {
+      background: #1A1814;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .footer-copy {
+      font-size: 11px;
+      color: #7A7468;
+    }
+    .footer-links {
+      display: flex;
+      gap: 16px;
+    }
+    .footer-links a {
+      font-size: 11px;
+      color: #7A7468;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: #F7F5F0; }
+    @media (max-width: 600px) {
+      .header { padding: 16px; }
+      .main { padding: 28px 16px; }
+      .footer { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <a href="/" class="header-logo">EL<span>TH</span>IO</a>
+  <a href="/" class="header-back">← Back to app</a>
+</header>
+
+<main class="main">
+  <div class="page-label">ELTHIO HEALTH</div>
+  <h1 class="page-title">Contact & Feedback</h1>
+  <p class="page-sub">
+    Questions about an interaction result, feedback on the product,
+    or anything else — we read every message and respond within 48 hours.
+  </p>
+
+  <div class="card">
+    <div class="card-title">GET IN TOUCH</div>
+    <div class="contact-row">
+      <span class="contact-icon">✉</span>
+      <div>
+        <div class="contact-label">Email</div>
+        <div class="contact-value">
+          <a href="mailto:elthiohealth@gmail.com">elthiohealth@gmail.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="contact-row">
+      <span class="contact-icon">⏱</span>
+      <div>
+        <div class="contact-label">Response time</div>
+        <div class="contact-value">Within 48 hours</div>
+      </div>
+    </div>
+    <div class="contact-row">
+      <span class="contact-icon">🌍</span>
+      <div>
+        <div class="contact-label">Company</div>
+        <div class="contact-value">Elthio Health</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">SEND FEEDBACK</div>
+    <div class="feedback-form" id="feedbackForm">
+      <div class="form-group">
+        <label class="form-label" for="feedbackName">YOUR NAME</label>
+        <input class="form-input" id="feedbackName"
+               type="text" placeholder="Optional">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="feedbackEmail">YOUR EMAIL</label>
+        <input class="form-input" id="feedbackEmail"
+               type="email" placeholder="So we can reply">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="feedbackType">TYPE OF FEEDBACK</label>
+        <select class="form-input" id="feedbackType">
+          <option value="">Select...</option>
+          <option value="interaction">Interaction result question</option>
+          <option value="missing">Missing interaction or drug</option>
+          <option value="timing">Timing schedule question</option>
+          <option value="bug">Something isn't working</option>
+          <option value="feature">Feature suggestion</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="feedbackMessage">MESSAGE</label>
+        <textarea class="form-input" id="feedbackMessage"
+                  placeholder="Tell us what's on your mind..."></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitFeedback()">
+        Send message →
+      </button>
+      <div class="success-msg" id="successMsg">
+        ✓ Message sent — we'll reply to your email within 48 hours.
+        Thank you for helping improve Elthio.
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    ⚕ Elthio is an educational tool — not medical advice.
+    If you have a medical emergency or urgent medication question,
+    contact your pharmacist, doctor, or call emergency services.
+    Do not rely on Elthio for clinical decisions.
+  </div>
+
+</main>
+
+<footer class="footer">
+  <span class="footer-copy">© 2026 Elthio Health</span>
+  <div class="footer-links">
+    <a href="/">App</a>
+    <a href="/contact">Contact</a>
+    <a href="https://www.termsfeed.com/live/861d899d-92b0-4801-a33f-e0ac8103d834"
+       target="_blank">Privacy Policy</a>
+  </div>
+</footer>
+
+<script>
+function submitFeedback() {
+  const email    = document.getElementById('feedbackEmail').value.trim();
+  const message  = document.getElementById('feedbackMessage').value.trim();
+  const type     = document.getElementById('feedbackType').value;
+
+  if (!message) {
+    alert('Please enter a message before sending.');
+    return;
+  }
+
+  const subject = encodeURIComponent(
+    'Elthio Feedback' + (type ? ' — ' + type : '')
+  );
+  const name    = document.getElementById('feedbackName').value.trim();
+  const body    = encodeURIComponent(
+    (name ? 'From: ' + name + '\n' : '') +
+    (email ? 'Reply to: ' + email + '\n\n' : '\n') +
+    message
+  );
+
+  window.location.href =
+    'mailto:elthiohealth@gmail.com?subject=' + subject + '&body=' + body;
+
+  document.getElementById('successMsg').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
