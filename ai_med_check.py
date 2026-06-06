@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(message)s")
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-CLAUDE_MODEL      = "claude-sonnet-4-20250514"
+CLAUDE_MODEL      = "claude-sonnet-4-5-20250929"
 OPENFDA_BASE      = "https://api.fda.gov/drug/label.json"
 
 # ── Common phrase → drug resolution (no API call needed) ─────────────────────
