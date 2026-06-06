@@ -499,6 +499,35 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
     find better value products, and bring a clear summary to your doctor.
   </p>
 
+  <!-- AI Conversational Med Check (hero — primary entry) -->
+  <div style="background:#FFFFFF;border-radius:10px;padding:16px;max-width:560px;margin-bottom:16px;border:1.5px solid var(--gold)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span style="font-size:18px">✨</span>
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--text)">Ask in plain English</div>
+        <div style="font-size:11px;color:var(--muted)">Describe your situation — no need to know exact drug names</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <input class="input" id="heroAiMedCheckInput"
+        placeholder="e.g. I take a blood thinner and just bought ashwagandha..."
+        onkeydown="if(event.key==='Enter')runAiMedCheck({inputId:'heroAiMedCheckInput',btnId:'heroAiMedCheckBtn',resultsId:'heroAiMedCheckResults'})"
+        style="flex:1">
+      <button class="btn" id="heroAiMedCheckBtn"
+        onclick="runAiMedCheck({inputId:'heroAiMedCheckInput',btnId:'heroAiMedCheckBtn',resultsId:'heroAiMedCheckResults'})"
+        style="background:var(--gold);color:#000;white-space:nowrap;border:none">
+        Ask →
+      </button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px">
+      <button class="quick-med-btn" onclick="document.getElementById('heroAiMedCheckInput').value=this.innerText">I take a blood thinner and want to try turmeric</button>
+      <button class="quick-med-btn" onclick="document.getElementById('heroAiMedCheckInput').value=this.innerText">Can I take magnesium with my thyroid medication?</button>
+      <button class="quick-med-btn" onclick="document.getElementById('heroAiMedCheckInput').value=this.innerText">I'm on metformin and considering berberine</button>
+      <button class="quick-med-btn" onclick="document.getElementById('heroAiMedCheckInput').value=this.innerText">Is CoQ10 safe with statins?</button>
+    </div>
+    <div id="heroAiMedCheckResults"></div>
+  </div>
+
   <div style="background:#FFFFFF;border-radius:10px;padding:18px;max-width:560px">
 
     <div style="font-size:10px;letter-spacing:0.15em;color:#9B9488;margin-bottom:6px">
@@ -1111,18 +1140,21 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 
     </div>
   </div>
-  <div id="medcheckLoadError" style="display:none;margin-bottom:12px"></div>
-  <p id="medcheckLoading" style="display:none;font-size:12px;color:var(--muted);margin-bottom:10px">Loading Med Check…</p>
-  <div id="medcheckFrameWrap" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);min-height:720px">
-    <iframe id="medcheckFrame" title="Med Check" style="width:100%;min-height:720px;border:0;display:block;background:var(--bg)"></iframe>
-  </div>
+  <details id="medcheckLegacyDetails" style="margin-top:8px">
+    <summary style="cursor:pointer;font-size:12px;color:var(--muted);padding:8px 0">Open classic Med Check tool</summary>
+    <div id="medcheckLoadError" style="display:none;margin-bottom:12px"></div>
+    <p id="medcheckLoading" style="display:none;font-size:12px;color:var(--muted);margin-bottom:10px" aria-hidden="true">Loading Med Check…</p>
+    <div id="medcheckFrameWrap" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);min-height:720px">
+      <iframe id="medcheckFrame" title="Med Check" style="width:100%;min-height:720px;border:0;display:block;background:var(--bg)"></iframe>
+    </div>
+  </details>
 </div>
 
 <!-- ══ TAB 6: SUPPLEMENT PASSPORT ══ -->
 <div id="tab-passport" class="main" style="display:none">
   <div id="passportLoadError" style="display:none;margin-bottom:12px"></div>
-  <p id="passportLoading" style="display:none;font-size:12px;color:var(--muted);margin-bottom:10px">Loading Supplement Passport…</p>
-  <div id="passportFrameWrap" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);min-height:720px">
+  <p id="passportLoading" style="display:none;font-size:12px;color:var(--muted);margin-bottom:10px" aria-hidden="true">Loading Supplement Passport…</p>
+  <div id="passportFrameWrap" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);min-height:720px">
     <iframe id="passportFrame" title="Supplement Passport" style="width:100%;min-height:720px;border:0;display:block;background:var(--bg)"></iframe>
   </div>
 </div>
@@ -1130,8 +1162,8 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 <!-- ══ TAB 7: VISIT PACKET ══ -->
 <div id="tab-visitpacket" class="main" style="display:none">
   <div id="visitpacketLoadError" style="display:none;margin-bottom:12px"></div>
-  <p id="visitpacketLoading" style="display:none;font-size:12px;color:var(--muted);margin-bottom:10px">Loading Visit Packet…</p>
-  <div id="visitpacketFrameWrap" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);min-height:720px">
+  <p id="visitpacketLoading" style="display:none;font-size:12px;color:var(--muted);margin-bottom:10px" aria-hidden="true">Loading Visit Packet…</p>
+  <div id="visitpacketFrameWrap" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);min-height:720px">
     <iframe id="visitpacketFrame" title="Visit Packet" style="width:100%;min-height:720px;border:0;display:block;background:var(--bg)"></iframe>
   </div>
 </div>
@@ -3268,12 +3300,13 @@ function heroQuick(name, type) {
   heroRenderTags();
 }
 
-async function runAiMedCheck() {
-  const inp   = document.getElementById('aiMedCheckInput');
-  const btn   = document.getElementById('aiMedCheckBtn');
-  const res   = document.getElementById('aiMedCheckResults');
+async function runAiMedCheck(opts) {
+  opts = opts || {};
+  const inp   = document.getElementById(opts.inputId || 'aiMedCheckInput');
+  const btn   = document.getElementById(opts.btnId || 'aiMedCheckBtn');
+  const res   = document.getElementById(opts.resultsId || 'aiMedCheckResults');
   const query = inp && inp.value.trim();
-  if (!query) return;
+  if (!query || !btn || !res) return;
 
   btn.disabled    = true;
   btn.textContent = '↻ Checking...';
@@ -3340,8 +3373,14 @@ function renderAiMedCheckResult(data) {
     </div>`;
   }
 
+  const aiStatus = data.ai_status || {};
+  const aiLabel  = data.ai_enhanced
+    ? '✨ AI-enhanced'
+    : (aiStatus.claude_configured === false
+      ? '📋 Curated guidance (Claude key not configured on server)'
+      : '📋 Curated guidance (AI explanation unavailable)');
   html += `<div style="font-size:10px;color:var(--muted);padding:8px 10px;background:var(--surface2);border-radius:5px;line-height:1.6">
-    ✨ AI-enhanced · ${data.rules_checked||0} rules checked · Sources: ${(data.sources||[]).join(' · ')}
+    ${aiLabel} · ${data.rules_checked||ELTHIO_INTERACTION_RULES} rules checked · Sources: ${(data.sources||[]).join(' · ')}
   </div>`;
   return html;
 }
@@ -3547,15 +3586,15 @@ function showTab(tab) {
       agentSetMode('search');
       agentInit();
     }
-    if (tab === 'medcheck') {
-      invalidateMedCheckFrame();
-      loadMedCheck();
-    }
     if (tab === 'passport') {
+      const pw = document.getElementById('passportFrameWrap');
+      if (pw) pw.style.display = 'block';
       invalidatePassportFrame();
       loadPassport();
     }
     if (tab === 'visitpacket') {
+      const vw = document.getElementById('visitpacketFrameWrap');
+      if (vw) vw.style.display = 'block';
       invalidateVisitPacketFrame();
       loadVisitPacket();
     }
@@ -3655,11 +3694,27 @@ function loadIframeEmbedded(opts) {
     }
   };
   const failTimer = setTimeout(onFail, 12000);
+  const readyTimer = setTimeout(() => {
+    if (frame.dataset.loaded !== 'true' && frame.src) onLoad();
+  }, 2500);
   frame.addEventListener('load', () => {
     clearTimeout(failTimer);
+    clearTimeout(readyTimer);
     onLoad();
   }, { once: true });
   frame.src = src;
+}
+
+function setupMedcheckLegacyDetails() {
+  const det = document.getElementById('medcheckLegacyDetails');
+  if (!det || det.dataset.bound === '1') return;
+  det.dataset.bound = '1';
+  det.addEventListener('toggle', () => {
+    if (!det.open) return;
+    const wrap = document.getElementById('medcheckFrameWrap');
+    if (wrap) wrap.style.display = 'block';
+    loadMedCheck();
+  });
 }
 
 function loadMedCheck() {
@@ -4880,6 +4935,7 @@ function initOnboarding() {
   showTab('medcheck');
 })();
 setupElthioNav();
+setupMedcheckLegacyDetails();
 heroRenderTags();
 try {
   initChemistry();

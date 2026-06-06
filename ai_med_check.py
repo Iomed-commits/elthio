@@ -8,16 +8,33 @@ from __future__ import annotations
 import json
 import logging
 import os
+import urllib.error
 import urllib.parse
 import urllib.request
 import concurrent.futures
+from pathlib import Path
 from typing import Any
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(message)s")
 
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-CLAUDE_MODEL      = "claude-sonnet-4-5-20250929"
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent / ".env")
+except ImportError:
+    pass
+
+CLAUDE_MODEL = "claude-sonnet-4-5-20250929"
+
+
+def _anthropic_key() -> str:
+    """Read at call time so Railway/env injections are always picked up."""
+    return (os.environ.get("ANTHROPIC_API_KEY") or "").strip()
+
+
+def claude_configured() -> bool:
+    key = _anthropic_key()
+    return key.startswith("sk-ant")
 OPENFDA_BASE      = "https://api.fda.gov/drug/label.json"
 
 # ── Common phrase → drug resolution (no API call needed) ─────────────────────
@@ -224,8 +241,11 @@ def get_medlineplus(drug_name: str) -> dict:
 
 # ── 5. Claude helper ──────────────────────────────────────────────────────────
 def call_claude(messages: list[dict], system: str, max_tokens: int = 1024) -> str:
-    if not ANTHROPIC_API_KEY:
+    key = _anthropic_key()
+    if not key:
         raise ValueError("ANTHROPIC_API_KEY not set")
+    if not key.startswith("sk-ant"):
+        raise ValueError("ANTHROPIC_API_KEY must start with sk-ant-")
     payload = json.dumps({
         "model":      CLAUDE_MODEL,
         "max_tokens": max_tokens,
@@ -237,13 +257,18 @@ def call_claude(messages: list[dict], system: str, max_tokens: int = 1024) -> st
         data=payload,
         headers={
             "Content-Type":      "application/json",
-            "x-api-key":         ANTHROPIC_API_KEY,
+            "x-api-key":         key,
             "anthropic-version": "2023-06-01",
         },
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read())["content"][0]["text"]
+    try:
+        with urllib.request.urlopen(req, timeout=45) as r:
+            return json.loads(r.read())["content"][0]["text"]
+    except urllib.error.HTTPError as e:
+        body = e.read().decode(errors="replace")[:400]
+        log.warning("Claude HTTP %s: %s", e.code, body)
+        raise ValueError(f"Claude API error {e.code}: {body}") from e
 
 
 # ── 6. Intent resolver ────────────────────────────────────────────────────────
@@ -400,6 +425,10 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'.
 Never say definitely safe or definitely dangerous."""
 
     enhanced = []
+    claude_calls = 0
+    claude_ok = 0
+    claude_error = ""
+
     for ix in interactions:
         med_name  = medications[0]  if medications  else ""
         supp_name = supplements[0] if supplements else ""
@@ -411,29 +440,44 @@ Never say definitely safe or definitely dangerous."""
             f"Source: {ix.get('source','')}\n{ctx}\n\n"
             f"Explain for {med_name} + {supp_name}."
         )
+        expl = ix.get("instruction", "") or ix.get("detail", "")
         try:
+            claude_calls += 1
             expl = call_claude([{"role": "user", "content": prompt}], explain_system)
-        except Exception:
-            expl = ix.get("instruction", "")
+            if len(expl.strip()) > len((ix.get("instruction") or "").strip()) + 30:
+                claude_ok += 1
+        except Exception as e:
+            if not claude_error:
+                claude_error = str(e)
+            log.warning("Claude explanation failed: %s", e)
         enhanced.append({**ix, "ai_explanation": expl})
 
     # Overall explanation
-    if not interactions:
-        no_match_system = """Pharmacist assistant for Elthio.
+    no_match_system = """Pharmacist assistant for Elthio.
 Combination not in our database. Use FDA/PubChem data provided.
 2 short paragraphs. Never invent interactions. Recommend pharmacist consultation."""
+    match_system = """Pharmacist assistant for Elthio.
+Summarize the interaction findings for the user in 2 short paragraphs.
+Plain English. Always end with 'discuss with your pharmacist or doctor'."""
+
+    if not interactions:
         prompt = (
             f'User asked: "{query}"\n'
             f"Medications: {medications}\nSupplements: {supplements}\n"
             f"Database: no specific rule found.\n{ctx}\n\nProvide a helpful response."
         )
+        overall = (
+            "This combination isn't in our current database. "
+            "That doesn't mean it's safe — please consult your pharmacist."
+        )
         try:
+            claude_calls += 1
             overall = call_claude([{"role": "user", "content": prompt}], no_match_system)
-        except Exception:
-            overall = (
-                "This combination isn't in our current database. "
-                "That doesn't mean it's safe — please consult your pharmacist."
-            )
+            claude_ok += 1
+        except Exception as e:
+            if not claude_error:
+                claude_error = str(e)
+            log.warning("Claude no-match explanation failed: %s", e)
     else:
         sevs = [i.get("severity") for i in interactions]
         overall = (
@@ -441,6 +485,21 @@ Combination not in our database. Use FDA/PubChem data provided.
             if "critical" in sevs else
             f"Found {len(interactions)} interaction(s) to be aware of. Manageable with the right timing and monitoring."
         )
+        prompt = (
+            f'User asked: "{query}"\n'
+            f"Medications: {medications}\nSupplements: {supplements}\n"
+            f"Interactions found: {len(interactions)}\n"
+            f"Top concern: {interactions[0].get('title')} ({interactions[0].get('severity')})\n"
+            f"{ctx}\n\nProvide a brief overall summary."
+        )
+        try:
+            claude_calls += 1
+            overall = call_claude([{"role": "user", "content": prompt}], match_system)
+            claude_ok += 1
+        except Exception as e:
+            if not claude_error:
+                claude_error = str(e)
+            log.warning("Claude overall summary failed: %s", e)
 
     sources = set()
     for i in interactions:
@@ -463,7 +522,13 @@ Combination not in our database. Use FDA/PubChem data provided.
         "medlineplus_data":     medlineplus_data,
         "explanation":          overall,
         "sources":              list(sources),
-        "ai_enhanced":          True,
+        "ai_enhanced":          claude_ok > 0,
+        "ai_status": {
+            "claude_configured": claude_configured(),
+            "claude_calls":      claude_calls,
+            "claude_ok":         claude_ok,
+            "claude_error":      claude_error or None,
+        },
         "rules_checked":        result.get("rules_checked", 0),
     }
 
@@ -493,5 +558,5 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"  ❌ {name}: FAILED — {e}")
     print(f"\n{passed}/{len(tests)} tests passed")
-    if not ANTHROPIC_API_KEY:
-        print("⚠  Set ANTHROPIC_API_KEY to enable Claude explanations")
+    if not claude_configured():
+        print("⚠  Set ANTHROPIC_API_KEY (sk-ant-...) to enable Claude explanations")
