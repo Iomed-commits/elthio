@@ -605,6 +605,35 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 
   <div id="heroResults" style="max-width:560px;margin-top:12px"></div>
 
+  <!-- Save My Stack -->
+  <div id="saveStackCard" style="display:none;max-width:560px;margin-top:16px;
+       background:#1A1814;border:1px solid #D4AF37;border-radius:10px;padding:20px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <span style="font-size:20px">💾</span>
+      <div>
+        <div style="color:#D4AF37;font-size:14px;font-weight:600">Save your stack</div>
+        <div style="color:#9ca3af;font-size:11px">
+          Get a weekly safety check email — we'll alert you if anything changes
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input class="input" id="saveStackEmail"
+        type="email" placeholder="your@email.com"
+        style="flex:1;background:#2a2520;border-color:#D4AF37;color:#fff"
+        onkeydown="if(event.key==='Enter')saveMyStack()">
+      <button class="btn" onclick="saveMyStack()" id="saveStackBtn"
+        style="background:#D4AF37;color:#000;border:none;white-space:nowrap">
+        Save + get alerts
+      </button>
+    </div>
+    <div id="saveStackMsg" style="margin-top:8px;font-size:12px"></div>
+    <div style="font-size:10px;color:#6b7280;margin-top:8px;line-height:1.5">
+      Weekly digest only. No spam. Unsubscribe any time.
+      We never sell your data.
+    </div>
+  </div>
+
   <button onclick="localStorage.removeItem('elthio_onboarding_done');location.reload()"
           style="display:none">
     reset onboarding
@@ -964,6 +993,19 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
              onkeydown="if(event.key==='Enter')coachAddSupp()">
       <button type="button" class="btn" onclick="coachAddSupp()">+ Add</button>
     </div>
+  </div>
+
+  <div id="loadStackCard" style="margin-bottom:12px">
+    <div style="display:flex;gap:8px">
+      <input class="input" id="loadStackEmail"
+        type="email" placeholder="Load saved stack by email..."
+        style="flex:1"
+        onkeydown="if(event.key==='Enter')loadMyStack()">
+      <button class="btn" onclick="loadMyStack()" id="loadStackBtn">
+        Load →
+      </button>
+    </div>
+    <div id="loadStackMsg" style="font-size:12px;margin-top:6px;color:var(--muted)"></div>
   </div>
 
   <!-- Actions -->
@@ -3499,6 +3541,7 @@ async function heroRunCheck() {
       Always follow your prescription label and consult your pharmacist.
     </p>`;
     res.innerHTML = html;
+    showSaveStackCard();
     if (_heroMeds.length && typeof _coachMeds !== 'undefined') {
       _coachMeds = [..._heroMeds];
       typeof coachRenderTags === 'function' && coachRenderTags();
@@ -3538,6 +3581,132 @@ window.heroRemoveSupp = heroRemoveSupp;
 window.heroQuick = heroQuick;
 window.heroRunCheck = heroRunCheck;
 window.heroGoTo = heroGoTo;
+
+function showSaveStackCard() {
+  const card = document.getElementById('saveStackCard');
+  if (card) card.style.display = 'block';
+}
+
+async function saveMyStack() {
+  const emailEl = document.getElementById('saveStackEmail');
+  const btn     = document.getElementById('saveStackBtn');
+  const msg     = document.getElementById('saveStackMsg');
+  const email   = emailEl && emailEl.value.trim();
+
+  if (!email || !email.includes('@')) {
+    if (msg) msg.innerHTML = '<span style="color:#ef4444">Please enter a valid email.</span>';
+    return;
+  }
+
+  const meds  = collectCurrentMeds();
+  const supps = collectCurrentSupps();
+
+  if (!meds.length && !supps.length) {
+    if (msg) msg.innerHTML = '<span style="color:#d97706">Add medications or supplements first.</span>';
+    return;
+  }
+
+  btn.disabled    = true;
+  btn.textContent = '↻ Saving...';
+
+  try {
+    const resp = await fetch(apiOrigin() + '/api/save-stack', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, meds, supps }),
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+
+    if (msg) msg.innerHTML = `
+      <span style="color:#D4AF37">
+        ✅ Stack saved! Weekly digest will be sent to ${escapeHtml(email)}.
+        ${data.interactions > 0
+          ? `We found ${data.interactions} interaction(s) — we'll alert you if they change.`
+          : 'Your stack looks clear — we\'ll keep watching it.'}
+      </span>`;
+    localStorage.setItem('elthio_saved_email', email);
+  } catch(e) {
+    if (msg) msg.innerHTML = `<span style="color:#ef4444">Error: ${escapeHtml(String(e.message||e))}</span>`;
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = 'Save + get alerts';
+  }
+}
+
+async function loadMyStack() {
+  const emailEl = document.getElementById('loadStackEmail');
+  const btn     = document.getElementById('loadStackBtn');
+  const msg     = document.getElementById('loadStackMsg');
+  const email   = emailEl && emailEl.value.trim();
+  if (!email) return;
+
+  btn.disabled    = true;
+  btn.textContent = '↻ Loading...';
+
+  try {
+    const resp = await fetch(
+      apiOrigin() + `/api/load-stack?email=${encodeURIComponent(email)}`
+    );
+    const data = await resp.json();
+    if (!data.found || !data.stack) {
+      if (msg) msg.textContent = 'No saved stack found for that email.';
+      return;
+    }
+
+    const stack = data.stack;
+    const meds  = stack.medications  || [];
+    const supps = stack.supplements || [];
+
+    if (typeof _coachMeds !== 'undefined') {
+      _coachMeds = coachNormalizeStringList(meds);
+      _coachSupps = coachNormalizeStringList(supps);
+      coachRenderTags();
+    }
+
+    if (msg) msg.innerHTML =
+      `<span style="color:var(--green)">✅ Loaded: ${meds.length} med(s), ${supps.length} supp(s)</span>`;
+    localStorage.setItem('elthio_saved_email', email);
+  } catch(e) {
+    if (msg) msg.textContent = `Error: ${e.message}`;
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = 'Load →';
+  }
+}
+
+function collectCurrentMeds() {
+  if (typeof _heroMeds !== 'undefined' && _heroMeds.length) return [..._heroMeds];
+  if (typeof _coachMeds !== 'undefined' && _coachMeds.length) return [..._coachMeds];
+  const tags = document.querySelectorAll('.med-tag, [data-med]');
+  if (tags.length) {
+    return Array.from(tags).map(t => t.dataset.med || t.textContent.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function collectCurrentSupps() {
+  if (typeof _heroSupps !== 'undefined' && _heroSupps.length) return [..._heroSupps];
+  if (typeof _coachSupps !== 'undefined' && _coachSupps.length) return [..._coachSupps];
+  const tags = document.querySelectorAll('.supp-tag, [data-supp]');
+  if (tags.length) {
+    return Array.from(tags).map(t => t.dataset.supp || t.textContent.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function initSavedStackEmail() {
+  const saved = localStorage.getItem('elthio_saved_email');
+  if (!saved) return;
+  const el = document.getElementById('saveStackEmail');
+  if (el) el.value = saved;
+  const el2 = document.getElementById('loadStackEmail');
+  if (el2) el2.value = saved;
+}
+
+window.showSaveStackCard = showSaveStackCard;
+window.saveMyStack = saveMyStack;
+window.loadMyStack = loadMyStack;
 
 const BIO_TABS = ['medcheck','coach','agent','compare','stack','chemistry','passport','visitpacket'];
 
@@ -4936,6 +5105,7 @@ function initOnboarding() {
 })();
 setupElthioNav();
 setupMedcheckLegacyDetails();
+initSavedStackEmail();
 heroRenderTags();
 try {
   initChemistry();

@@ -629,6 +629,24 @@ class ElthioHandler(BaseHTTPRequestHandler):
             )
             return
 
+        if path == "/api/load-stack" or path.startswith("/api/load-stack"):
+            try:
+                qs    = parse_qs(urlparse(self.path).query)
+                email = (qs.get("email") or [""])[0].strip()
+                if not email:
+                    self._send_json({"error": "email required"}, 400)
+                    return
+                from stack_save import get_stack
+                stack = get_stack(email)
+                if stack:
+                    self._send_json({"found": True,  "stack": stack})
+                else:
+                    self._send_json({"found": False, "stack": None})
+            except Exception as e:
+                log.error("load-stack error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
         if path == "/auth":
             html_path = BASE_DIR / "auth.html"
             if html_path.exists():
@@ -1277,6 +1295,32 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 self._send_json(result)
             except Exception as e:
                 log.error("AI Med Check error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
+        if path == "/api/save-stack":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body   = self.rfile.read(length).decode()
+                data   = json.loads(body) if body else {}
+                email  = str(data.get("email", "")).strip()
+                meds   = data.get("meds",  [])
+                supps  = data.get("supps", [])
+                if not email or "@" not in email:
+                    self._send_json({"error": "Valid email required"}, 400)
+                    return
+                from stack_save import save_stack, record_check
+                from med_check_engine import run_med_check
+                save_stack(email, meds, supps)
+                result = run_med_check(meds, supps, [])
+                record_check(email, meds, supps, result.get("interactions", []))
+                self._send_json({
+                    "saved": True,
+                    "email": email,
+                    "interactions": len(result.get("interactions", [])),
+                })
+            except Exception as e:
+                log.error("save-stack error: %s", e)
                 self._send_json({"error": str(e)}, 500)
             return
 
