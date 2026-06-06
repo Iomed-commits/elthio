@@ -618,6 +618,17 @@ class ElthioHandler(BaseHTTPRequestHandler):
             )
             return
 
+        if path == "/api/health":
+            key = (os.environ.get("ANTHROPIC_API_KEY") or "").strip()
+            self._send_json(
+                {
+                    "ok": True,
+                    "anthropic_configured": key.startswith("sk-ant"),
+                    "claude_model": "claude-sonnet-4-5-20250929",
+                }
+            )
+            return
+
         if path == "/auth":
             html_path = BASE_DIR / "auth.html"
             if html_path.exists():
