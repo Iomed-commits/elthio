@@ -551,7 +551,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
       🛡 Check my stack — free
     </button>
     <p style="font-size:10px;color:#9B9488;text-align:center;margin-top:8px;line-height:1.5">
-      75 curated interaction rules · NIH verified sources · not medical advice
+      118 curated interaction rules · NIH verified sources · not medical advice
     </p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
             margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
@@ -584,11 +584,11 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 
 <div class="stat-strip">
   <div class="stat-strip-item">
-    <span class="stat-strip-num">75</span>
+    <span class="stat-strip-num">118</span>
     <span class="stat-strip-lbl">INTERACTION RULES</span>
   </div>
   <div class="stat-strip-item">
-    <span class="stat-strip-num">38</span>
+    <span class="stat-strip-num">36</span>
     <span class="stat-strip-lbl">TIMING RULES</span>
   </div>
   <div class="stat-strip-item">
@@ -1042,7 +1042,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
           <i class="ti ti-shield-check" aria-hidden="true" style="color:var(--red)"></i>
         </div>
         <div class="feature-title">Med Check</div>
-        <div class="feature-sub">75 curated drug-supplement interaction rules. Critical flags, near-misses, NIH sourced.</div>
+        <div class="feature-sub">118 curated drug-supplement interaction rules. Critical flags, near-misses, NIH sourced.</div>
         <span class="feature-badge badge-free">Free · entry point</span>
       </div>
 
@@ -1051,7 +1051,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
           <i class="ti ti-clock" aria-hidden="true" style="color:var(--green)"></i>
         </div>
         <div class="feature-title">Separation Coach</div>
-        <div class="feature-sub">Daily timing schedule — morning, evening, bedtime blocks based on 38 absorption rules.</div>
+        <div class="feature-sub">Daily timing schedule — morning, evening, bedtime blocks based on 36 absorption rules.</div>
         <span class="feature-badge badge-retain">Daily retention</span>
       </div>
 
@@ -1111,9 +1111,6 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 
     </div>
   </div>
-  <p id="medcheckFileHint" style="display:none;font-size:11px;color:var(--amber);margin-bottom:10px;line-height:1.5">
-    Open Elthio from the server (<strong>http://127.0.0.1:8765</strong>) — not a saved <code style="font-size:10px">file://</code> page — so Med Check can load.
-  </p>
   <div id="medcheckLoadError" style="display:none;margin-bottom:12px"></div>
   <p id="medcheckLoading" style="display:none;font-size:12px;color:var(--muted);margin-bottom:10px">Loading Med Check…</p>
   <div id="medcheckFrameWrap" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);min-height:720px">
@@ -1162,16 +1159,38 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
   });
 })();
 
+const ELTHIO_INTERACTION_RULES = 118;
+const ELTHIO_TIMING_RULES = 36;
+
+function isLocalDev() {
+  const h = window.location.hostname;
+  return h === 'localhost' || h === '127.0.0.1';
+}
+
 function apiOrigin() {
-  if (
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1'
-  ) {
+  if (isLocalDev()) {
     return 'http://127.0.0.1:8765';
   }
   return 'https://elthio-production.up.railway.app';
 }
 window.apiOrigin = apiOrigin;
+
+function embedPagePath(routePath) {
+  const map = {
+    '/medcheck': '/med_check.html',
+    '/passport': '/supplement_passport.html',
+    '/visit-packet': '/visit_packet.html',
+  };
+  return map[routePath] || routePath;
+}
+
+function embedPageSrc(routePath) {
+  const ts = Date.now();
+  if (isLocalDev()) {
+    return `${apiOrigin()}${routePath}?t=${ts}`;
+  }
+  return `${embedPagePath(routePath)}?t=${ts}`;
+}
 
 function safeJsonParse(raw, fallback) {
   try {
@@ -3362,7 +3381,7 @@ async function heroRunCheck() {
             No critical interactions found
           </div>
           <div style="font-size:11px;color:#166534;opacity:0.85;line-height:1.5">
-            Nothing matched our ${data.rules_checked||75}-rule database.
+            Nothing matched our ${data.rules_checked||ELTHIO_INTERACTION_RULES}-rule database.
             Confirm with your pharmacist.
           </div>
         </div>
@@ -3587,7 +3606,6 @@ function loadIframeEmbedded(opts) {
   const loading = document.getElementById(opts.loadingId);
   if (!frame) return;
   if (frame.dataset.loaded === 'true') return;
-  if (opts.hintEl) opts.hintEl.style.display = window.location.protocol === 'file:' ? 'block' : 'none';
   if (errEl) { errEl.style.display = 'none'; errEl.innerHTML = ''; }
   if (wrap) wrap.style.display = 'block';
   frame.style.display = 'block';
@@ -3611,8 +3629,7 @@ function loadIframeEmbedded(opts) {
     return;
   }
 
-  const base = coachServerBases()[0] || 'http://127.0.0.1:8765';
-  const src = `${base}${opts.path}?t=${Date.now()}`;
+  const src = embedPageSrc(opts.path);
   const onLoad = () => {
     frame.dataset.loaded = 'true';
     if (loading) loading.style.display = 'none';
@@ -3625,11 +3642,14 @@ function loadIframeEmbedded(opts) {
     if (loading) loading.style.display = 'none';
     if (errEl) {
       errEl.style.display = 'block';
+      const devHint = isLocalDev()
+        ? `<p style="font-size:12px;line-height:1.65;margin-top:8px">Run <code>start.bat</code> from <code>c:\\myfristai</code>, then open
+            <strong>http://127.0.0.1:8765</strong> and <kbd>Ctrl+F5</kbd>.</p>`
+        : `<p style="font-size:12px;line-height:1.65;margin-top:8px">Please refresh the page or try again in a moment.</p>`;
       errEl.innerHTML = `
         <div class="card" style="border-color:var(--border)">
           <div class="card-title">${escapeHtml(opts.title)}</div>
-          <p style="font-size:12px;line-height:1.65">Could not reach the server. Run <code>start.bat</code> from <code>c:\\myfristai</code>, then open
-            <strong>http://127.0.0.1:8765</strong> and <kbd>Ctrl+F5</kbd>.</p>
+          ${devHint}
           <button type="button" class="btn gold" style="margin-top:12px" onclick="${opts.retryOnclick}">Try again</button>
         </div>`;
     }
@@ -3651,7 +3671,6 @@ function loadMedCheck() {
     path: '/medcheck',
     title: '💊 Med Check couldn’t load',
     retryOnclick: 'retryMedCheck()',
-    hintEl: document.getElementById('medcheckFileHint'),
   });
 }
 
@@ -3702,39 +3721,15 @@ function retryVisitPacket() {
 }
 
 function loadVisitPacket() {
-  const frame = document.getElementById('visitpacketFrame');
-  const errEl = document.getElementById('visitpacketLoadError');
-  const wrap = document.getElementById('visitpacketFrameWrap');
-  const loading = document.getElementById('visitpacketLoading');
-  if (!frame) return;
-  if (frame.dataset.loaded === 'true') return;
-  if (errEl) { errEl.style.display = 'none'; errEl.innerHTML = ''; }
-  if (wrap) { wrap.style.display = 'block'; }
-  frame.style.display = 'block';
-  if (loading) loading.style.display = 'block';
-
-  const hostnameUrl = (window.location && window.location.hostname)
-    ? `http://${window.location.hostname}:8765`
-    : null;
-  const base = apiOrigin() || hostnameUrl || 'http://127.0.0.1:8765';
-  frame.onload = () => { if (loading) loading.style.display = 'none'; };
-  frame.onerror = () => {
-    if (loading) loading.style.display = 'none';
-    frame.style.display = 'none';
-    if (wrap) wrap.style.display = 'none';
-    if (errEl) {
-      errEl.style.display = 'block';
-      errEl.innerHTML = `
-        <div class="card" style="border-color:var(--border)">
-          <div class="card-title">🧾 Visit Packet could not load</div>
-          <p style="font-size:12px;line-height:1.65">Could not load the visit packet page.</p>
-          <p style="font-size:11px;color:var(--muted);margin-top:10px">Restart from <code>c:\\myfristai</code>, then open <strong>http://127.0.0.1:8765</strong> and use <kbd>Ctrl+F5</kbd>.</p>
-          <button type="button" class="btn gold" style="margin-top:12px" onclick="retryVisitPacket()">Try again</button>
-        </div>`;
-    }
-  };
-  frame.src = `${base}/visit-packet?t=${Date.now()}`;
-  frame.dataset.loaded = 'true';
+  loadIframeEmbedded({
+    frameId: 'visitpacketFrame',
+    errorId: 'visitpacketLoadError',
+    wrapId: 'visitpacketFrameWrap',
+    loadingId: 'visitpacketLoading',
+    path: '/visit-packet',
+    title: '🧾 Visit Packet couldn’t load',
+    retryOnclick: 'retryVisitPacket()',
+  });
 }
 
 // ════════════════════════════════════════════
@@ -4840,7 +4835,7 @@ function obStep2HTML() {
       <button type="button" class="ob-next-btn" onclick="obGoToTab('medcheck')">
         <div style="font-size:18px;margin-bottom:6px">🛡</div>
         <div style="font-size:12px;font-weight:500;color:var(--text)">Full interaction check</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">75 rules, near-misses</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">118 rules, near-misses</div>
       </button>
       <button type="button" class="ob-next-btn" onclick="obGoToTab('compare')">
         <div style="font-size:18px;margin-bottom:6px">⚖️</div>

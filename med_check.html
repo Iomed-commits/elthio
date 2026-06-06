@@ -428,7 +428,7 @@ function renderResults(data) {
   const nearMisses = data.near_misses || [];
   const critCount = interactions.filter((i) => i.severity === 'critical').length;
   const highCount = interactions.filter((i) => i.severity === 'high').length;
-  const rulesChecked = (data.rules_checked != null) ? data.rules_checked : ((data.meta && data.meta.curated_interactions) || 75);
+  const rulesChecked = (data.rules_checked != null) ? data.rules_checked : ((data.meta && data.meta.curated_interactions) || 118);
 
   let html = '<div class="summary-grid">' +
     '<div class="summary-box"><span class="summary-num" style="color:var(--red)">' + critCount + '</span><span class="summary-lbl">CRITICAL</span></div>' +

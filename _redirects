@@ -1,4 +1,7 @@
-/contact    /contact.html    200
-/privacy    https://www.termsfeed.com/live/861d899d-92b0-4801-a33f-e0ac8103d834    301
-/           /elthio.html     200
-/*          /elthio.html     200
+/contact       /contact.html               200
+/privacy       https://www.termsfeed.com/live/861d899d-92b0-4801-a33f-e0ac8103d834    301
+/medcheck      /med_check.html             200
+/passport      /supplement_passport.html   200
+/visit-packet  /visit_packet.html          200
+/              /elthio.html                200
+/*             /elthio.html                200
