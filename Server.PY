@@ -1250,6 +1250,25 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": str(e)}, 500)
             return
 
+        if path == "/api/ai-med-check":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body   = self.rfile.read(length).decode()
+                data   = json.loads(body) if body else {}
+                query  = str(data.get("query", "")).strip()
+                meds   = data.get("meds",  [])
+                supps  = data.get("supps", [])
+                if not query:
+                    self._send_json({"error": "query is required"}, 400)
+                    return
+                from ai_med_check import ai_med_check
+                result = ai_med_check(query, meds, supps)
+                self._send_json(result)
+            except Exception as e:
+                log.error("AI Med Check error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
         self._send_json({"error": "Not found"}, 404)
 
 
