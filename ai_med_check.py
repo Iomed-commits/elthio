@@ -64,6 +64,16 @@ SUPPLEMENT_KEYWORDS = [
     "natural", "botanical", "dietary",
 ]
 
+# Instant supplement resolution (no Claude needed)
+COMMON_SUPPLEMENT_PHRASES = [
+    "st. john's wort", "st. john's", "st. john", "fish oil", "omega-3",
+    "omega 3", "vitamin k2", "vitamin k", "vitamin d3", "vitamin d",
+    "vitamin b12", "vitamin c", "coenzyme q10", "coq10", "red yeast rice",
+    "magnesium", "turmeric", "ashwagandha", "berberine", "calcium",
+    "zinc", "iron", "potassium", "garlic", "ginkgo", "ginseng",
+    "melatonin", "valerian", "echinacea", "kava", "biotin", "selenium",
+]
+
 
 # ── HTTP helper ───────────────────────────────────────────────────────────────
 def _get_json(url: str, timeout: int = 6) -> Any:
@@ -247,6 +257,12 @@ def resolve_intent(query: str) -> dict:
         if phrase in query_lower:
             pre_resolved.extend(drugs)
 
+    # Phase 1b: supplement phrase dictionary (instant, no Claude)
+    phrase_supps = []
+    for phrase in sorted(COMMON_SUPPLEMENT_PHRASES, key=len, reverse=True):
+        if phrase in query_lower and phrase not in phrase_supps:
+            phrase_supps.append(phrase)
+
     # Phase 2: RxNorm for individual words
     skip_words = {
         "taking", "bought", "started", "using", "want", "trying",
@@ -285,15 +301,17 @@ Rules: use generic names, keep supplements specific, return empty arrays if noth
     except Exception as e:
         log.warning("Claude entity extraction failed: %s", e)
 
-    all_meds = list(dict.fromkeys(pre_resolved + rxnorm_resolved + ai_meds))
+    all_meds  = list(dict.fromkeys(pre_resolved + rxnorm_resolved + ai_meds))
+    all_supps = list(dict.fromkeys(phrase_supps + ai_supps))
     return {
         "original_query":  query,
         "medications":     all_meds,
-        "supplements":     ai_supps,
+        "supplements":     all_supps,
         "confidence":      confidence,
         "notes":           notes,
         "rxnorm_resolved": rxnorm_resolved,
         "phrase_resolved": pre_resolved,
+        "phrase_supplements": phrase_supps,
     }
 
 

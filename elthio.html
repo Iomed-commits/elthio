@@ -624,7 +624,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 </div>
 
 <!-- ══ TAB 1: VALUE COMPARE ══ -->
-<div id="tab-compare" class="main">
+<div id="tab-compare" class="main" style="display:none">
   <div class="card">
     <div class="card-title">💰 Compare Supplement Value Across Brands</div>
     <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6">Add 2–4 products of the same type. We rank cost per serving, absorption-friendly forms, and label accuracy so you see the best deal.</p>
@@ -3489,6 +3489,12 @@ function showTab(tab) {
     const panel = document.getElementById('tab-' + t);
     if (panel) panel.style.display = t === tab ? 'block' : 'none';
   });
+  const activePanel = document.getElementById('tab-' + tab);
+  if (activePanel) {
+    requestAnimationFrame(() => {
+      activePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
   document.querySelectorAll('.nav-tab').forEach((b, i) => {
     b.classList.toggle('active', BIO_TABS[i] === tab);
   });
