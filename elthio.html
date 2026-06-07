@@ -666,14 +666,14 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
   <span class="journey-arrow">→</span>
   <div class="journey-step">🧾 Visit Packet</div>
   <span class="journey-arrow">→</span>
-  <div class="journey-step">🛒 Shop</div>
+  <div class="journey-step">🛒 Basket compare</div>
 </div>
 
 <!-- NAV TABS -->
 <div class="nav-tabs">
   <button class="nav-tab active" onclick="showTab('medcheck')">🛡 MED CHECK</button>
   <button class="nav-tab" onclick="showTab('coach')">⏱ SEPARATION COACH</button>
-  <button class="nav-tab" onclick="showTab('agent')">🛒 SHOP</button>
+  <button class="nav-tab" onclick="showTab('agent')">🛒 BASKET</button>
   <button class="nav-tab" onclick="showTab('compare')" style="display:none">⚖️ VALUE COMPARE</button>
   <button class="nav-tab" onclick="showTab('stack')">💊 MY STACK</button>
   <button class="nav-tab" onclick="showTab('chemistry')" style="display:none">⚗️ STACK CHEMISTRY</button>
@@ -752,8 +752,10 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
   </details>
 </div>
 
-<!-- ══ TAB: SHOPPING AGENT ══ -->
+<!-- ══ TAB: BASKET COMPARE ══ -->
 <div id="tab-agent" class="main" style="display:none">
+
+  <div id="agentSearchWrapper" style="display:none">
 
   <div style="margin-bottom:1.25rem">
     <p style="font-family:'Syne',sans-serif;font-weight:700;font-size:18px;margin-bottom:4px">
@@ -871,7 +873,9 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 
   </div>
 
-  <div id="agentBasketMode" style="display:none">
+  </div>
+
+  <div id="agentBasketMode">
 
     <div class="card" style="margin-bottom:10px;padding:14px 16px">
       <p style="font-size:10px;letter-spacing:0.15em;color:var(--muted);margin-bottom:8px">
@@ -1131,7 +1135,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
         <span class="feature-badge badge-retain">Daily retention</span>
       </div>
 
-      <div class="feature-card" onclick="showTab('agent')">
+      <div class="feature-card" onclick="showTab('agent')" style="display:none">
         <div class="feature-icon-wrap" style="background:var(--amber-light)">
           <i class="ti ti-shopping-cart" aria-hidden="true" style="color:var(--amber)"></i>
         </div>
@@ -1140,12 +1144,12 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
         <span class="feature-badge badge-revenue">Affiliate revenue</span>
       </div>
 
-      <div class="feature-card" onclick="showTab('agent');agentSetMode('basket')">
+      <div class="feature-card" onclick="showTab('agent')">
         <div class="feature-icon-wrap" style="background:var(--blue-light)">
           <i class="ti ti-shopping-bag" aria-hidden="true" style="color:var(--blue)"></i>
         </div>
         <div class="feature-title">Basket Compare</div>
-        <div class="feature-sub">Compare a full supplement list across iHerb and Life Extension. Finds cheapest total.</div>
+        <div class="feature-sub">Compare your full supplement list across iHerb and Life Extension. Finds the cheapest total basket with the best absorption forms.</div>
         <span class="feature-badge badge-revenue">Affiliate revenue</span>
       </div>
 
@@ -3866,8 +3870,7 @@ function showTab(tab) {
       if (gr && gr.open) void refreshGoldenRecordsList();
     }
     if (tab === 'agent') {
-      agentSetMode('search');
-      agentInit();
+      agentSetMode('basket');
     }
     if (tab === 'passport') {
       const pw = document.getElementById('passportFrameWrap');
