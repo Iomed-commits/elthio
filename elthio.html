@@ -580,7 +580,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
       🛡 Check my stack — free
     </button>
     <p style="font-size:10px;color:#9B9488;text-align:center;margin-top:8px;line-height:1.5">
-      118 curated interaction rules · NIH verified sources · not medical advice
+      114 curated interaction rules · NIH verified sources · not medical advice
     </p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
             margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
@@ -642,7 +642,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 
 <div class="stat-strip">
   <div class="stat-strip-item">
-    <span class="stat-strip-num">118</span>
+    <span class="stat-strip-num">114</span>
     <span class="stat-strip-lbl">INTERACTION RULES</span>
   </div>
   <div class="stat-strip-item">
@@ -660,13 +660,13 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
     🛡 Med Check
   </div>
   <span class="journey-arrow">→</span>
-  <div class="journey-step">⏱ Timing schedule</div>
+  <div class="journey-step">⏱ Separation Coach</div>
   <span class="journey-arrow">→</span>
-  <div class="journey-step">🛒 Find better value</div>
+  <div class="journey-step">💊 Save stack</div>
   <span class="journey-arrow">→</span>
   <div class="journey-step">🧾 Visit Packet</div>
   <span class="journey-arrow">→</span>
-  <div class="journey-step">🔁 Daily check-ins</div>
+  <div class="journey-step">🛒 Shop</div>
 </div>
 
 <!-- NAV TABS -->
@@ -674,10 +674,10 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
   <button class="nav-tab active" onclick="showTab('medcheck')">🛡 MED CHECK</button>
   <button class="nav-tab" onclick="showTab('coach')">⏱ SEPARATION COACH</button>
   <button class="nav-tab" onclick="showTab('agent')">🛒 SHOP</button>
-  <button class="nav-tab" onclick="showTab('compare')">⚖️ VALUE COMPARE</button>
+  <button class="nav-tab" onclick="showTab('compare')" style="display:none">⚖️ VALUE COMPARE</button>
   <button class="nav-tab" onclick="showTab('stack')">💊 MY STACK</button>
-  <button class="nav-tab" onclick="showTab('chemistry')">⚗️ STACK CHEMISTRY</button>
-  <button class="nav-tab" onclick="showTab('passport')">📋 PASSPORT</button>
+  <button class="nav-tab" onclick="showTab('chemistry')" style="display:none">⚗️ STACK CHEMISTRY</button>
+  <button class="nav-tab" onclick="showTab('passport')" style="display:none">📋 PASSPORT</button>
   <button class="nav-tab" onclick="showTab('visitpacket')">🧾 VISIT PACKET</button>
 </div>
 
@@ -962,6 +962,11 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 <!-- ══ TAB: SEPARATION COACH ══ -->
 <div id="tab-coach" class="main" style="display:none">
 
+  <div id="coachImportConfirm" style="display:none;font-size:12px;
+     color:var(--gold);padding:8px 12px;background:var(--surface);
+     border:1px solid var(--gold);border-radius:6px;margin-bottom:12px">
+  </div>
+
   <div style="margin-bottom:1.25rem">
     <p style="font-family:'Syne',sans-serif;font-weight:700;font-size:18px;margin-bottom:4px">Separation Coach</p>
     <p style="font-size:12px;color:var(--muted);line-height:1.6;max-width:480px">Enter your medications and supplements to get a safe daily timing schedule — no other tabs needed.</p>
@@ -1113,7 +1118,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
           <i class="ti ti-shield-check" aria-hidden="true" style="color:var(--red)"></i>
         </div>
         <div class="feature-title">Med Check</div>
-        <div class="feature-sub">118 curated drug-supplement interaction rules. Critical flags, near-misses, NIH sourced.</div>
+        <div class="feature-sub">114 curated drug-supplement interaction rules. Critical flags, near-misses, NIH sourced.</div>
         <span class="feature-badge badge-free">Free · entry point</span>
       </div>
 
@@ -1144,7 +1149,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
         <span class="feature-badge badge-revenue">Affiliate revenue</span>
       </div>
 
-      <div class="feature-card" onclick="showTab('compare')">
+      <div class="feature-card" onclick="showTab('compare')" style="display:none">
         <div class="feature-icon-wrap" style="background:var(--surface2)">
           <i class="ti ti-scale" aria-hidden="true" style="color:var(--muted)"></i>
         </div>
@@ -1153,7 +1158,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
         <span class="feature-badge badge-free">Free</span>
       </div>
 
-      <div class="feature-card" onclick="showTab('chemistry')">
+      <div class="feature-card" onclick="showTab('chemistry')" style="display:none">
         <div class="feature-icon-wrap" style="background:var(--green-light)">
           <i class="ti ti-flask" aria-hidden="true" style="color:var(--green)"></i>
         </div>
@@ -1162,7 +1167,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
         <span class="feature-badge badge-free">Free</span>
       </div>
 
-      <div class="feature-card" onclick="showTab('passport')">
+      <div class="feature-card" onclick="showTab('passport')" style="display:none">
         <div class="feature-icon-wrap" style="background:var(--amber-light)">
           <i class="ti ti-id-badge" aria-hidden="true" style="color:var(--amber)"></i>
         </div>
@@ -1233,7 +1238,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
   });
 })();
 
-const ELTHIO_INTERACTION_RULES = 118;
+const ELTHIO_INTERACTION_RULES = 114;
 const ELTHIO_TIMING_RULES = 36;
 
 function isLocalDev() {
@@ -3427,6 +3432,47 @@ function renderAiMedCheckResult(data) {
   return html;
 }
 
+function medCheckFlowCardsHtml() {
+  return `<div id="coachCta" style="margin-top:20px;background:var(--surface);
+     border:1.5px solid var(--gold);border-radius:10px;padding:20px;
+     display:flex;align-items:center;justify-content:space-between;
+     flex-wrap:wrap;gap:12px">
+  <div>
+    <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px">
+      ⏱ Get your timing schedule
+    </div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5">
+      We'll build a safe morning / evening / bedtime plan using your stack above.
+      No re-entry needed.
+    </div>
+  </div>
+  <button class="btn" onclick="goToCoachWithStack()"
+    style="background:var(--gold);color:#000;border:none;
+           font-size:12px;padding:10px 20px;white-space:nowrap">
+    Build my schedule →
+  </button>
+</div>
+<div id="visitPacketCta" style="margin-top:10px;background:var(--surface);
+     border:1px solid var(--border);border-radius:10px;padding:20px;
+     display:flex;align-items:center;justify-content:space-between;
+     flex-wrap:wrap;gap:12px">
+  <div>
+    <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px">
+      🧾 Download doctor summary
+    </div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5">
+      One-page PDF of your stack, flagged interactions, and timing schedule.
+      Bring it to your next appointment.
+    </div>
+  </div>
+  <button class="btn" onclick="goToVisitPacket()"
+    style="background:var(--text);color:var(--bg);border:none;
+           font-size:12px;padding:10px 20px;white-space:nowrap">
+    Create visit packet →
+  </button>
+</div>`;
+}
+
 async function heroRunCheck() {
   const btn = document.getElementById('heroCheckBtn');
   const res = document.getElementById('heroResults');
@@ -3540,6 +3586,7 @@ async function heroRunCheck() {
       Educational only — not medical advice.
       Always follow your prescription label and consult your pharmacist.
     </p>`;
+    html += medCheckFlowCardsHtml();
     res.innerHTML = html;
     showSaveStackCard();
     if (_heroMeds.length && typeof _coachMeds !== 'undefined') {
@@ -3574,6 +3621,69 @@ function heroGoTo(tab) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function goToCoachWithStack() {
+  const meds  = collectCurrentMeds();
+  const supps = collectCurrentSupps();
+  showTab('coach');
+  setTimeout(() => {
+    if (meds.length || supps.length) {
+      populateCoach(meds, supps);
+    }
+  }, 150);
+}
+
+function populateCoach(meds, supps) {
+  _coachMeds = coachNormalizeStringList(meds);
+  _coachSupps = coachNormalizeStringList(supps);
+  coachRenderTags();
+  coachPersist();
+  const confirmMsg = document.getElementById('coachImportConfirm');
+  if (confirmMsg) {
+    confirmMsg.style.display = 'block';
+    confirmMsg.textContent =
+      `✅ Imported ${meds.length} medication(s) and ${supps.length} supplement(s) from Med Check`;
+    setTimeout(() => { confirmMsg.style.display = 'none'; }, 4000);
+  }
+}
+
+function goToVisitPacket() {
+  const meds  = collectCurrentMeds();
+  const supps = collectCurrentSupps();
+  showTab('visitpacket');
+  setTimeout(() => {
+    populateVisitPacket(meds, supps);
+  }, 150);
+}
+
+function populateVisitPacket(meds, supps) {
+  try {
+    localStorage.setItem('elthio_meds', JSON.stringify(meds));
+    localStorage.setItem('bio_med_supps', JSON.stringify(supps));
+  } catch (e) {}
+
+  const frame = document.getElementById('visitpacketFrame');
+  const refreshVisitPacket = () => {
+    try {
+      const w = frame && frame.contentWindow;
+      if (w && typeof w.refreshPacket === 'function') w.refreshPacket();
+      if (w && typeof w.loadMedCheckTopics === 'function') w.loadMedCheckTopics();
+    } catch (e) {}
+  };
+  if (frame && frame.dataset.loaded === 'true') {
+    refreshVisitPacket();
+  } else if (frame) {
+    frame.addEventListener('load', refreshVisitPacket, { once: true });
+  }
+
+  const msg = document.getElementById('visitPacketImportConfirm');
+  if (msg) {
+    msg.style.display = 'block';
+    msg.textContent =
+      `✅ Stack imported — ${meds.length} med(s), ${supps.length} supp(s)`;
+    setTimeout(() => { msg.style.display = 'none'; }, 4000);
+  }
+}
+
 window.heroAddMed = heroAddMed;
 window.heroAddSupp = heroAddSupp;
 window.heroRemoveMed = heroRemoveMed;
@@ -3581,6 +3691,10 @@ window.heroRemoveSupp = heroRemoveSupp;
 window.heroQuick = heroQuick;
 window.heroRunCheck = heroRunCheck;
 window.heroGoTo = heroGoTo;
+window.goToCoachWithStack = goToCoachWithStack;
+window.populateCoach = populateCoach;
+window.goToVisitPacket = goToVisitPacket;
+window.populateVisitPacket = populateVisitPacket;
 
 function showSaveStackCard() {
   const card = document.getElementById('saveStackCard');
