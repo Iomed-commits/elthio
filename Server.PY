@@ -647,6 +647,28 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": str(e)}, 500)
             return
 
+        if path.startswith("/api/price-search"):
+            try:
+                qs       = parse_qs(urlparse(self.path).query)
+                query    = (qs.get("q", [""])[0] or "").strip()
+                retailer = (qs.get("retailer", [None])[0] or None) or None
+                form     = (qs.get("form", [None])[0] or None) or None
+                sort     = (qs.get("sort", ["cost_per_serving"])[0] or "cost_per_serving")
+                try:
+                    max_p = float(qs.get("max_price", [None])[0])
+                except (TypeError, ValueError):
+                    max_p = None
+                if not query:
+                    self._send_json({"error": "q is required"}, 400)
+                    return
+                from price_monitor import search_prices
+                results = search_prices(query, retailer, form, max_p, sort)
+                self._send_json({"results": results, "query": query, "count": len(results)})
+            except Exception as e:
+                log.error("price-search error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
         if path == "/auth":
             html_path = BASE_DIR / "auth.html"
             if html_path.exists():
@@ -1321,6 +1343,24 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 })
             except Exception as e:
                 log.error("save-stack error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
+        if path == "/api/monitor-url":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body   = self.rfile.read(length).decode()
+                data   = json.loads(body) if body else {}
+                from price_monitor import monitor_url
+                result = monitor_url(
+                    data.get("url", ""),
+                    data.get("retailer", ""),
+                    data.get("name", ""),
+                    data.get("affiliate_tag"),
+                )
+                self._send_json(result)
+            except Exception as e:
+                log.error("monitor-url error: %s", e)
                 self._send_json({"error": str(e)}, 500)
             return
 

@@ -877,6 +877,65 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 
   <div id="agentBasketMode">
 
+    <!-- Price Search — powered by monitored database -->
+    <div class="card" style="margin-bottom:20px;border:1.5px solid var(--gold)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <span style="font-size:20px">🔍</span>
+        <div>
+          <div style="font-size:14px;font-weight:500;color:var(--text)">
+            Find best price across all retailers
+          </div>
+          <div style="font-size:11px;color:var(--muted)">
+            Updated nightly · NIH-verified products marked ✅
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input class="input" id="priceSearchInput"
+          placeholder="Search supplement... e.g. magnesium, vitamin c, coq10"
+          onkeydown="if(event.key==='Enter')runPriceSearch()"
+          style="flex:1">
+        <button class="btn" onclick="runPriceSearch()" id="priceSearchBtn"
+          style="background:var(--gold);color:#000;border:none;white-space:nowrap">
+          Search →
+        </button>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px">
+        <span style="font-size:10px;color:var(--muted);align-self:center">Try:</span>
+        <button class="quick-med-btn" onclick="quickPriceSearch('vitamin d3')">Vitamin D3</button>
+        <button class="quick-med-btn" onclick="quickPriceSearch('magnesium')">Magnesium</button>
+        <button class="quick-med-btn" onclick="quickPriceSearch('vitamin c')">Vitamin C</button>
+        <button class="quick-med-btn" onclick="quickPriceSearch('coq10')">CoQ10</button>
+        <button class="quick-med-btn" onclick="quickPriceSearch('omega-3')">Omega-3</button>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;
+                  padding:10px 12px;background:var(--surface2);border-radius:6px">
+        <select id="priceFilterRetailer" class="input"
+          style="width:auto;font-size:11px;padding:4px 8px">
+          <option value="">All retailers</option>
+          <option value="iherb">iHerb</option>
+          <option value="life_extension">Life Extension</option>
+          <option value="thorne">Thorne</option>
+          <option value="vitacost">Vitacost</option>
+        </select>
+        <select id="priceFilterSort" class="input"
+          style="width:auto;font-size:11px;padding:4px 8px">
+          <option value="cost_per_serving">Best value ($/serving)</option>
+          <option value="price_usd">Lowest price</option>
+        </select>
+        <label style="font-size:11px;color:var(--muted);display:flex;
+                      align-items:center;gap:4px;cursor:pointer">
+          <input type="checkbox" id="priceFilterVerified">
+          NIH verified only
+        </label>
+      </div>
+
+      <div id="priceSearchResults"></div>
+    </div>
+
     <div class="card" style="margin-bottom:10px;padding:14px 16px">
       <p style="font-size:10px;letter-spacing:0.15em;color:var(--muted);margin-bottom:8px">
         YOUR BASKET
@@ -3285,6 +3344,133 @@ window.bcAddItem = bcAddItem;
 window.bcAddFromInput = bcAddFromInput;
 window.bcRemoveItem = bcRemoveItem;
 window.bcRunComparison = bcRunComparison;
+
+function quickPriceSearch(term) {
+  const input = document.getElementById('priceSearchInput');
+  if (input) input.value = term;
+  runPriceSearch();
+}
+
+async function runPriceSearch() {
+  const input    = document.getElementById('priceSearchInput');
+  const btn      = document.getElementById('priceSearchBtn');
+  const results  = document.getElementById('priceSearchResults');
+  const retailer = document.getElementById('priceFilterRetailer').value;
+  const sort     = document.getElementById('priceFilterSort').value;
+  const verified = document.getElementById('priceFilterVerified').checked;
+  const query    = input && input.value.trim();
+  if (!query || !btn || !results) return;
+
+  btn.disabled    = true;
+  btn.textContent = '↻ Searching...';
+  results.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px">Searching across retailers...</div>';
+
+  try {
+    let url = apiOrigin() + `/api/price-search?q=${encodeURIComponent(query)}&sort=${encodeURIComponent(sort)}`;
+    if (retailer) url += `&retailer=${encodeURIComponent(retailer)}`;
+
+    const resp = await fetch(url);
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+
+    let rows = data.results || [];
+    if (verified) rows = rows.filter(r => r.nih_status === 'VERIFIED');
+
+    if (!rows.length) {
+      results.innerHTML = `<div style="font-size:12px;color:var(--muted);padding:12px;
+        text-align:center">No results found for "${escapeHtml(query)}". Try a broader search.</div>`;
+      return;
+    }
+
+    results.innerHTML = renderPriceResults(rows, query);
+  } catch(e) {
+    results.innerHTML = `<div style="font-size:12px;color:var(--red);padding:8px">
+      Error: ${escapeHtml(String(e.message || e))}</div>`;
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = 'Search →';
+  }
+}
+
+function renderPriceResults(rows, query) {
+  const nihBadge = status => {
+    if (status === 'VERIFIED')  return '<span style="color:#1D9E75;font-size:10px">✅ NIH Verified</span>';
+    if (status === 'POSSIBLE')  return '<span style="color:#EF9F27;font-size:10px">⚠ NIH Possible</span>';
+    if (status === 'MISMATCH')  return '<span style="color:#E24B4A;font-size:10px">⚠ Label Mismatch</span>';
+    return '<span style="color:var(--muted);font-size:10px">○ Unverified</span>';
+  };
+
+  const retailerLabel = r => ({
+    iherb:          'iHerb',
+    life_extension: 'Life Extension',
+    thorne:         'Thorne',
+    vitacost:       'Vitacost',
+    swanson:        'Swanson',
+  }[r] || r);
+
+  const minCpp = Math.min(...rows.map(r => r.cost_per_serving || 99));
+
+  let html = `<div style="font-size:11px;color:var(--muted);margin-bottom:8px">
+    ${rows.length} result${rows.length !== 1 ? 's' : ''} for "${escapeHtml(query)}"
+    · sorted by cost per serving
+  </div>`;
+
+  rows.forEach((r) => {
+    const isBest   = r.cost_per_serving && r.cost_per_serving <= minCpp + 0.001;
+    const border   = isBest ? '1.5px solid var(--gold)' : '1px solid var(--border)';
+    const cpp      = r.cost_per_serving ? `$${Number(r.cost_per_serving).toFixed(4)}/serving` : '—';
+    const price    = r.price_usd ? `$${Number(r.price_usd).toFixed(2)}` : '—';
+    const servings = r.servings ? `${r.servings} servings` : '';
+    const form     = r.form ? `· ${escapeHtml(r.form)}` : '';
+    const checked  = r.last_checked
+      ? `checked ${new Date(r.last_checked).toLocaleDateString()}`
+      : '';
+    const title    = escapeHtml(r.product_title || r.brand || '—');
+    const buyUrl   = escapeHtml(r.affiliate_url || '#');
+
+    html += `
+    <div style="border:${border};border-radius:8px;padding:12px 14px;margin-bottom:8px;
+                background:${isBest ? 'var(--surface2)' : 'var(--surface)'}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <div style="flex:1">
+          ${isBest ? '<span style="font-size:10px;font-weight:600;color:var(--gold);margin-bottom:4px;display:block">BEST VALUE</span>' : ''}
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px">
+            ${title}
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">
+            ${escapeHtml(retailerLabel(r.retailer))} · ${escapeHtml(servings)} ${form}
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            ${nihBadge(r.nih_status)}
+            <span style="font-size:10px;color:var(--muted)">${escapeHtml(checked)}</span>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:18px;font-weight:600;color:var(--text)">${price}</div>
+          <div style="font-size:11px;color:var(--muted)">${cpp}</div>
+          <a href="${buyUrl}" target="_blank" rel="noopener"
+             style="display:inline-block;margin-top:8px;font-size:11px;font-weight:500;
+                    padding:6px 12px;background:var(--gold);color:#000;border-radius:5px;
+                    text-decoration:none">
+            Buy →
+          </a>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  html += `<div style="font-size:10px;color:var(--muted);padding:6px 0;line-height:1.5">
+    Elthio earns a small commission on purchases through our links.
+    Rankings based purely on cost per serving and NIH verification status.
+    Prices updated nightly.
+  </div>`;
+
+  return html;
+}
+
+window.quickPriceSearch = quickPriceSearch;
+window.runPriceSearch = runPriceSearch;
+window.renderPriceResults = renderPriceResults;
 
 // ════════════════════════════════════════════
 // TAB NAVIGATION
