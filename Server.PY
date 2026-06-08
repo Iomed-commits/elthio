@@ -658,11 +658,12 @@ class ElthioHandler(BaseHTTPRequestHandler):
                     max_p = float(qs.get("max_price", [None])[0])
                 except (TypeError, ValueError):
                     max_p = None
+                verified_only = qs.get("verified", ["false"])[0].lower() == "true"
                 if not query:
                     self._send_json({"error": "q is required"}, 400)
                     return
                 from price_monitor import search_prices
-                results = search_prices(query, retailer, form, max_p, sort)
+                results = search_prices(query, retailer, form, max_p, sort, verified_only)
                 self._send_json({"results": results, "query": query, "count": len(results)})
             except Exception as e:
                 log.error("price-search error: %s", e)
@@ -1351,12 +1352,10 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 length = int(self.headers.get("Content-Length", 0))
                 body   = self.rfile.read(length).decode()
                 data   = json.loads(body) if body else {}
-                from price_monitor import monitor_url
-                result = monitor_url(
-                    data.get("url", ""),
-                    data.get("retailer", ""),
-                    data.get("name", ""),
-                    data.get("affiliate_tag"),
+                from price_monitor import run_monitor
+                result = run_monitor(
+                    data.get("supplement") or data.get("name"),
+                    data.get("retailer"),
                 )
                 self._send_json(result)
             except Exception as e:

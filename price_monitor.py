@@ -1,16 +1,18 @@
 """
-price_monitor.py — Elthio + Biologer Price Monitor Agent
+price_monitor.py — Elthio Search-Based Price Monitor Agent
 
-Fetches retailer product pages, uses Claude to extract price/serving data,
-runs the existing pipeline.py NIH reconciliation for ingredient verification,
-and upserts everything into Supabase product_prices.
+Architecture: supplement names → retailer search → Claude extracts
+top N results → NIH check via dsld.py → upsert to Supabase.
 
-Reuses: pipeline.py reconciliation engine, crawler.py fetch layer,
-        dsld.py NIH lookup — zero duplication.
+Zero hardcoded URLs. Scales automatically as retailers update listings.
+API-ready: set source_type='api' on any retailer row and the agent
+routes to that retailer's API instead of scraping.
 
-Run manually:   python price_monitor.py
-Railway cron:   0 2 * * *  (every night 2am UTC)
-Single URL:     python price_monitor.py --url "https://..." --retailer iherb --name "vitamin c"
+Run:           python price_monitor.py
+Single supp:   python price_monitor.py --supplement "magnesium glycinate"
+Single retail: python price_monitor.py --retailer iherb
+Search DB:     python price_monitor.py --search "coq10"
+Full run:      python price_monitor.py --run-all
 """
 from __future__ import annotations
 
@@ -18,7 +20,8 @@ import argparse
 import json
 import logging
 import os
-import sys
+import re
+import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -36,56 +39,46 @@ except ImportError:
 
 from supabase_client import normalize_supabase_url
 
-# ── Environment ───────────────────────────────────────────────────────────────
-ANTHROPIC_API_KEY   = os.environ.get("ANTHROPIC_API_KEY", "")
+ANTHROPIC_API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
 BRIGHTDATA_API_KEY  = os.environ.get("BRIGHTDATA_API_KEY", "")
 BRIGHTDATA_ZONE     = os.environ.get("BRIGHTDATA_ZONE", "web_unlocker1")
 BRIGHTDATA_ENDPOINT = "https://api.brightdata.com/request"
 SCRAPERAPI_KEY      = os.environ.get("SCRAPERAPI_KEY", "")
 ZENROWS_API_KEY     = os.environ.get("ZENROWS_API_KEY", "")
-SUPABASE_URL      = normalize_supabase_url(os.environ.get("SUPABASE_URL", ""))
-SUPABASE_KEY      = (
+SUPABASE_URL        = normalize_supabase_url(os.environ.get("SUPABASE_URL", ""))
+SUPABASE_KEY        = (
     os.environ.get("SUPABASE_KEY", "")
     or os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 ).strip()
-CLAUDE_MODEL      = "claude-sonnet-4-5-20250929"
+CLAUDE_MODEL        = "claude-sonnet-4-5-20250929"
 
-# ── Affiliate tags per retailer ───────────────────────────────────────────────
-AFFILIATE_TAGS: dict[str, str] = {
-    "iherb":          "?rcode=ELTHIO",
-    "life_extension": "?source=elthio",
-    "thorne":         "?affId=ELTHIO",
-    "vitacost":       "?affId=ELTHIO",
-    "swanson":        "?srccode=ELTHIO",
-}
-
-# ── Retailers that need JS rendering (ScraperAPI render=true) ─────────────────
-JS_RETAILERS = {"iherb", "amazon", "vitacost"}
+JS_RETAILERS = {"iherb", "vitacost", "amazon"}
+REQUEST_DELAY_SECONDS = 2.0
+MAX_RESULTS_PER_SEARCH = 5
 
 
-# ── HTTP helper ───────────────────────────────────────────────────────────────
-def _get_json(url: str, headers: dict | None = None, timeout: int = 10) -> Any:
+def _rest_base() -> str:
+    if not SUPABASE_URL:
+        raise ValueError("SUPABASE_URL must be set")
+    return f"{SUPABASE_URL.rstrip('/')}/rest/v1"
+
+
+def _get(url: str, headers: dict | None = None, timeout: int = 30) -> bytes:
     req = urllib.request.Request(
-        url, headers={**(headers or {}), "User-Agent": "Elthio/1.0"}
+        url,
+        headers={
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 Chrome/120.0 Safari/537.36"
+            ),
+            **(headers or {}),
+        },
     )
     with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read())
+        return r.read()
 
 
-def _post_json(url: str, body: dict, headers: dict | None = None) -> Any:
-    data = json.dumps(body).encode()
-    req  = urllib.request.Request(
-        url, data=data,
-        headers={**(headers or {}), "Content-Type": "application/json",
-                 "User-Agent": "Elthio/1.0"},
-        method="POST",
-    )
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read())
-
-
-# ── Supabase helpers ──────────────────────────────────────────────────────────
-def _supa_headers() -> dict:
+def _sh() -> dict:
     return {
         "apikey":        SUPABASE_KEY,
         "Authorization": f"Bearer {SUPABASE_KEY}",
@@ -95,41 +88,34 @@ def _supa_headers() -> dict:
 
 
 def supa_get(table: str, params: dict) -> list:
-    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/{table}?" + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers=_supa_headers())
-    with urllib.request.urlopen(req, timeout=10) as r:
+    url = f"{_rest_base()}/{table}?" + urllib.parse.urlencode(params)
+    req = urllib.request.Request(url, headers=_sh())
+    with urllib.request.urlopen(req, timeout=15) as r:
         return json.loads(r.read()) or []
 
 
-def supa_upsert(table: str, row: dict) -> dict:
-    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/{table}?on_conflict=affiliate_url"
-    result = _post_json(url, row, headers=_supa_headers())
-    if isinstance(result, list) and result:
-        return result[0]
-    if isinstance(result, dict):
-        return result
-    return row
+def supa_upsert(table: str, row: dict) -> None:
+    url  = f"{_rest_base()}/{table}?on_conflict=affiliate_url"
+    data = json.dumps(row).encode()
+    req  = urllib.request.Request(url, data=data, headers=_sh(), method="POST")
+    urllib.request.urlopen(req, timeout=15)
 
 
-def supa_patch(table: str, params: dict, body: dict) -> None:
-    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/{table}?" + urllib.parse.urlencode(params)
-    data = json.dumps(body).encode()
-    req  = urllib.request.Request(
-        url, data=data, headers=_supa_headers(), method="PATCH"
-    )
-    urllib.request.urlopen(req, timeout=10)
+def load_supplements() -> list[dict]:
+    return supa_get("tracked_supplements", {"active": "eq.true", "select": "*"})
 
 
-# ── Page fetcher — Bright Data / optional ScraperAPI / ZenRows / plain HTTP ───
+def load_retailers() -> list[dict]:
+    return supa_get("retailers", {
+        "active": "eq.true",
+        "select": "*",
+        "order":  "priority.asc",
+    })
+
+
 def _fetch_brightdata_html(url: str) -> str:
-    """
-    Fetch raw HTML via Bright Data Web Unlocker (same API as crawler.py).
-    Returns HTML string — NOT flattened text — so Claude can use <h1>, price tags, etc.
-    Does not import crawler.py (that path strips HTML to text and loses structure).
-    """
     if not BRIGHTDATA_API_KEY:
         return ""
-
     body = json.dumps({"zone": BRIGHTDATA_ZONE, "url": url, "format": "raw"}).encode()
     req = urllib.request.Request(
         BRIGHTDATA_ENDPOINT,
@@ -137,14 +123,12 @@ def _fetch_brightdata_html(url: str) -> str:
         headers={
             "Content-Type":  "application/json",
             "Authorization": f"Bearer {BRIGHTDATA_API_KEY}",
-            "User-Agent":    "Elthio/1.0",
         },
         method="POST",
     )
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             html = r.read().decode(errors="replace")
-
         if html.strip().startswith("{"):
             try:
                 payload = json.loads(html)
@@ -155,244 +139,200 @@ def _fetch_brightdata_html(url: str) -> str:
                     return ""
             except json.JSONDecodeError:
                 pass
-
         if len(html.strip()) < 500:
-            log.warning("Bright Data returned short page (%d chars)", len(html))
             return ""
-
-        log.info("Bright Data: %d chars (raw HTML)", len(html))
-        return html
+        log.info("BrightData: %d chars", len(html))
+        return html[:2_000_000]
     except Exception as e:
-        log.warning("Bright Data failed: %s", e)
+        log.warning("BrightData failed: %s", e)
         return ""
 
 
 def fetch_page(url: str, retailer: str) -> str:
-    """
-    Fetch rendered HTML for a product page.
-    Priority order:
-    1. Bright Data Web Unlocker — raw HTML (uses BRIGHTDATA_API_KEY from .env)
-    2. ScraperAPI (optional, if SCRAPERAPI_KEY set)
-    3. ZenRows (optional, if ZENROWS_API_KEY set)
-    4. Plain HTTP last resort (non-JS retailers only)
-    """
-    # 1. Bright Data — primary (you already have this in .env)
+    """Fetch rendered HTML via Bright Data, ScraperAPI, ZenRows, or plain HTTP."""
     html = _fetch_brightdata_html(url)
     if html:
         return html
 
-    # 2. ScraperAPI — optional fallback
     if SCRAPERAPI_KEY:
         try:
             render  = "true" if retailer in JS_RETAILERS else "false"
             api_url = (
                 f"http://api.scraperapi.com/?api_key={SCRAPERAPI_KEY}"
-                f"&url={urllib.parse.quote(url)}"
-                f"&render={render}"
-                f"&premium=true"
+                f"&url={urllib.parse.quote(url)}&render={render}&premium=true"
             )
-            req = urllib.request.Request(
-                api_url,
-                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
-            )
-            with urllib.request.urlopen(req, timeout=45) as r:
-                text = r.read().decode(errors="replace")
-                if len(text) > 2000:
-                    log.info("ScraperAPI: %d chars for %s", len(text), retailer)
-                    return text[:20000]
-                log.warning("ScraperAPI returned short page (%d chars)", len(text))
+            html = _get(api_url, timeout=45).decode(errors="replace")
+            if len(html) > 2000:
+                log.info("ScraperAPI: %d chars", len(html))
+                return html[:2_000_000]
         except Exception as e:
             log.warning("ScraperAPI failed: %s", e)
 
-    # 3. ZenRows — optional fallback
     if ZENROWS_API_KEY:
         try:
             api_url = (
                 f"https://api.zenrows.com/v1/?apikey={ZENROWS_API_KEY}"
-                f"&url={urllib.parse.quote(url)}"
-                f"&js_render=true"
-                f"&premium_proxy=true"
+                f"&url={urllib.parse.quote(url)}&js_render=true&premium_proxy=true"
             )
-            req = urllib.request.Request(
-                api_url,
-                headers={"User-Agent": "Mozilla/5.0"},
-            )
-            with urllib.request.urlopen(req, timeout=45) as r:
-                text = r.read().decode(errors="replace")
-                if len(text) > 2000:
-                    log.info("ZenRows: %d chars for %s", len(text), retailer)
-                    return text[:20000]
+            html = _get(api_url, timeout=45).decode(errors="replace")
+            if len(html) > 2000:
+                log.info("ZenRows: %d chars", len(html))
+                return html[:2_000_000]
         except Exception as e:
             log.warning("ZenRows failed: %s", e)
 
-    # 4. Plain HTTP — last resort, only works for Life Extension
     if retailer not in JS_RETAILERS:
         try:
-            req = urllib.request.Request(
-                url,
-                headers={
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                    "Accept": "text/html,application/xhtml+xml",
-                    "Accept-Language": "en-US,en;q=0.9",
-                },
-            )
-            with urllib.request.urlopen(req, timeout=20) as r:
-                text = r.read().decode(errors="replace")
-                log.info("Plain HTTP: %d chars for %s", len(text), retailer)
-                return text[:20000]
+            html = _get(url, timeout=20).decode(errors="replace")
+            log.info("Plain HTTP: %d chars", len(html))
+            return html[:2_000_000]
         except Exception as e:
             log.warning("Plain HTTP failed: %s", e)
 
-    log.error("All fetch methods failed for %s", url)
     return ""
 
 
-# ── Claude extraction ─────────────────────────────────────────────────────────
-def preprocess_html(html: str, supplement_name: str) -> str:
-    """
-    Extract the most price-relevant slice from raw retailer HTML.
-    Priority order:
-    1. JSON-LD structured data (most reliable — retailers put price here)
-    2. Open Graph meta tags (og:title, og:description, og:price)
-    3. Price-bearing HTML section (search for price class patterns)
-    4. First 10,000 chars fallback
-    """
-    import re
+def preprocess_html(html: str, query: str) -> str:
+    """Extract price-relevant signals from raw HTML before sending to Claude."""
+    parts: list[str] = []
 
-    extracted_parts = []
-
-    jsonld_matches = re.findall(
+    for match in re.findall(
         r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
         html, re.DOTALL | re.IGNORECASE
-    )
-    for match in jsonld_matches:
+    ):
         try:
             data = json.loads(match.strip())
-            items = data if isinstance(data, list) else [data]
-            if isinstance(data, dict) and "@graph" in data:
+            items: list = []
+            if isinstance(data, list):
+                items = data
+            elif isinstance(data, dict) and "@graph" in data:
                 items = data["@graph"]
+            elif isinstance(data, dict):
+                items = [data]
             for item in items:
                 if not isinstance(item, dict):
                     continue
                 type_ = item.get("@type", "")
                 if isinstance(type_, list):
                     type_ = " ".join(type_)
-                if any(t in type_ for t in ("Product", "Offer", "ItemPage")):
-                    extracted_parts.append(
-                        f"JSON-LD PRODUCT DATA:\n{json.dumps(item, indent=2)[:3000]}"
-                    )
+                if any(t in type_ for t in ("Product", "Offer", "ItemPage", "ItemList")):
+                    parts.append(f"JSON-LD:\n{json.dumps(item, indent=2)[:4000]}")
                     break
         except Exception:
             continue
 
-    og_tags = re.findall(
+    og = re.findall(
         r'<meta[^>]*property=["\']og:([^"\']+)["\'][^>]*content=["\']([^"\']+)["\']',
         html, re.IGNORECASE
     )
-    if og_tags:
-        og_text = "OG META TAGS:\n" + "\n".join(
-            f"  og:{k}: {v}" for k, v in og_tags[:15]
-        )
-        extracted_parts.append(og_text)
+    if og:
+        parts.append("OG TAGS:\n" + "\n".join(f"og:{k}: {v}" for k, v in og[:15]))
 
-    title_match = re.search(r'<title[^>]*>(.*?)</title>', html, re.IGNORECASE | re.DOTALL)
-    if title_match:
-        extracted_parts.append(f"PAGE TITLE: {title_match.group(1).strip()[:200]}")
+    t = re.search(r"<title[^>]*>(.*?)</title>", html, re.IGNORECASE | re.DOTALL)
+    if t:
+        parts.append(f"TITLE: {t.group(1).strip()[:200]}")
 
-    price_patterns = [
-        r'class=["\'][^"\']*price[^"\']*["\'][^>]*>([^<]{1,50})',
+    prices: list[str] = []
+    for pat in [
         r'"price"\s*:\s*"?(\d+\.?\d*)"?',
         r'itemprop=["\']price["\'][^>]*content=["\']([^"\']+)["\']',
-        r'data-price=["\']([^"\']+)["\']',
-        r'\$\s*(\d+\.\d{2})',
-    ]
-    price_hits = []
-    for pattern in price_patterns:
-        hits = re.findall(pattern, html, re.IGNORECASE)
-        price_hits.extend(hits[:5])
-    if price_hits:
-        extracted_parts.append(f"PRICE SIGNALS FOUND: {price_hits[:10]}")
+        r'data-price=["\'](\d+\.?\d*)["\']',
+        r"\$\s*(\d+\.\d{2})",
+        r'class=["\'][^"\']*price[^"\']*["\'][^>]*>\$?\s*(\d+\.\d{2})',
+    ]:
+        prices.extend(re.findall(pat, html, re.IGNORECASE)[:5])
+    if prices:
+        parts.append(f"PRICES FOUND: {list(dict.fromkeys(prices))[:15]}")
 
-    sf_match = re.search(
-        r'(Supplement Facts.{0,3000})',
-        html, re.IGNORECASE | re.DOTALL
-    )
-    if sf_match:
-        extracted_parts.append(
-            f"SUPPLEMENT FACTS SECTION:\n{sf_match.group(1)[:2000]}"
-        )
-
-    serv_match = re.search(
-        r'(Servings?\s+Per\s+Container[^\n]{0,100})',
+    product_blocks = re.findall(
+        r"(?:product-title|product-name|product_title|item-name)"
+        r"[^>]*>([^<]{10,100})",
         html, re.IGNORECASE
     )
-    if serv_match:
-        extracted_parts.append(f"SERVINGS: {serv_match.group(1).strip()}")
-
-    if extracted_parts:
-        result = f"\n\n{'='*40}\n".join(extracted_parts)
-        log.info(
-            "preprocess_html: extracted %d chars from %dMB HTML",
-            len(result), len(html) // 1_000_000
+    if product_blocks:
+        parts.append(
+            "PRODUCT NAMES IN RESULTS:\n"
+            + "\n".join(f"- {p.strip()}" for p in product_blocks[:10])
         )
-        return result[:12000]
 
-    log.warning("preprocess_html: no structured data found — using first 10k chars")
+    sf = re.search(r"(Supplement Facts.{0,2000})", html, re.IGNORECASE | re.DOTALL)
+    if sf:
+        parts.append(f"SUPPLEMENT FACTS:\n{sf.group(1)[:1500]}")
+
+    sv = re.search(r"(Servings?\s+Per\s+Container[^\n]{0,100})", html, re.IGNORECASE)
+    if sv:
+        parts.append(f"SERVINGS: {sv.group(1).strip()}")
+
+    if parts:
+        result = "\n\n---\n\n".join(parts)
+        log.info(
+            "Preprocessed: %d chars from %d MB HTML",
+            len(result), len(html) // 1_000_000,
+        )
+        return result[:15000]
+
+    log.warning("No structured data found — using first 10k chars")
     return html[:10000]
 
 
-def extract_price_data(html: str, supplement_name: str, retailer: str) -> dict:
-    """
-    Use Claude to extract price and product data from raw page HTML/text.
-    Returns structured dict or empty dict on failure.
-    """
+def extract_products_from_search(
+    html: str,
+    supplement_name: str,
+    retailer: str,
+    search_query: str,
+    max_results: int = MAX_RESULTS_PER_SEARCH,
+) -> list[dict]:
+    """Extract multiple products from a retailer search results page."""
     if not ANTHROPIC_API_KEY:
         raise ValueError("ANTHROPIC_API_KEY not set")
 
-    html = preprocess_html(html, supplement_name)
+    preprocessed = preprocess_html(html, search_query)
 
-    system = """You are a supplement product data extractor.
-Extract pricing and product information from retail page HTML.
-Return ONLY valid JSON — no markdown, no explanation, no backticks:
-{
-  "product_title": "exact product name from page",
-  "brand": "brand name",
-  "price_usd": 19.99,
-  "serving_size": "1 capsule",
-  "servings": 120,
-  "cost_per_serving": 0.17,
-  "form": "glycinate|citrate|ascorbic acid|ubiquinol|etc",
-  "in_stock": true,
-  "primary_ingredient": "main active ingredient name exactly as on label"
-}
+    system = f"""You are a supplement price extraction agent for Elthio.
+You receive HTML from a retailer's search results page and extract
+the top {max_results} most relevant products.
+
+Return ONLY valid JSON array — no markdown, no explanation:
+[
+  {{
+    "product_title": "exact product name",
+    "brand": "brand name",
+    "price_usd": 19.99,
+    "serving_size": "1 capsule",
+    "servings": 120,
+    "cost_per_serving": 0.17,
+    "form": "glycinate|citrate|ubiquinol|etc",
+    "in_stock": true,
+    "product_url": "full URL if visible",
+    "match_confidence": "high|medium|low",
+    "rank": 1
+  }}
+]
+
 Rules:
-- price_usd: numeric only, no $ sign
-- servings: integer, the servings per container
-- cost_per_serving: price_usd / servings, rounded to 4 decimal places
-- form: the specific chemical form of the supplement if shown
-- in_stock: true unless page shows out of stock / sold out
-- If a field cannot be found, use null
-- Never guess or invent values"""
+- Return up to {max_results} products, best match ranked 1
+- match_confidence high = clearly matches '{supplement_name}'
+- match_confidence medium = probably matches, some ambiguity
+- match_confidence low = might match but uncertain
+- SKIP products that are clearly unrelated (hair pins, cotton tampons, etc)
+- price_usd: number only, no $ sign, null if not found
+- cost_per_serving: price_usd / servings, 4 decimal places
+- form: specific chemical form if visible (glycinate not just magnesium)
+- product_url: full URL if visible in HTML, otherwise null
+- If fewer than {max_results} matching products exist, return fewer
+- Return [] if no relevant products found"""
 
     prompt = (
         f"Retailer: {retailer}\n"
-        f"Supplement we expect: {supplement_name}\n"
-        f"IMPORTANT: Extract ONLY the primary product on this page — ignore "
-        f"related products, recommendations, bundles, or cross-sells anywhere "
-        f"on the page. The product title must clearly match '{supplement_name}'. "
-        f"If the main product does not match '{supplement_name}', return null "
-        f"for price_usd and set product_title to whatever IS on the page so "
-        f"we can debug it.\n\n"
-        f"Pre-processed page data (JSON-LD, meta tags, price signals, supplement facts):\n"
-        f"Extract the product data for '{supplement_name}' from the structured "
-        f"data below. JSON-LD and price signals are the most reliable sources.\n\n"
-        f"{html}\n\n"
-        f"Extract the product data."
+        f"Searching for: {supplement_name}\n"
+        f"Search query used: {search_query}\n\n"
+        f"Page data:\n{preprocessed}\n\n"
+        f"Extract up to {max_results} matching products."
     )
 
     body = json.dumps({
         "model":      CLAUDE_MODEL,
-        "max_tokens": 512,
+        "max_tokens": 2000,
         "system":     system,
         "messages":   [{"role": "user", "content": prompt}],
     }).encode()
@@ -407,176 +347,251 @@ Rules:
         },
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=30) as r:
+    with urllib.request.urlopen(req, timeout=60) as r:
         resp = json.loads(r.read())
+
     raw = resp["content"][0]["text"].strip()
     raw = raw.lstrip("```json").lstrip("```").rstrip("```").strip()
-    return json.loads(raw)
+    result = json.loads(raw)
+    return result if isinstance(result, list) else []
 
 
-# ── NIH verification — reuses dsld.py lookup ────────────────────────────────
 def run_nih_check(product_title: str, brand: str) -> dict:
-    """
-    Reuse dsld.py NIH DSLD lookup and fuzzy matching.
-    Returns { nih_status, nih_confidence, nih_dsld_id }.
-    """
     try:
         from dsld import search_products
         from rapidfuzz import fuzz
 
-        query   = f"{brand} {product_title}" if brand else product_title
+        query   = f"{brand} {product_title}".strip() if brand else product_title
         results = search_products(query)
         if not results:
             return {"nih_status": "NOT_FOUND", "nih_confidence": 0, "nih_dsld_id": None}
 
-        best    = results[0]
-        dsld_id = str(best.get("id", ""))
+        best     = results[0]
         nih_name = best.get("name") or best.get("product_name") or ""
         score    = fuzz.token_sort_ratio(query.lower(), nih_name.lower())
-        nih_status = "VERIFIED" if score >= 80 else "POSSIBLE" if score >= 60 else "UNCERTAIN"
-
+        status   = "VERIFIED" if score >= 80 else "POSSIBLE" if score >= 60 else "UNCERTAIN"
         return {
-            "nih_status":     nih_status,
-            "nih_confidence": score,
-            "nih_dsld_id":    dsld_id,
+            "nih_status":     status,
+            "nih_confidence": int(score),
+            "nih_dsld_id":    str(best.get("id", "")),
         }
     except ImportError:
-        log.debug("dsld.py not importable — skipping NIH check")
         return {"nih_status": "UNVERIFIED", "nih_confidence": 0, "nih_dsld_id": None}
     except Exception as e:
-        log.warning("NIH check failed: %s", e)
+        log.warning("NIH check error: %s", e)
         return {"nih_status": "ERROR", "nih_confidence": 0, "nih_dsld_id": None}
 
 
-# ── Affiliate URL builder ─────────────────────────────────────────────────────
-def build_affiliate_url(url: str, retailer: str, custom_tag: str | None = None) -> str:
-    tag = custom_tag or AFFILIATE_TAGS.get(retailer, "")
-    if not tag:
-        return url
-    separator = "&" if "?" in url else "?"
-    return url + separator + tag.lstrip("?&")
+def build_affiliate_url(url: str, retailer_tag: str) -> str:
+    if not url or not retailer_tag:
+        return url or ""
+    sep = "&" if "?" in url else "?"
+    return url + sep + retailer_tag.lstrip("?&")
 
 
-# ── Single URL monitor ────────────────────────────────────────────────────────
-def monitor_url(
-    url: str,
-    retailer: str,
-    supplement_name: str,
-    affiliate_tag: str | None = None,
-) -> dict:
-    """Monitor one product URL: fetch, extract, NIH-check, upsert to Supabase."""
-    log.info("Monitoring: %s [%s] %s", supplement_name, retailer, url)
-
-    html = fetch_page(url, retailer)
-    if not html:
-        raise ValueError(f"Could not fetch {url}")
-
-    extracted = extract_price_data(html, supplement_name, retailer)
-    log.info(
-        "Extracted: %s — $%.2f / %d servings",
-        extracted.get("product_title", "?"),
-        extracted.get("price_usd") or 0,
-        extracted.get("servings") or 0,
-    )
-
-    nih = run_nih_check(
-        extracted.get("product_title", supplement_name),
-        extracted.get("brand", ""),
-    )
-    log.info("NIH status: %s (confidence: %d%%)", nih["nih_status"], nih["nih_confidence"])
-
-    aff_url = build_affiliate_url(url, retailer, affiliate_tag)
-
-    price    = extracted.get("price_usd")
-    servings = extracted.get("servings")
-    cpp      = extracted.get("cost_per_serving")
-    if price and servings and not cpp:
-        cpp = round(float(price) / int(servings), 4)
-
-    row = {
-        "supplement_name":  supplement_name.lower().strip(),
-        "brand":            extracted.get("brand"),
-        "product_title":    extracted.get("product_title"),
-        "retailer":         retailer,
-        "price_usd":        price,
-        "serving_size":     extracted.get("serving_size"),
-        "servings":         servings,
-        "cost_per_serving": cpp,
-        "form":             extracted.get("form"),
-        "in_stock":         extracted.get("in_stock", True),
-        "affiliate_url":    aff_url,
-        "source_type":      "scraped",
-        "nih_status":       nih["nih_status"],
-        "nih_confidence":   int(nih["nih_confidence"] or 0),
-        "nih_dsld_id":      nih["nih_dsld_id"],
-        "last_checked":     datetime.now(timezone.utc).isoformat(),
-    }
-
-    supa_upsert("product_prices", row)
-
-    try:
-        supa_patch(
-            "monitor_urls",
-            {"url": f"eq.{url}"},
-            {"last_run": row["last_checked"], "last_status": nih["nih_status"]},
-        )
-    except Exception:
-        pass
-
-    return row
+def fetch_via_api(supplement: dict, retailer: dict) -> list[dict]:
+    """Placeholder for official retailer APIs."""
+    name = retailer["name"]
+    if name == "iherb":
+        raise NotImplementedError("iHerb API not yet configured — add IHERB_API_KEY to env")
+    if name == "amazon":
+        raise NotImplementedError("Amazon PAAPI not yet configured")
+    if name == "thorne":
+        raise NotImplementedError("Thorne API not yet configured")
+    raise NotImplementedError(f"No API adapter for {name}")
 
 
-# ── Batch monitor — all active URLs ──────────────────────────────────────────
-def run_monitor() -> dict:
-    """Run the full monitor: fetch all active monitor_urls, process each one."""
-    try:
-        urls = supa_get("monitor_urls", {"active": "eq.true", "select": "*"})
-    except Exception as e:
-        log.error("Could not load monitor_urls from Supabase: %s", e)
-        return {"error": str(e)}
+def _parse_search_terms(supplement: dict) -> list[str]:
+    search_terms = supplement.get("search_terms") or [supplement["name"]]
+    if isinstance(search_terms, str):
+        search_terms = json.loads(search_terms)
+    return search_terms if isinstance(search_terms, list) else [supplement["name"]]
 
-    log.info("Starting monitor run: %d URLs", len(urls))
-    success = failed = 0
 
-    for entry in urls:
-        url             = entry.get("url", "")
-        retailer        = entry.get("retailer", "")
-        supplement_name = entry.get("supplement_name", "")
-        affiliate_tag   = entry.get("affiliate_tag")
+def monitor_supplement_retailer(supplement: dict, retailer: dict) -> list[dict]:
+    """Fetch search results for one supplement from one retailer."""
+    supp_name     = supplement["name"]
+    search_terms  = _parse_search_terms(supplement)
+    retailer_name = retailer["name"]
+    source_type   = retailer.get("source_type", "scrape")
+    affiliate_tag = retailer.get("affiliate_tag", "")
+    search_url_t  = retailer.get("search_url", "") or ""
+    used_query    = search_terms[0] if search_terms else supp_name
 
-        if not url or not retailer or not supplement_name:
-            log.warning("Skipping invalid entry: %s", entry)
-            failed += 1
-            continue
+    log.info("▶ %s @ %s [%s]", supp_name, retailer_name, source_type)
+
+    products: list[dict] = []
+
+    if source_type == "api":
+        try:
+            products = fetch_via_api(supplement, retailer)
+            log.info("  API: %d products", len(products))
+        except NotImplementedError as e:
+            log.warning("  %s — falling back to scrape", e)
+            source_type = "scrape"
+
+    if source_type in ("scrape", "api_pending") and not products:
+        html = ""
+        for term in search_terms:
+            if not search_url_t:
+                break
+            search_url = search_url_t.replace("{query}", urllib.parse.quote(term))
+            log.info("  Searching: %s", search_url[:80])
+            html = fetch_page(search_url, retailer_name)
+            if len(html) > 3000:
+                used_query = term
+                break
+            time.sleep(REQUEST_DELAY_SECONDS)
+
+        if not html or len(html) < 3000:
+            log.warning("  No usable HTML for %s @ %s", supp_name, retailer_name)
+            return []
 
         try:
-            result = monitor_url(url, retailer, supplement_name, affiliate_tag)
-            log.info(
-                "✅ %s @ %s — $%.2f (NIH: %s)",
-                supplement_name, retailer,
-                result.get("price_usd") or 0,
-                result.get("nih_status"),
+            products = extract_products_from_search(
+                html, supp_name, retailer_name, used_query
             )
-            success += 1
+            log.info("  Claude extracted %d products", len(products))
         except Exception as e:
-            log.error("❌ Failed %s @ %s: %s", supplement_name, retailer, e)
-            failed += 1
+            log.error("  Extraction failed: %s", e)
+            return []
 
-    summary = {"success": success, "failed": failed, "total": len(urls)}
+    products = [
+        p for p in products
+        if p.get("match_confidence") in ("high", "medium")
+        and p.get("price_usd")
+        and float(p.get("price_usd") or 0) > 0
+    ]
+
+    if not products:
+        log.warning("  No high/medium confidence products with prices")
+        return []
+
+    upserted: list[dict] = []
+    for i, product in enumerate(products[:MAX_RESULTS_PER_SEARCH]):
+        price    = product.get("price_usd")
+        servings = product.get("servings")
+        cpp      = product.get("cost_per_serving")
+        if price and servings and not cpp:
+            cpp = round(float(price) / int(servings), 4)
+
+        prod_url = product.get("product_url") or ""
+        if not prod_url and search_url_t:
+            prod_url = search_url_t.replace(
+                "{query}", urllib.parse.quote(used_query)
+            )
+        aff_url = build_affiliate_url(prod_url, affiliate_tag) if prod_url else ""
+        if not aff_url:
+            log.warning("  No URL for product %d — skipping", i + 1)
+            continue
+
+        nih = run_nih_check(
+            product.get("product_title", supp_name),
+            product.get("brand", ""),
+        )
+
+        row = {
+            "supplement_name":  supp_name,
+            "brand":            product.get("brand"),
+            "product_title":    product.get("product_title"),
+            "retailer":         retailer_name,
+            "price_usd":        float(price) if price else None,
+            "serving_size":     product.get("serving_size"),
+            "servings":         int(servings) if servings else None,
+            "cost_per_serving": cpp,
+            "form":             product.get("form"),
+            "in_stock":         product.get("in_stock", True),
+            "affiliate_url":    aff_url,
+            "source_type":      source_type,
+            "search_query":     used_query,
+            "rank_in_results":  i + 1,
+            "nih_status":       nih["nih_status"],
+            "nih_confidence":   int(nih["nih_confidence"] or 0),
+            "nih_dsld_id":      nih["nih_dsld_id"],
+            "last_checked":     datetime.now(timezone.utc).isoformat(),
+        }
+
+        try:
+            supa_upsert("product_prices", row)
+            log.info(
+                "  OK Rank %d: %s — $%.2f (NIH: %s)",
+                i + 1,
+                (product.get("product_title") or "?")[:40],
+                float(price or 0),
+                nih["nih_status"],
+            )
+            upserted.append(row)
+        except Exception as e:
+            log.error("  Supabase upsert failed: %s", e)
+
+        time.sleep(REQUEST_DELAY_SECONDS)
+
+    return upserted
+
+
+def run_monitor(
+    supplement_filter: str | None = None,
+    retailer_filter: str | None = None,
+) -> dict:
+    """Run monitor for all supplements × all retailers."""
+    supplements = load_supplements()
+    retailers   = load_retailers()
+
+    if supplement_filter:
+        supplements = [
+            s for s in supplements
+            if supplement_filter.lower() in s["name"].lower()
+        ]
+    if retailer_filter:
+        retailers = [
+            r for r in retailers
+            if r["name"].lower() == retailer_filter.lower()
+        ]
+
+    log.info(
+        "Monitor run: %d supplements × %d retailers = %d combinations",
+        len(supplements), len(retailers), len(supplements) * len(retailers),
+    )
+
+    total_products = 0
+    success = skipped = failed = 0
+
+    for supp in supplements:
+        for retailer in retailers:
+            try:
+                results = monitor_supplement_retailer(supp, retailer)
+                if results:
+                    total_products += len(results)
+                    success += 1
+                else:
+                    skipped += 1
+            except Exception as e:
+                log.error("FAIL %s @ %s: %s", supp["name"], retailer["name"], e)
+                failed += 1
+            time.sleep(REQUEST_DELAY_SECONDS)
+
+    summary = {
+        "supplements":    len(supplements),
+        "retailers":      len(retailers),
+        "combinations":   len(supplements) * len(retailers),
+        "success":        success,
+        "skipped":        skipped,
+        "failed":         failed,
+        "total_products": total_products,
+    }
     log.info("Monitor complete: %s", summary)
     return summary
 
 
-# ── Price search — for Elthio search UI ──────────────────────────────────────
 def search_prices(
     query: str,
     retailer: str | None = None,
     form: str | None = None,
     max_price: float | None = None,
     sort: str = "cost_per_serving",
+    verified_only: bool = False,
 ) -> list[dict]:
-    """Search product_prices by supplement name."""
-    allowed_sort = {"cost_per_serving", "price_usd", "last_checked"}
+    allowed_sort = {"cost_per_serving", "price_usd", "last_checked", "rank_in_results"}
     if sort not in allowed_sort:
         sort = "cost_per_serving"
 
@@ -584,105 +599,134 @@ def search_prices(
         "supplement_name": f"ilike.*{query.lower().strip()}*",
         "in_stock":        "eq.true",
         "select":          "*",
-        "order":           f"{sort}.asc.nullslast",
-        "limit":           "50",
+        "order":           f"{sort}.asc.nullslast,rank_in_results.asc.nullslast",
+        "limit":           "100",
     }
     if retailer:
         params["retailer"] = f"eq.{retailer}"
+    if verified_only:
+        params["nih_status"] = "eq.VERIFIED"
 
     try:
-        results = supa_get("product_prices", params)
+        try:
+            results = supa_get("product_prices", params)
+        except urllib.error.HTTPError as e:
+            if e.code == 400 and "rank_in_results" in params.get("order", ""):
+                params["order"] = f"{sort}.asc.nullslast"
+                results = supa_get("product_prices", params)
+            else:
+                raise
         if form:
-            results = [r for r in results if form.lower() in (r.get("form") or "").lower()]
+            results = [
+                r for r in results
+                if form.lower() in (r.get("form") or "").lower()
+            ]
         if max_price:
-            results = [r for r in results if (r.get("price_usd") or 0) <= max_price]
+            results = [
+                r for r in results
+                if (r.get("price_usd") or 0) <= max_price
+            ]
         return results
     except Exception as e:
         log.error("search_prices error: %s", e)
         return []
 
 
-# ── CLI ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Elthio Price Monitor")
-    parser.add_argument("--url",        help="Single URL to monitor")
-    parser.add_argument("--retailer",   help="Retailer name (iherb, life_extension, etc.)")
-    parser.add_argument("--name",       help="Supplement name")
-    parser.add_argument("--search",     help="Search the database")
-    parser.add_argument("--run-all",    action="store_true", help="Run full monitor")
+    parser.add_argument("--supplement", help="Monitor one supplement (name filter)")
+    parser.add_argument("--retailer",   help="Monitor one retailer only")
+    parser.add_argument("--search",     help="Search the price database")
+    parser.add_argument("--run-all",    action="store_true")
+    parser.add_argument("--list",       action="store_true",
+                        help="List all tracked supplements and retailers")
     args = parser.parse_args()
 
-    if args.search:
-        print(f"\nSearching for '{args.search}'...")
+    if args.list:
+        print("\nTracked supplements:")
+        for s in load_supplements():
+            print(f"  {s['name']} — {s.get('category', '')}")
+        print("\nActive retailers:")
+        for r in load_retailers():
+            print(f"  {r['name']} ({r['display_name']}) [{r['source_type']}]")
+
+    elif args.search:
         results = search_prices(args.search)
         if not results:
-            print("No results found.")
+            print("No results.")
         else:
-            print(f"\n{'Brand':<20} {'Retailer':<16} {'Form':<16} {'Price':>7} {'$/serv':>8} {'NIH':<12}")
+            print(f"\n{'Product':<35} {'Retailer':<16} {'Price':>7} {'$/serv':>8} {'NIH':<12}")
             print("-" * 85)
-            for r in results:
+            for r in results[:20]:
                 print(
-                    f"{(r.get('brand') or '')[:19]:<20} "
-                    f"{r.get('retailer','')[:15]:<16} "
-                    f"{(r.get('form') or '')[:15]:<16} "
+                    f"{(r.get('product_title') or '')[:34]:<35} "
+                    f"{r.get('retailer', '')[:15]:<16} "
                     f"${r.get('price_usd') or 0:>6.2f} "
                     f"${r.get('cost_per_serving') or 0:>7.4f} "
-                    f"{r.get('nih_status',''):<12}"
+                    f"{r.get('nih_status', ''):<12}"
                 )
+            print(f"\nTotal: {len(results)} results")
 
-    elif args.url and args.retailer and args.name:
-        result = monitor_url(args.url, args.retailer, args.name)
-        print(json.dumps(result, indent=2, default=str))
-
-    elif args.run_all:
-        summary = run_monitor()
-        print(f"\nDone: {summary}")
+    elif args.run_all or args.supplement or args.retailer:
+        summary = run_monitor(args.supplement, args.retailer)
+        print(f"\n{'=' * 50}")
+        print("Monitor complete:")
+        print(f"  {summary['supplements']} supplements x {summary['retailers']} retailers")
+        print(f"  {summary['total_products']} products upserted")
+        print(
+            f"  {summary['success']} success / "
+            f"{summary['skipped']} skipped / {summary['failed']} failed"
+        )
+        print(f"{'=' * 50}")
 
     else:
         print("\n" + "=" * 60)
         print("  PRICE MONITOR — SELF TEST")
         print("=" * 60)
 
-        print("\n[1] Test Claude extraction (Life Extension Vitamin D3)")
+        print("\n[1] Supabase connection + supplements loaded")
         try:
-            sample = """
-            Life Extension Vitamin D3 5000 IU
-            Item #: 01913
-            Price: $8.00
-            Serving Size: 1 Softgel
-            Servings Per Container: 60
-            Form: Cholecalciferol
-            In Stock
-            """
-            result = extract_price_data(sample, "vitamin d3", "life_extension")
-            print(f"  OK {result.get('product_title')} — ${result.get('price_usd')} / {result.get('servings')} servings")
+            supps = load_supplements()
+            rets  = load_retailers()
+            print(f"  OK {len(supps)} supplements, {len(rets)} retailers")
+        except Exception as e:
+            print(f"  FAIL {e}")
+            supps, rets = [], []
+
+        print("\n[2] List supplements")
+        try:
+            for s in supps[:5]:
+                print(f"     {s['name']} ({s.get('category', '')})")
+            if len(supps) > 5:
+                print(f"     ... and {len(supps) - 5} more")
         except Exception as e:
             print(f"  FAIL {e}")
 
-        print("\n[2] Test NIH check")
+        print("\n[3] NIH check")
         try:
-            nih = run_nih_check("Vitamin D3 5000 IU", "Life Extension")
-            print(f"  OK NIH status: {nih['nih_status']} (confidence: {nih['nih_confidence']}%)")
+            nih = run_nih_check("Vitamin D3 5000 IU", "NOW Foods")
+            print(f"  OK {nih['nih_status']} ({nih['nih_confidence']}%)")
         except Exception as e:
             print(f"  FAIL {e}")
 
-        print("\n[3] Test affiliate URL builder")
-        url = build_affiliate_url(
-            "https://www.lifeextension.com/vitamins-supplements/item01913/vitamin-d3",
-            "life_extension"
-        )
-        print(f"  OK {url}")
-
-        print("\n[4] Test Supabase connection")
+        print("\n[4] Single supplement test (Life Extension, vitamin d3)")
         try:
-            rows = supa_get("monitor_urls", {"active": "eq.true", "select": "url,retailer,supplement_name", "limit": "3"})
-            print(f"  OK {len(rows)} active monitor URLs found")
-            for r in rows:
-                print(f"     {r.get('supplement_name')} @ {r.get('retailer')}")
+            supps_d3 = [s for s in supps if "vitamin d3" == s["name"].lower()]
+            rets_le  = [r for r in rets if r["name"] == "life_extension"]
+            if supps_d3 and rets_le:
+                results = monitor_supplement_retailer(supps_d3[0], rets_le[0])
+                print(f"  OK {len(results)} products upserted")
+                for r in results[:3]:
+                    print(
+                        f"     {(r.get('product_title') or '?')[:40]} — "
+                        f"${r.get('price_usd', 0):.2f} (NIH: {r.get('nih_status')})"
+                    )
+            else:
+                print("  WARN vitamin d3 or life_extension not in DB — run search_monitor.sql")
         except Exception as e:
             print(f"  FAIL {e}")
 
-        print("\n[5] Test price search")
+        print("\n[5] Price search")
         try:
             results = search_prices("vitamin d3")
             print(f"  OK {len(results)} results for 'vitamin d3'")
@@ -690,6 +734,7 @@ if __name__ == "__main__":
             print(f"  FAIL {e}")
 
         print("\n" + "=" * 60)
-        print("  Run with --run-all to monitor all URLs")
-        print("  Run with --search 'vitamin c' to query database")
+        print("  Run with --run-all to monitor all supplements")
+        print("  Run with --list to see all supplements + retailers")
+        print("  Run with --search 'coq10' to query the database")
         print("=" * 60 + "\n")
