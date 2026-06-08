@@ -161,7 +161,7 @@ def _fetch_brightdata_html(url: str) -> str:
             return ""
 
         log.info("Bright Data: %d chars (raw HTML)", len(html))
-        return html[:20000]
+        return html
     except Exception as e:
         log.warning("Bright Data failed: %s", e)
         return ""
@@ -248,6 +248,99 @@ def fetch_page(url: str, retailer: str) -> str:
 
 
 # ── Claude extraction ─────────────────────────────────────────────────────────
+def preprocess_html(html: str, supplement_name: str) -> str:
+    """
+    Extract the most price-relevant slice from raw retailer HTML.
+    Priority order:
+    1. JSON-LD structured data (most reliable — retailers put price here)
+    2. Open Graph meta tags (og:title, og:description, og:price)
+    3. Price-bearing HTML section (search for price class patterns)
+    4. First 10,000 chars fallback
+    """
+    import re
+
+    extracted_parts = []
+
+    jsonld_matches = re.findall(
+        r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
+        html, re.DOTALL | re.IGNORECASE
+    )
+    for match in jsonld_matches:
+        try:
+            data = json.loads(match.strip())
+            items = data if isinstance(data, list) else [data]
+            if isinstance(data, dict) and "@graph" in data:
+                items = data["@graph"]
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                type_ = item.get("@type", "")
+                if isinstance(type_, list):
+                    type_ = " ".join(type_)
+                if any(t in type_ for t in ("Product", "Offer", "ItemPage")):
+                    extracted_parts.append(
+                        f"JSON-LD PRODUCT DATA:\n{json.dumps(item, indent=2)[:3000]}"
+                    )
+                    break
+        except Exception:
+            continue
+
+    og_tags = re.findall(
+        r'<meta[^>]*property=["\']og:([^"\']+)["\'][^>]*content=["\']([^"\']+)["\']',
+        html, re.IGNORECASE
+    )
+    if og_tags:
+        og_text = "OG META TAGS:\n" + "\n".join(
+            f"  og:{k}: {v}" for k, v in og_tags[:15]
+        )
+        extracted_parts.append(og_text)
+
+    title_match = re.search(r'<title[^>]*>(.*?)</title>', html, re.IGNORECASE | re.DOTALL)
+    if title_match:
+        extracted_parts.append(f"PAGE TITLE: {title_match.group(1).strip()[:200]}")
+
+    price_patterns = [
+        r'class=["\'][^"\']*price[^"\']*["\'][^>]*>([^<]{1,50})',
+        r'"price"\s*:\s*"?(\d+\.?\d*)"?',
+        r'itemprop=["\']price["\'][^>]*content=["\']([^"\']+)["\']',
+        r'data-price=["\']([^"\']+)["\']',
+        r'\$\s*(\d+\.\d{2})',
+    ]
+    price_hits = []
+    for pattern in price_patterns:
+        hits = re.findall(pattern, html, re.IGNORECASE)
+        price_hits.extend(hits[:5])
+    if price_hits:
+        extracted_parts.append(f"PRICE SIGNALS FOUND: {price_hits[:10]}")
+
+    sf_match = re.search(
+        r'(Supplement Facts.{0,3000})',
+        html, re.IGNORECASE | re.DOTALL
+    )
+    if sf_match:
+        extracted_parts.append(
+            f"SUPPLEMENT FACTS SECTION:\n{sf_match.group(1)[:2000]}"
+        )
+
+    serv_match = re.search(
+        r'(Servings?\s+Per\s+Container[^\n]{0,100})',
+        html, re.IGNORECASE
+    )
+    if serv_match:
+        extracted_parts.append(f"SERVINGS: {serv_match.group(1).strip()}")
+
+    if extracted_parts:
+        result = f"\n\n{'='*40}\n".join(extracted_parts)
+        log.info(
+            "preprocess_html: extracted %d chars from %dMB HTML",
+            len(result), len(html) // 1_000_000
+        )
+        return result[:12000]
+
+    log.warning("preprocess_html: no structured data found — using first 10k chars")
+    return html[:10000]
+
+
 def extract_price_data(html: str, supplement_name: str, retailer: str) -> dict:
     """
     Use Claude to extract price and product data from raw page HTML/text.
@@ -255,6 +348,8 @@ def extract_price_data(html: str, supplement_name: str, retailer: str) -> dict:
     """
     if not ANTHROPIC_API_KEY:
         raise ValueError("ANTHROPIC_API_KEY not set")
+
+    html = preprocess_html(html, supplement_name)
 
     system = """You are a supplement product data extractor.
 Extract pricing and product information from retail page HTML.
@@ -288,12 +383,10 @@ Rules:
         f"If the main product does not match '{supplement_name}', return null "
         f"for price_usd and set product_title to whatever IS on the page so "
         f"we can debug it.\n\n"
-        f"Page content (first 10000 chars — may be raw HTML):\n"
-        f"Focus only on the MAIN product section. Ignore nav, footer, "
-        f"recommendations, and anything not about '{supplement_name}'.\n"
-        f"If you see HTML tags like <title>, <h1>, <span class='price'>, "
-        f"use those as primary signals.\n\n"
-        f"{html[:10000]}\n\n"
+        f"Pre-processed page data (JSON-LD, meta tags, price signals, supplement facts):\n"
+        f"Extract the product data for '{supplement_name}' from the structured "
+        f"data below. JSON-LD and price signals are the most reliable sources.\n\n"
+        f"{html}\n\n"
         f"Extract the product data."
     )
 
