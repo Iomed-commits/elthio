@@ -117,67 +117,82 @@ def supa_patch(table: str, params: dict, body: dict) -> None:
     urllib.request.urlopen(req, timeout=10)
 
 
-# ── Page fetcher — hybrid ScraperAPI / ZenRows / plain ───────────────────────
+# ── Page fetcher — ScraperAPI / ZenRows / plain HTTP ─────────────────────────
 def fetch_page(url: str, retailer: str) -> str:
     """
     Fetch rendered HTML for a product page.
-    Uses ScraperAPI for JS-heavy retailers (iHerb),
-    ZenRows as fallback, plain requests for clean-HTML retailers.
-    Returns page text (up to 15,000 chars).
+    Priority order:
+    1. ScraperAPI (best for iHerb + Life Extension — returns full rendered HTML)
+    2. ZenRows fallback
+    3. Plain HTTP last resort (Life Extension only)
+    Skips crawler.py entirely — Bright Data text-only mode returns
+    cross-sell content instead of the target product HTML.
     """
-    try:
-        import asyncio
-        from crawler import crawl_page
-        text = asyncio.run(crawl_page(url))
-        if text and len(text) > 500:
-            log.info("crawler.py fetched %d chars for %s", len(text), retailer)
-            return text[:15000]
-    except Exception as e:
-        log.debug("crawler.py unavailable: %s — falling back", e)
-
-    if SCRAPERAPI_KEY and retailer in JS_RETAILERS:
+    # 1. ScraperAPI — primary for all retailers
+    if SCRAPERAPI_KEY:
         try:
-            api_url = (
+            render   = "true" if retailer in JS_RETAILERS else "false"
+            api_url  = (
                 f"http://api.scraperapi.com/?api_key={SCRAPERAPI_KEY}"
-                f"&url={urllib.parse.quote(url)}&render=true&premium=true"
+                f"&url={urllib.parse.quote(url)}"
+                f"&render={render}"
+                f"&premium=true"
             )
             req = urllib.request.Request(
-                api_url, headers={"User-Agent": "Elthio/1.0"}
+                api_url,
+                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
             )
-            with urllib.request.urlopen(req, timeout=30) as r:
-                text = r.read().decode(errors="replace")[:15000]
-                log.info("ScraperAPI fetched %d chars", len(text))
-                return text
+            with urllib.request.urlopen(req, timeout=45) as r:
+                text = r.read().decode(errors="replace")
+                if len(text) > 2000:
+                    log.info("ScraperAPI: %d chars for %s", len(text), retailer)
+                    return text[:20000]
+                else:
+                    log.warning("ScraperAPI returned short page (%d chars) — trying fallback", len(text))
         except Exception as e:
             log.warning("ScraperAPI failed: %s", e)
 
+    # 2. ZenRows fallback
     if ZENROWS_API_KEY:
         try:
             api_url = (
                 f"https://api.zenrows.com/v1/?apikey={ZENROWS_API_KEY}"
-                f"&url={urllib.parse.quote(url)}&js_render=true&premium_proxy=true"
+                f"&url={urllib.parse.quote(url)}"
+                f"&js_render=true"
+                f"&premium_proxy=true"
             )
             req = urllib.request.Request(
-                api_url, headers={"User-Agent": "Elthio/1.0"}
+                api_url,
+                headers={"User-Agent": "Mozilla/5.0"},
             )
-            with urllib.request.urlopen(req, timeout=30) as r:
-                text = r.read().decode(errors="replace")[:15000]
-                log.info("ZenRows fetched %d chars", len(text))
-                return text
+            with urllib.request.urlopen(req, timeout=45) as r:
+                text = r.read().decode(errors="replace")
+                if len(text) > 2000:
+                    log.info("ZenRows: %d chars for %s", len(text), retailer)
+                    return text[:20000]
         except Exception as e:
             log.warning("ZenRows failed: %s", e)
 
-    try:
-        req = urllib.request.Request(
-            url, headers={"User-Agent": "Mozilla/5.0 (compatible; Elthio/1.0)"}
-        )
-        with urllib.request.urlopen(req, timeout=15) as r:
-            text = r.read().decode(errors="replace")[:15000]
-            log.info("Plain fetch: %d chars", len(text))
-            return text
-    except Exception as e:
-        log.error("All fetch methods failed for %s: %s", url, e)
-        return ""
+    # 3. Plain HTTP — last resort, only works for Life Extension
+    if retailer not in JS_RETAILERS:
+        try:
+            req = urllib.request.Request(
+                url,
+                headers={
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                    "Accept": "text/html,application/xhtml+xml",
+                    "Accept-Language": "en-US,en;q=0.9",
+                },
+            )
+            with urllib.request.urlopen(req, timeout=20) as r:
+                text = r.read().decode(errors="replace")
+                log.info("Plain HTTP: %d chars for %s", len(text), retailer)
+                return text[:20000]
+        except Exception as e:
+            log.warning("Plain HTTP failed: %s", e)
+
+    log.error("All fetch methods failed for %s", url)
+    return ""
 
 
 # ── Claude extraction ─────────────────────────────────────────────────────────
@@ -221,7 +236,12 @@ Rules:
         f"If the main product does not match '{supplement_name}', return null "
         f"for price_usd and set product_title to whatever IS on the page so "
         f"we can debug it.\n\n"
-        f"Page content (first 8000 chars):\n{html[:8000]}\n\n"
+        f"Page content (first 10000 chars — may be raw HTML):\n"
+        f"Focus only on the MAIN product section. Ignore nav, footer, "
+        f"recommendations, and anything not about '{supplement_name}'.\n"
+        f"If you see HTML tags like <title>, <h1>, <span class='price'>, "
+        f"use those as primary signals.\n\n"
+        f"{html[:10000]}\n\n"
         f"Extract the product data."
     )
 
