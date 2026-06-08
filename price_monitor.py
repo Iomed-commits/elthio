@@ -214,7 +214,13 @@ Rules:
 
     prompt = (
         f"Retailer: {retailer}\n"
-        f"Supplement we expect: {supplement_name}\n\n"
+        f"Supplement we expect: {supplement_name}\n"
+        f"IMPORTANT: Extract ONLY the primary product on this page — ignore "
+        f"related products, recommendations, bundles, or cross-sells anywhere "
+        f"on the page. The product title must clearly match '{supplement_name}'. "
+        f"If the main product does not match '{supplement_name}', return null "
+        f"for price_usd and set product_title to whatever IS on the page so "
+        f"we can debug it.\n\n"
         f"Page content (first 8000 chars):\n{html[:8000]}\n\n"
         f"Extract the product data."
     )
@@ -336,7 +342,7 @@ def monitor_url(
         "affiliate_url":    aff_url,
         "source_type":      "scraped",
         "nih_status":       nih["nih_status"],
-        "nih_confidence":   nih["nih_confidence"],
+        "nih_confidence":   int(nih["nih_confidence"] or 0),
         "nih_dsld_id":      nih["nih_dsld_id"],
         "last_checked":     datetime.now(timezone.utc).isoformat(),
     }
