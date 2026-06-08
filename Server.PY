@@ -647,6 +647,23 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": str(e)}, 500)
             return
 
+        if path.startswith("/api/faers"):
+            try:
+                qs   = urlparse(self.path).query
+                p    = parse_qs(qs)
+                drug = p.get("drug",       [""])[0].strip()
+                supp = p.get("supplement", [""])[0].strip()
+                if not drug or not supp:
+                    self._send_json({"error": "drug and supplement required"}, 400)
+                    return
+                from faers import get_adverse_events
+                result = get_adverse_events(drug, supp)
+                self._send_json(result)
+            except Exception as e:
+                log.error("faers error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
         if path.startswith("/api/price-search"):
             try:
                 qs       = parse_qs(urlparse(self.path).query)
@@ -1318,6 +1335,94 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 self._send_json(result)
             except Exception as e:
                 log.error("AI Med Check error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
+        if path == "/api/parse-pharmacy":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body   = json.loads(self.rfile.read(length).decode())
+                text   = body.get("text", "").strip()
+                email  = body.get("email", "").strip()
+                if not text:
+                    self._send_json({"error": "text is required"}, 400)
+                    return
+                from pharmacy_history import parse_pharmacy_text, save_pharmacy_history
+                result = parse_pharmacy_text(text)
+                if email and result["medications"]:
+                    save_pharmacy_history(email, result["medications"])
+                self._send_json(result)
+            except Exception as e:
+                log.error("parse-pharmacy error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
+        if path == "/api/scan-label":
+            try:
+                length    = int(self.headers.get("Content-Length", 0))
+                body      = json.loads(self.rfile.read(length).decode())
+                image_b64 = body.get("image_base64", "")
+                if not image_b64:
+                    self._send_json({"error": "image_base64 required"}, 400)
+                    return
+
+                api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+                if not api_key:
+                    self._send_json({"error": "ANTHROPIC_API_KEY not configured"}, 500)
+                    return
+
+                payload = json.dumps({
+                    "model":      "claude-sonnet-4-5-20250929",
+                    "max_tokens": 1000,
+                    "system": (
+                        "You are a supplement label reader. Extract all ingredients "
+                        "from a Supplement Facts panel image. "
+                        "Return ONLY valid JSON: "
+                        '{"supplements": ["ingredient name"], '
+                        '"product_name": "product name if visible", '
+                        '"serving_size": "serving size", '
+                        '"confidence": "high|medium|low"} '
+                        "No markdown, no explanation."
+                    ),
+                    "messages": [{
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "image",
+                                "source": {
+                                    "type":       "base64",
+                                    "media_type": "image/jpeg",
+                                    "data":       image_b64,
+                                },
+                            },
+                            {
+                                "type": "text",
+                                "text": "Extract all supplement ingredients from this label.",
+                            },
+                        ],
+                    }],
+                }).encode()
+
+                import urllib.request as _ur
+                req = _ur.Request(
+                    "https://api.anthropic.com/v1/messages",
+                    data=payload,
+                    headers={
+                        "Content-Type":      "application/json",
+                        "x-api-key":         api_key,
+                        "anthropic-version": "2023-06-01",
+                    },
+                    method="POST",
+                )
+                with _ur.urlopen(req, timeout=60) as r:
+                    resp = json.loads(r.read())
+
+                raw  = resp["content"][0]["text"].strip()
+                raw  = raw.lstrip("```json").lstrip("```").rstrip("```").strip()
+                data = json.loads(raw)
+                self._send_json(data)
+            except Exception as e:
+                log.error("scan-label error: %s", e)
                 self._send_json({"error": str(e)}, 500)
             return
 

@@ -373,6 +373,15 @@ def ai_med_check(
     interactions = result.get("interactions", [])
     near_misses  = result.get("near_misses", [])
 
+    # FAERS adverse event data
+    faers_context = []
+    try:
+        from faers import get_faers_context_for_stack
+        faers_context = get_faers_context_for_stack(medications, supplements)
+        log.info("FAERS: %d pairs with adverse events", len(faers_context))
+    except Exception as e:
+        log.warning("FAERS lookup failed: %s", e)
+
     # Parallel API enrichment
     openfda_data, pubchem_data, medlineplus_data = [], [], []
 
@@ -417,6 +426,19 @@ def ai_med_check(
         ctx += "\nNIH MedlinePlus:\n" + "".join(
             f"- {d.get('summary','')[:200]}\n" for d in medlineplus_data[:1]
         )
+    if faers_context:
+        faers_summary = "FDA ADVERSE EVENT DATA (real-world reports):\n"
+        for pair in faers_context[:3]:
+            f = pair["faers"]
+            faers_summary += (
+                f"- {pair['drug']} + {pair['supplement']}: "
+                f"{f['total_events']} total reports, "
+                f"{f['serious_count']} serious, "
+                f"{f['death_count']} deaths reported\n"
+                f"  Top reactions: "
+                f"{', '.join(r['reaction'] for r in f['top_reactions'][:5])}\n"
+            )
+        ctx += "\n" + faers_summary
 
     # Enhance each interaction with Claude explanation
     explain_system = """You are a pharmacist assistant for Elthio.
@@ -507,6 +529,7 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'."""
     if openfda_data:     sources.add("FDA Drug Label (OpenFDA)")
     if pubchem_data:     sources.add(f"PubChem CID {pubchem_data[0].get('cid','')}")
     if medlineplus_data: sources.add("NIH MedlinePlus")
+    if faers_context:    sources.add("FDA FAERS (OpenFDA adverse events)")
     sources.add("Educational only — not medical advice. Consult your pharmacist.")
 
     return {
@@ -520,6 +543,7 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'."""
         "openfda_data":         openfda_data,
         "pubchem_data":         pubchem_data,
         "medlineplus_data":     medlineplus_data,
+        "faers_context":        faers_context,
         "explanation":          overall,
         "sources":              list(sources),
         "ai_enhanced":          claude_ok > 0,
