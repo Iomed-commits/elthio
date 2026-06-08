@@ -37,9 +37,12 @@ except ImportError:
 from supabase_client import normalize_supabase_url
 
 # ── Environment ───────────────────────────────────────────────────────────────
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-SCRAPERAPI_KEY    = os.environ.get("SCRAPERAPI_KEY", "")
-ZENROWS_API_KEY   = os.environ.get("ZENROWS_API_KEY", "")
+ANTHROPIC_API_KEY   = os.environ.get("ANTHROPIC_API_KEY", "")
+BRIGHTDATA_API_KEY  = os.environ.get("BRIGHTDATA_API_KEY", "")
+BRIGHTDATA_ZONE     = os.environ.get("BRIGHTDATA_ZONE", "web_unlocker1")
+BRIGHTDATA_ENDPOINT = "https://api.brightdata.com/request"
+SCRAPERAPI_KEY      = os.environ.get("SCRAPERAPI_KEY", "")
+ZENROWS_API_KEY     = os.environ.get("ZENROWS_API_KEY", "")
 SUPABASE_URL      = normalize_supabase_url(os.environ.get("SUPABASE_URL", ""))
 SUPABASE_KEY      = (
     os.environ.get("SUPABASE_KEY", "")
@@ -117,22 +120,72 @@ def supa_patch(table: str, params: dict, body: dict) -> None:
     urllib.request.urlopen(req, timeout=10)
 
 
-# ── Page fetcher — ScraperAPI / ZenRows / plain HTTP ─────────────────────────
+# ── Page fetcher — Bright Data / optional ScraperAPI / ZenRows / plain HTTP ───
+def _fetch_brightdata_html(url: str) -> str:
+    """
+    Fetch raw HTML via Bright Data Web Unlocker (same API as crawler.py).
+    Returns HTML string — NOT flattened text — so Claude can use <h1>, price tags, etc.
+    Does not import crawler.py (that path strips HTML to text and loses structure).
+    """
+    if not BRIGHTDATA_API_KEY:
+        return ""
+
+    body = json.dumps({"zone": BRIGHTDATA_ZONE, "url": url, "format": "raw"}).encode()
+    req = urllib.request.Request(
+        BRIGHTDATA_ENDPOINT,
+        data=body,
+        headers={
+            "Content-Type":  "application/json",
+            "Authorization": f"Bearer {BRIGHTDATA_API_KEY}",
+            "User-Agent":    "Elthio/1.0",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            html = r.read().decode(errors="replace")
+
+        if html.strip().startswith("{"):
+            try:
+                payload = json.loads(html)
+                if isinstance(payload, dict) and (
+                    payload.get("error") or payload.get("message") or payload.get("status") == "error"
+                ):
+                    log.warning("Bright Data API error: %s", html[:300])
+                    return ""
+            except json.JSONDecodeError:
+                pass
+
+        if len(html.strip()) < 500:
+            log.warning("Bright Data returned short page (%d chars)", len(html))
+            return ""
+
+        log.info("Bright Data: %d chars (raw HTML)", len(html))
+        return html[:20000]
+    except Exception as e:
+        log.warning("Bright Data failed: %s", e)
+        return ""
+
+
 def fetch_page(url: str, retailer: str) -> str:
     """
     Fetch rendered HTML for a product page.
     Priority order:
-    1. ScraperAPI (best for iHerb + Life Extension — returns full rendered HTML)
-    2. ZenRows fallback
-    3. Plain HTTP last resort (Life Extension only)
-    Skips crawler.py entirely — Bright Data text-only mode returns
-    cross-sell content instead of the target product HTML.
+    1. Bright Data Web Unlocker — raw HTML (uses BRIGHTDATA_API_KEY from .env)
+    2. ScraperAPI (optional, if SCRAPERAPI_KEY set)
+    3. ZenRows (optional, if ZENROWS_API_KEY set)
+    4. Plain HTTP last resort (non-JS retailers only)
     """
-    # 1. ScraperAPI — primary for all retailers
+    # 1. Bright Data — primary (you already have this in .env)
+    html = _fetch_brightdata_html(url)
+    if html:
+        return html
+
+    # 2. ScraperAPI — optional fallback
     if SCRAPERAPI_KEY:
         try:
-            render   = "true" if retailer in JS_RETAILERS else "false"
-            api_url  = (
+            render  = "true" if retailer in JS_RETAILERS else "false"
+            api_url = (
                 f"http://api.scraperapi.com/?api_key={SCRAPERAPI_KEY}"
                 f"&url={urllib.parse.quote(url)}"
                 f"&render={render}"
@@ -147,12 +200,11 @@ def fetch_page(url: str, retailer: str) -> str:
                 if len(text) > 2000:
                     log.info("ScraperAPI: %d chars for %s", len(text), retailer)
                     return text[:20000]
-                else:
-                    log.warning("ScraperAPI returned short page (%d chars) — trying fallback", len(text))
+                log.warning("ScraperAPI returned short page (%d chars)", len(text))
         except Exception as e:
             log.warning("ScraperAPI failed: %s", e)
 
-    # 2. ZenRows fallback
+    # 3. ZenRows — optional fallback
     if ZENROWS_API_KEY:
         try:
             api_url = (
@@ -173,7 +225,7 @@ def fetch_page(url: str, retailer: str) -> str:
         except Exception as e:
             log.warning("ZenRows failed: %s", e)
 
-    # 3. Plain HTTP — last resort, only works for Life Extension
+    # 4. Plain HTTP — last resort, only works for Life Extension
     if retailer not in JS_RETAILERS:
         try:
             req = urllib.request.Request(
