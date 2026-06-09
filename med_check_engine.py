@@ -353,6 +353,73 @@ def get_near_misses(
     return messages
 
 
+def check_supplement_interactions(supplements: list[str]) -> dict:
+    """
+    Check supplement-supplement interactions from the curated database.
+    Returns { interactions, near_misses, synergies, timing_conflicts }
+    """
+    db_path = Path(__file__).resolve().parent / "supplement_interactions_db.json"
+    try:
+        with open(db_path, encoding="utf-8") as f:
+            db = json.load(f)
+    except FileNotFoundError:
+        return {
+            "interactions": [], "near_misses": [],
+            "synergies": [], "timing_conflicts": [],
+        }
+
+    supps_lower = [(s or "").lower().strip() for s in supplements if (s or "").strip()]
+
+    def _supp_match(keyword: str) -> bool:
+        kw = (keyword or "").lower()
+        if not kw:
+            return False
+        return any(
+            kw in s or s in kw or any(term in s for term in kw.split())
+            for s in supps_lower
+        )
+
+    interactions: list[dict] = []
+    near_misses: list[dict] = []
+    synergies: list[dict] = []
+    timing_conflicts: list[dict] = []
+
+    for rule in db:
+        supp_a = (rule.get("supplement_a") or "").lower()
+        supp_b = (rule.get("supplement_b") or "").lower()
+        if not supp_a or not supp_b:
+            continue
+
+        if not (_supp_match(supp_a) and _supp_match(supp_b)):
+            continue
+
+        result = {
+            **rule,
+            "supplements_matched": [supp_a, supp_b],
+            "check_type": "supplement_supplement",
+        }
+
+        if rule.get("synergy"):
+            synergies.append(result)
+        elif rule.get("type") == "timing_conflict":
+            timing_conflicts.append(result)
+            if rule.get("severity") in ("high", "critical"):
+                interactions.append(result)
+        elif rule.get("severity") in ("critical", "high", "moderate"):
+            interactions.append(result)
+        else:
+            near_misses.append(result)
+
+    interactions.sort(key=lambda x: SEVERITY_ORDER.get(x.get("severity", "moderate"), 9))
+
+    return {
+        "interactions":     interactions,
+        "near_misses":      near_misses,
+        "synergies":        synergies,
+        "timing_conflicts": timing_conflicts,
+    }
+
+
 def run_med_check(
     medications: list[str],
     supplements: list[str],
@@ -438,9 +505,22 @@ def run_med_check(
 
     checked_pairs = len(med_names) * len(supp_names) if med_names and supp_names else 0
 
-    # Backward compatibility for visit_packet.html
+    # Backward compatibility for visit_packet.html (rebuilt after merge below)
+    disclaimer = (
+        "Educational information only — not medical advice. "
+        "No result means no match in our curated set, not that your combination is safe. "
+        "Always tell your doctor and pharmacist every supplement you take."
+    )
+
+    supp_check = check_supplement_interactions(supplements)
+    all_interactions = interactions + supp_check["interactions"]
+    all_near_misses  = near_misses + supp_check["near_misses"]
+    all_interactions.sort(
+        key=lambda x: SEVERITY_ORDER.get(x.get("severity", "moderate"), 9)
+    )
+
     findings = []
-    for it in interactions:
+    for it in all_interactions:
         leg_sev = _LEGACY_SEVERITY.get(it.get("severity", "moderate"), "moderate")
         findings.append(
             {
@@ -452,28 +532,38 @@ def run_med_check(
             }
         )
 
-    disclaimer = (
-        "Educational information only — not medical advice. "
-        "No result means no match in our curated set, not that your combination is safe. "
-        "Always tell your doctor and pharmacist every supplement you take."
-    )
+    supp_db_len = len(_load_supplement_db())
 
     return {
-        "interactions": interactions,
-        "near_misses": near_misses,
-        "checked_pairs": checked_pairs,
-        "rules_checked": len(db),
-        "findings": findings,
+        "interactions":         all_interactions,
+        "near_misses":          all_near_misses,
+        "checked_pairs":        checked_pairs,
+        "rules_checked":        len(db) + supp_db_len,
+        "findings":             findings,
         "resolved_medications": resolved_meds,
         "supplement_terms_checked": [t["display"] for t in supp_terms],
         "meta": {
-            "curated_interactions": len(db),
+            "curated_interactions": len(db) + supp_db_len,
             "rxnorm_api": "https://rxnav.nlm.nih.gov/",
             "positioning": "Flags well-documented interactions worth discussing with your pharmacist.",
         },
-        "disclaimer": disclaimer,
-        "severity_styles": SEVERITY_STYLES,
+        "disclaimer":           disclaimer,
+        "severity_styles":      SEVERITY_STYLES,
+        "synergies":            supp_check["synergies"],
+        "timing_conflicts":     supp_check["timing_conflicts"],
+        "supp_interactions":    supp_check["interactions"],
+        "supp_synergies":       supp_check["synergies"],
     }
+
+
+def _load_supplement_db() -> list[dict]:
+    db_path = Path(__file__).resolve().parent / "supplement_interactions_db.json"
+    if not db_path.is_file():
+        return []
+    try:
+        return json.loads(db_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return []
 
 
 if __name__ == "__main__":

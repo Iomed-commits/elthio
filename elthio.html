@@ -3824,6 +3824,51 @@ function buildSeveritySummary(interactions, nearMisses) {
   </div>`;
 }
 
+function renderSynergies(synergies) {
+  if (!synergies || !synergies.length) return '';
+  return `
+  <div style="background:#E1F5EE;border:1px solid #1D9E75;
+    border-radius:8px;padding:12px 14px;margin-bottom:8px">
+    <div style="font-size:11px;font-weight:600;color:#0F6E56;
+         letter-spacing:0.08em;margin-bottom:8px">
+      ✅ SYNERGIES — BENEFICIAL COMBINATIONS IN YOUR STACK
+    </div>
+    ${synergies.slice(0,3).map(s => `
+      <div style="padding:6px 0;border-bottom:1px solid rgba(29,158,117,0.2);
+           font-size:12px">
+        <div style="font-weight:500;color:#0F6E56;margin-bottom:2px">
+          ${escapeHtml(s.supplement_a)} + ${escapeHtml(s.supplement_b)}
+        </div>
+        <div style="color:#1D9E75;line-height:1.5">${escapeHtml(s.detail || '')}</div>
+        <div style="color:#0F6E56;font-size:11px;margin-top:4px;
+             padding:4px 8px;background:rgba(29,158,117,0.1);border-radius:4px">
+          💡 ${escapeHtml(s.instruction || '')}
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function renderTimingConflicts(conflicts) {
+  if (!conflicts || !conflicts.length) return '';
+  return `
+  <div style="background:#FFF7ED;border:1px solid #F97316;
+    border-radius:8px;padding:12px 14px;margin-bottom:8px">
+    <div style="font-size:11px;font-weight:600;color:#9A3412;
+         letter-spacing:0.08em;margin-bottom:8px">
+      ⏱ TIMING — TAKE THESE SEPARATELY
+    </div>
+    ${conflicts.slice(0,3).map(t => `
+      <div style="padding:6px 0;border-bottom:1px solid rgba(249,115,22,0.2);
+           font-size:12px">
+        <div style="font-weight:500;color:#9A3412;margin-bottom:2px">
+          ${escapeHtml(t.supplement_a)} + ${escapeHtml(t.supplement_b)}
+          — separate by ${t.timing_hours || 2}+ hours
+        </div>
+        <div style="color:#EA580C;font-size:11px">${escapeHtml(t.instruction || '')}</div>
+      </div>`).join('')}
+  </div>`;
+}
+
 function renderNearMisses(nearMisses) {
   if (!nearMisses || !nearMisses.length) return '';
 
@@ -3987,6 +4032,9 @@ function renderAiMedCheckResult(data) {
       </div>`;
     });
   }
+
+  html += renderSynergies(data.synergies || []);
+  html += renderTimingConflicts(data.timing_conflicts || []);
 
   html += renderNearMisses(near);
 
@@ -4256,6 +4304,9 @@ async function heroRunCheck() {
         </div>`;
       });
     }
+
+    html += renderSynergies(data.synergies || []);
+    html += renderTimingConflicts(data.timing_conflicts || []);
 
     html += renderNearMisses(nearMisses);
 

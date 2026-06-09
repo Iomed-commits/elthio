@@ -440,11 +440,35 @@ def ai_med_check(
             )
         ctx += "\n" + faers_summary
 
+    synergies = result.get("synergies") or []
+    if synergies:
+        syn_text = "SUPPLEMENT SYNERGIES (beneficial combinations):\n"
+        for s in synergies[:3]:
+            syn_text += (
+                f"- {s['supplement_a']} + {s['supplement_b']}: "
+                f"{s['title']} — {s['detail'][:120]}\n"
+            )
+        ctx += "\n" + syn_text
+
+    timing_conflicts = result.get("timing_conflicts") or []
+    if timing_conflicts:
+        tim_text = "TIMING CONFLICTS (take separately):\n"
+        for t in timing_conflicts[:3]:
+            tim_text += (
+                f"- {t['supplement_a']} + {t['supplement_b']}: "
+                f"separate by {t.get('timing_hours', 2)} hours — "
+                f"{t['instruction'][:100]}\n"
+            )
+        ctx += "\n" + tim_text
+
     # Enhance each interaction with Claude explanation
     explain_system = """You are a pharmacist assistant for Elthio.
 Explain drug-supplement interactions clearly. 2-3 short paragraphs.
 Plain English. Always end with 'discuss with your pharmacist or doctor'.
-Never say definitely safe or definitely dangerous."""
+Never say definitely safe or definitely dangerous.
+- If synergies are present, mention them positively — these are good combinations
+- If timing conflicts exist, clearly state what needs to be separated and by how long
+- Distinguish between drug-supplement interactions (safety) and supplement-supplement interactions (optimization)"""
 
     enhanced = []
     claude_calls = 0
@@ -480,7 +504,10 @@ Combination not in our database. Use FDA/PubChem data provided.
 2 short paragraphs. Never invent interactions. Recommend pharmacist consultation."""
     match_system = """Pharmacist assistant for Elthio.
 Summarize the interaction findings for the user in 2 short paragraphs.
-Plain English. Always end with 'discuss with your pharmacist or doctor'."""
+Plain English. Always end with 'discuss with your pharmacist or doctor'.
+- If synergies are present, mention them positively — these are good combinations
+- If timing conflicts exist, clearly state what needs to be separated and by how long
+- Distinguish between drug-supplement interactions (safety) and supplement-supplement interactions (optimization)"""
 
     if not interactions:
         prompt = (
@@ -554,6 +581,10 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'."""
             "claude_error":      claude_error or None,
         },
         "rules_checked":        result.get("rules_checked", 0),
+        "synergies":            synergies,
+        "timing_conflicts":     timing_conflicts,
+        "supp_interactions":    result.get("supp_interactions", []),
+        "supp_synergies":       result.get("supp_synergies", []),
     }
 
 

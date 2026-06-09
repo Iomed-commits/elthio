@@ -44,6 +44,7 @@ DEDUCTIONS = {
     "duplicate_ingredient":      5,
     "timing_conflict":           5,
     "over_supplemented":         8,
+    "timing_conflict_supp":      3,
 }
 
 BONUSES = {
@@ -51,6 +52,7 @@ BONUSES = {
     "zero_critical":          5,
     "reasonable_stack_size":  3,
     "has_timing_schedule":    2,
+    "has_synergies":          3,
 }
 
 SCORE_BANDS = [
@@ -75,6 +77,7 @@ def calculate_safety_score(
     near_misses: list[dict] | None = None,
     nih_statuses: dict[str, str] | None = None,
     timing_conflicts: list[dict] | None = None,
+    synergies: list[dict] | None = None,
 ) -> dict[str, Any]:
     """Calculate a Safety Score from Med Check output."""
     score     = BASE_SCORE
@@ -172,16 +175,28 @@ def calculate_safety_score(
 
     tc_count = len(timing_conflicts or [])
     if tc_count > 0:
-        total  = DEDUCTIONS["timing_conflict"] * min(tc_count, 3)
+        total  = DEDUCTIONS["timing_conflict_supp"] * min(tc_count, 3)
         score -= total
         breakdown.append({
             "reason":   (
                 f"{tc_count} timing conflict{'s' if tc_count > 1 else ''} "
-                f"(absorption interference)"
+                f"(take separately)"
             ),
             "impact":   "negative",
             "points":   -total,
             "category": "timing",
+        })
+
+    if synergies:
+        score += BONUSES["has_synergies"]
+        breakdown.append({
+            "reason":   (
+                f"{len(synergies)} beneficial supplement combination"
+                f"{'s' if len(synergies) > 1 else ''} in your stack"
+            ),
+            "impact":   "positive",
+            "points":   +BONUSES["has_synergies"],
+            "category": "synergies",
         })
 
     if severity_counts.get("critical", 0) == 0:
@@ -230,6 +245,8 @@ def score_from_med_check_result(
         supplements  = supplements,
         interactions = med_check_result.get("interactions", []),
         near_misses  = med_check_result.get("near_misses", []),
+        timing_conflicts = med_check_result.get("timing_conflicts", []),
+        synergies    = med_check_result.get("synergies", []),
     )
 
 
