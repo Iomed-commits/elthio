@@ -564,6 +564,12 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
     <div id="heroAiMedCheckResults"></div>
   </div>
 
+  <div style="display:flex;align-items:center;gap:10px;margin:16px 0;max-width:560px">
+    <div style="flex:1;height:1px;background:#E2DDD4"></div>
+    <span style="font-size:10px;color:#9B9488;letter-spacing:0.1em;white-space:nowrap">OR CHECK YOUR FULL STACK</span>
+    <div style="flex:1;height:1px;background:#E2DDD4"></div>
+  </div>
+
   <div style="background:#FFFFFF;border-radius:10px;padding:18px;max-width:560px">
 
     <div style="font-size:10px;letter-spacing:0.15em;color:#9B9488;margin-bottom:6px">
@@ -612,7 +618,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
       <button onclick="heroAddSupp()" class="hero-add-btn">+ Add</button>
     </div>
 
-    <button id="heroCheckBtn" onclick="heroRunCheck()" disabled class="hero-check-btn">
+    <button id="checkStackBtn" onclick="heroRunCheck()" disabled class="hero-check-btn">
       🛡 Check my stack — free
     </button>
     <p style="font-size:10px;color:#9B9488;text-align:center;margin-top:8px;line-height:1.5">
@@ -639,7 +645,21 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
     </div>
   </div>
 
-  <div id="heroResults" style="max-width:560px;margin-top:12px"></div>
+  <div id="heroResults" style="max-width:560px;margin-top:12px">
+    <div id="medCheckEmptyState" style="text-align:center;padding:24px 16px;color:var(--muted)">
+      <div style="font-size:28px;margin-bottom:10px">🛡</div>
+      <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px">
+        Ready to check your stack
+      </div>
+      <div style="font-size:12px;line-height:1.7;max-width:280px;margin:0 auto">
+        Add at least one medication and one supplement above,
+        then tap <strong>Check my stack</strong> to see interactions.
+      </div>
+      <div style="margin-top:14px;font-size:11px;color:var(--muted)">
+        Checks against 114 curated rules · NIH sources · FDA adverse event data
+      </div>
+    </div>
+  </div>
 
   <!-- Save My Stack -->
   <div id="saveStackCard" style="display:none;max-width:560px;margin-top:16px;
@@ -671,7 +691,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
   </div>
 
   <button onclick="localStorage.removeItem('elthio_onboarding_done');location.reload()"
-          style="display:none">
+          style="display:none !important" hidden aria-hidden="true">
     reset onboarding
   </button>
 </div>
@@ -713,7 +733,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 <div class="nav-tabs">
   <button class="nav-tab active" onclick="showTab('medcheck')">🛡 MED CHECK</button>
   <button class="nav-tab" onclick="showTab('coach')">⏱ SEPARATION COACH</button>
-  <button class="nav-tab" onclick="showTab('agent')">🛒 BASKET</button>
+  <button class="nav-tab" onclick="showTab('agent')" style="display:none">🛒 BASKET</button>
   <button class="nav-tab" onclick="showTab('compare')" style="display:none">⚖️ VALUE COMPARE</button>
   <button class="nav-tab" onclick="showTab('stack')">💊 MY STACK</button>
   <button class="nav-tab" onclick="showTab('chemistry')" style="display:none">⚗️ STACK CHEMISTRY</button>
@@ -1365,7 +1385,7 @@ Atorvastatin 20mg - Take at bedtime"
   <details id="medcheckLegacyDetails" style="margin-top:8px">
     <summary style="cursor:pointer;font-size:12px;color:var(--muted);padding:8px 0">Open classic Med Check tool</summary>
     <div id="medcheckLoadError" style="display:none;margin-bottom:12px"></div>
-    <p id="medcheckLoading" style="display:none;font-size:12px;color:var(--muted);margin-bottom:10px" aria-hidden="true">Loading Med Check…</p>
+    <p id="medcheckLoading" style="display:none !important" hidden aria-hidden="true">Loading Med Check…</p>
     <div id="medcheckFrameWrap" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);min-height:720px">
       <iframe id="medcheckFrame" title="Med Check" style="width:100%;min-height:720px;border:0;display:block;background:var(--bg)"></iframe>
     </div>
@@ -1375,7 +1395,7 @@ Atorvastatin 20mg - Take at bedtime"
 <!-- ══ TAB 6: SUPPLEMENT PASSPORT ══ -->
 <div id="tab-passport" class="main" style="display:none">
   <div id="passportLoadError" style="display:none;margin-bottom:12px"></div>
-  <p id="passportLoading" style="display:none;font-size:12px;color:var(--muted);margin-bottom:10px" aria-hidden="true">Loading Supplement Passport…</p>
+  <p id="passportLoading" style="display:none !important" hidden aria-hidden="true">Loading Supplement Passport…</p>
   <div id="passportFrameWrap" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);min-height:720px">
     <iframe id="passportFrame" title="Supplement Passport" style="width:100%;min-height:720px;border:0;display:block;background:var(--bg)"></iframe>
   </div>
@@ -1384,7 +1404,7 @@ Atorvastatin 20mg - Take at bedtime"
 <!-- ══ TAB 7: VISIT PACKET ══ -->
 <div id="tab-visitpacket" class="main" style="display:none">
   <div id="visitpacketLoadError" style="display:none;margin-bottom:12px"></div>
-  <p id="visitpacketLoading" style="display:none;font-size:12px;color:var(--muted);margin-bottom:10px" aria-hidden="true">Loading Visit Packet…</p>
+  <p id="visitpacketLoading" style="display:none !important" hidden aria-hidden="true">Loading Visit Packet…</p>
   <div id="visitpacketFrameWrap" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);min-height:720px">
     <iframe id="visitpacketFrame" title="Visit Packet" style="width:100%;min-height:720px;border:0;display:block;background:var(--bg)"></iframe>
   </div>
@@ -3620,8 +3640,149 @@ function heroRenderTags() {
         ).join('')
       : '<span style="font-size:11px;color:#B0A89A">None added</span>';
   }
-  const btn = document.getElementById('heroCheckBtn');
+  const btn = document.getElementById('checkStackBtn');
   if (btn) btn.disabled = !(_heroMeds.length && _heroSupps.length);
+  if (_heroMeds.length === 0 && _heroSupps.length === 0) {
+    resetMedCheckEmptyState();
+  }
+}
+
+function resetMedCheckEmptyState() {
+  const res = document.getElementById('heroResults');
+  if (!res || res.dataset.hasResults === '1') return;
+  res.innerHTML = `<div id="medCheckEmptyState" style="text-align:center;padding:24px 16px;color:var(--muted)">
+    <div style="font-size:28px;margin-bottom:10px">🛡</div>
+    <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px">
+      Ready to check your stack
+    </div>
+    <div style="font-size:12px;line-height:1.7;max-width:280px;margin:0 auto">
+      Add at least one medication and one supplement above,
+      then tap <strong>Check my stack</strong> to see interactions.
+    </div>
+    <div style="margin-top:14px;font-size:11px;color:var(--muted)">
+      Checks against 114 curated rules · NIH sources · FDA adverse event data
+    </div>
+  </div>`;
+}
+
+function hideMedCheckEmptyState() {
+  const empty = document.getElementById('medCheckEmptyState');
+  if (empty) empty.style.display = 'none';
+}
+
+function buildSeveritySummary(interactions, nearMisses) {
+  const counts = { critical: 0, high: 0, moderate: 0, informational: 0 };
+  (interactions || []).forEach(ix => {
+    const s = (ix.severity || 'informational').toLowerCase();
+    if (counts[s] !== undefined) counts[s]++;
+  });
+
+  const total   = interactions ? interactions.length : 0;
+  const nmCount = nearMisses ? nearMisses.length : 0;
+
+  if (total === 0 && nmCount === 0) {
+    return `<div style="background:var(--green-light);border:1.5px solid var(--green);
+      border-radius:10px;padding:14px 16px;margin-bottom:16px;
+      display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">✅</span>
+      <div>
+        <div style="font-size:14px;font-weight:500;color:var(--green)">
+          No interactions found
+        </div>
+        <div style="font-size:11px;color:var(--green);opacity:0.8;margin-top:2px">
+          Your stack looks clear against our 114 curated rules
+        </div>
+      </div>
+    </div>`;
+  }
+
+  const pills = [];
+  if (counts.critical  > 0) pills.push(`<span style="background:#fde8e8;color:#b91c1c;
+    padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">
+    🔴 ${counts.critical} critical</span>`);
+  if (counts.high      > 0) pills.push(`<span style="background:#fef3c7;color:#92400e;
+    padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">
+    🟠 ${counts.high} high</span>`);
+  if (counts.moderate  > 0) pills.push(`<span style="background:#dbeafe;color:#1e40af;
+    padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">
+    🟡 ${counts.moderate} moderate</span>`);
+  if (counts.informational > 0) pills.push(`<span style="background:var(--surface2);
+    color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11px">
+    ℹ ${counts.informational} info</span>`);
+  if (nmCount > 0) pills.push(`<span style="background:var(--surface2);
+    color:var(--muted);padding:3px 10px;border-radius:20px;font-size:11px">
+    ⚠ ${nmCount} near-match${nmCount > 1 ? 'es' : ''}</span>`);
+
+  const hasCritical = counts.critical > 0 || counts.high > 0;
+  return `<div style="background:${hasCritical ? '#fde8e8' : 'var(--surface2)'};
+    border:1.5px solid ${hasCritical ? '#f87171' : 'var(--border)'};
+    border-radius:10px;padding:14px 16px;margin-bottom:16px">
+    <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px">
+      ${total} interaction${total !== 1 ? 's' : ''} found in your stack
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      ${pills.join('')}
+    </div>
+  </div>`;
+}
+
+function renderNearMisses(nearMisses) {
+  if (!nearMisses || !nearMisses.length) return '';
+
+  const items = nearMisses.slice(0, 3).map(nm => `
+    <div style="padding:8px 0;border-bottom:1px solid var(--border);
+         font-size:12px;color:var(--muted)">
+      <span style="color:var(--text);font-weight:500">
+        ${escapeHtml(nm.title || (nm.medications_matched && nm.supplements_matched
+          ? nm.medications_matched + ' + ' + nm.supplements_matched
+          : (nm.message || 'Near match')))}
+      </span>
+      ${nm.detail
+        ? `<span style="margin-left:6px">${escapeHtml(String(nm.detail).slice(0, 80))}…</span>`
+        : ''}
+    </div>`).join('');
+
+  return `<div style="background:var(--surface2);border:1px solid var(--border);
+    border-radius:8px;padding:12px 14px;margin-top:8px">
+    <div style="font-size:11px;font-weight:500;color:var(--muted);
+         letter-spacing:0.08em;margin-bottom:8px">
+      ⚠ NEAR-MATCHES — worth being aware of
+    </div>
+    ${items}
+    <div style="font-size:10px;color:var(--muted);margin-top:8px">
+      Partial matches based on similar drug classes or related compounds.
+      Discuss with your pharmacist.
+    </div>
+  </div>`;
+}
+
+function buildNextStepsBar(hasInteractions) {
+  return `<div id="nextStepsBar" style="position:sticky;bottom:0;
+    background:var(--text);border-top:2px solid var(--gold);
+    padding:12px 16px;margin:16px -16px -16px;
+    display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:8px;z-index:10">
+    <div style="font-size:12px;color:#9B9488">
+      ${hasInteractions
+        ? '⚠ Interactions found — here\'s what to do next:'
+        : '✅ Stack looks clear — explore your options:'}
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="goToCoachWithStack()"
+        style="font-size:11px;font-weight:500;padding:8px 14px;
+               background:var(--gold);color:#000;border:none;
+               border-radius:6px;cursor:pointer;white-space:nowrap">
+        ⏱ Get timing schedule →
+      </button>
+      <button onclick="goToVisitPacket()"
+        style="font-size:11px;font-weight:500;padding:8px 14px;
+               background:transparent;color:#fff;
+               border:1px solid rgba(255,255,255,0.2);
+               border-radius:6px;cursor:pointer;white-space:nowrap">
+        🧾 Create doctor PDF →
+      </button>
+    </div>
+  </div>`;
 }
 
 function heroAddMed() {
@@ -3640,8 +3801,22 @@ function heroAddSupp() {
   heroRenderTags();
 }
 
-function heroRemoveMed(i) { _heroMeds.splice(i,1); heroRenderTags(); }
-function heroRemoveSupp(i) { _heroSupps.splice(i,1); heroRenderTags(); }
+function heroRemoveMed(i) {
+  _heroMeds.splice(i, 1);
+  heroRenderTags();
+  if (_heroMeds.length === 0 && _heroSupps.length === 0) {
+    const res = document.getElementById('heroResults');
+    if (res) { res.dataset.hasResults = ''; resetMedCheckEmptyState(); }
+  }
+}
+function heroRemoveSupp(i) {
+  _heroSupps.splice(i, 1);
+  heroRenderTags();
+  if (_heroMeds.length === 0 && _heroSupps.length === 0) {
+    const res = document.getElementById('heroResults');
+    if (res) { res.dataset.hasResults = ''; resetMedCheckEmptyState(); }
+  }
+}
 
 function heroQuick(name, type) {
   if (type === 'med' && !_heroMeds.includes(name)) _heroMeds.push(name);
@@ -3682,7 +3857,8 @@ function renderAiMedCheckResult(data) {
   const meds  = data.resolved_medications || [];
   const supps = data.resolved_supplements  || [];
   const ixs   = data.interactions          || [];
-  let   html  = '';
+  const near  = data.near_misses           || [];
+  let   html  = buildSeveritySummary(ixs, near);
 
   if (meds.length || supps.length) {
     html += `<div style="background:var(--surface2);border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px">
@@ -3695,7 +3871,6 @@ function renderAiMedCheckResult(data) {
 
   if (!ixs.length) {
     html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px">
-      <div style="font-size:13px;font-weight:500;margin-bottom:6px">No interactions found in our database</div>
       <div style="font-size:12px;color:var(--muted);line-height:1.65">${data.explanation||''}</div>
     </div>`;
   } else {
@@ -3714,6 +3889,8 @@ function renderAiMedCheckResult(data) {
       </div>`;
     });
   }
+
+  html += renderNearMisses(near);
 
   if ((data.openfda_data||[]).length) {
     html += `<div style="background:var(--surface2);border-radius:6px;padding:10px 12px;margin-bottom:8px">
@@ -3917,13 +4094,15 @@ function medCheckFlowCardsHtml() {
 }
 
 async function heroRunCheck() {
-  const btn = document.getElementById('heroCheckBtn');
+  const checkBtn = document.getElementById('checkStackBtn');
   const res = document.getElementById('heroResults');
-  if (!btn || !res) return;
+  if (!checkBtn || !res) return;
 
-  btn.disabled = true;
-  btn.textContent = '↻ Checking...';
+  checkBtn.disabled    = true;
+  checkBtn.textContent = '↻ Checking 114 rules + FDA data…';
+  hideMedCheckEmptyState();
   res.innerHTML = '';
+  res.dataset.hasResults = '';
 
   try {
     const resp = await fetch(apiOrigin() + '/med-check', {
@@ -3940,23 +4119,9 @@ async function heroRunCheck() {
     const interactions = data.interactions || [];
     const nearMisses = data.near_misses || [];
 
-    let html = '';
+    let html = buildSeveritySummary(interactions, nearMisses);
 
-    if (!interactions.length) {
-      html += `<div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;
-                           padding:10px 12px;margin-bottom:8px;display:flex;gap:8px">
-        <span style="color:#166534;font-size:16px;flex-shrink:0">✅</span>
-        <div>
-          <div style="font-size:12px;font-weight:500;color:#166534;margin-bottom:2px">
-            No critical interactions found
-          </div>
-          <div style="font-size:11px;color:#166534;opacity:0.85;line-height:1.5">
-            Nothing matched our ${data.rules_checked||ELTHIO_INTERACTION_RULES}-rule database.
-            Confirm with your pharmacist.
-          </div>
-        </div>
-      </div>`;
-    } else {
+    if (interactions.length) {
       const order = ['critical','high','moderate','informational'];
       const sorted = [...interactions].sort((a,b) =>
         order.indexOf(a.severity) - order.indexOf(b.severity)
@@ -3992,45 +4157,16 @@ async function heroRunCheck() {
       });
     }
 
-    if (nearMisses.length) {
-      html += `<div style="background:var(--surface2);border-radius:6px;padding:10px 12px;margin-bottom:10px">
-        <div style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin-bottom:6px">
-          RELATED ENTRIES IN OUR DATABASE
-        </div>
-        ${nearMisses.map(m =>
-          `<div style="font-size:11px;color:var(--muted);padding:5px 0;
-                       border-bottom:1px solid var(--border);line-height:1.5">
-            ${escapeHtml(typeof m === 'string' ? m : (m.message || m.title || JSON.stringify(m)))}
-          </div>`
-        ).join('')}
-      </div>`;
-    }
+    html += renderNearMisses(nearMisses);
 
-    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
-                         gap:6px;margin-top:10px">
-      ${[
-        {icon:'ti-clock',    label:'Timing schedule', sub:'When to take each', tab:'coach'},
-        {icon:'ti-shopping-cart', label:'Find best value', sub:'iHerb + Life Ext.', tab:'agent'},
-        {icon:'ti-shopping-bag',  label:'Basket compare', sub:'Cheapest retailer', tab:'agent'},
-        {icon:'ti-file-text', label:'Visit Packet', sub:'For your doctor', tab:'visitpacket'},
-      ].map(b=>`<button onclick="heroGoTo('${b.tab}')"
-        style="background:white;border:1px solid var(--border);border-radius:6px;
-               padding:10px;text-align:left;cursor:pointer;font-family:'DM Mono',monospace;
-               transition:border-color 0.12s" onmouseover="this.style.borderColor='var(--gold)'"
-               onmouseout="this.style.borderColor='var(--border)'">
-        <i class="ti ${b.icon}" aria-hidden="true"
-           style="font-size:16px;color:var(--muted);display:block;margin-bottom:5px"></i>
-        <div style="font-size:11px;font-weight:500;color:var(--text)">${b.label}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px">${b.sub}</div>
-      </button>`).join('')}
-    </div>
-    <p style="font-size:10px;color:#9B9488;margin-top:10px;line-height:1.6;
+    html += `<p style="font-size:10px;color:#9B9488;margin-top:10px;line-height:1.6;
               padding:8px 10px;background:var(--surface2);border-radius:5px">
       Educational only — not medical advice.
       Always follow your prescription label and consult your pharmacist.
     </p>`;
-    html += medCheckFlowCardsHtml();
+    html += buildNextStepsBar(interactions.length > 0);
     res.innerHTML = html;
+    res.dataset.hasResults = '1';
     showSaveStackCard();
     if (_heroMeds.length && typeof _coachMeds !== 'undefined') {
       _coachMeds = [..._heroMeds];
@@ -4050,9 +4186,12 @@ async function heroRunCheck() {
                                  border-radius:6px;padding:10px 12px;font-size:11px;color:var(--red)">
       Could not check — ${escapeHtml(String(e.message||e))}
     </div>`;
+    resetMedCheckEmptyState();
   } finally {
-    btn.disabled = false;
-    btn.innerHTML = '🛡 Check my stack — free';
+    if (checkBtn) {
+      checkBtn.disabled    = false;
+      checkBtn.textContent = '🛡 Check my stack — free';
+    }
   }
 }
 
@@ -4373,7 +4512,7 @@ function loadIframeEmbedded(opts) {
   if (errEl) { errEl.style.display = 'none'; errEl.innerHTML = ''; }
   if (wrap) wrap.style.display = 'block';
   frame.style.display = 'block';
-  if (loading) loading.style.display = 'block';
+  if (loading) loading.style.display = 'none';
 
   const proto = window.location && window.location.protocol;
   if (proto === 'file:') {
