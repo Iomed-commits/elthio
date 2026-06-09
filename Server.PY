@@ -1468,6 +1468,38 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": str(e)}, 500)
             return
 
+        if path == "/api/safety-score":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body   = json.loads(self.rfile.read(length).decode())
+                meds   = body.get("meds",  [])
+                supps  = body.get("supps", [])
+                email  = body.get("email", "").strip()
+
+                from med_check_engine import run_med_check
+                from safety_score import (
+                    score_from_med_check_result,
+                    save_score_to_supabase,
+                )
+
+                result = run_med_check(meds, supps, [])
+                score  = score_from_med_check_result(meds, supps, result)
+
+                if email:
+                    save_score_to_supabase(
+                        email,
+                        score["score"],
+                        score["band"]["label"],
+                        meds,
+                        supps,
+                    )
+
+                self._send_json(score)
+            except Exception as e:
+                log.error("safety-score error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
         self._send_json({"error": "Not found"}, 404)
 
 
