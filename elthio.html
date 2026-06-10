@@ -725,8 +725,8 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
   <div class="journey-step">💊 Save stack</div>
   <span class="journey-arrow">→</span>
   <div class="journey-step">🧾 Visit Packet</div>
-  <span class="journey-arrow">→</span>
-  <div class="journey-step">🛒 Basket compare</div>
+  <span class="journey-arrow" style="display:none">→</span>
+  <div class="journey-step" style="display:none">🛒 Basket compare</div>
 </div>
 
 <!-- NAV TABS -->
@@ -4069,6 +4069,7 @@ function renderAiMedCheckResult(data) {
   html += `<div style="font-size:10px;color:var(--muted);padding:8px 10px;background:var(--surface2);border-radius:5px;line-height:1.6">
     ${aiLabel} · ${data.rules_checked||ELTHIO_INTERACTION_RULES} rules checked · Sources: ${(data.sources||[]).join(' · ')}
   </div>`;
+  html += buildNextStepsBar(ixs.length > 0);
   return html;
 }
 
@@ -4340,7 +4341,7 @@ async function heroRunCheck() {
     resetMedCheckEmptyState();
   } finally {
     if (checkBtn) {
-      checkBtn.disabled    = false;
+      checkBtn.disabled    = !(_heroMeds.length && _heroSupps.length);
       checkBtn.textContent = '🛡 Check my stack — free';
     }
   }
