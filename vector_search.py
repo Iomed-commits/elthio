@@ -25,9 +25,20 @@ from typing import Any
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(message)s")
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent / ".env")
+except ImportError:
+    pass
+
+from supabase_client import normalize_supabase_url
+
 OPENAI_API_KEY       = os.environ.get("OPENAI_API_KEY", "")
-SUPABASE_URL         = os.environ.get("SUPABASE_URL", "")
-SUPABASE_KEY         = os.environ.get("SUPABASE_KEY", "")
+SUPABASE_URL         = normalize_supabase_url(os.environ.get("SUPABASE_URL", ""))
+SUPABASE_KEY         = (
+    os.environ.get("SUPABASE_KEY", "")
+    or os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+)
 EMBEDDING_MODEL      = "text-embedding-3-small"
 SIMILARITY_THRESHOLD = 0.65
 TOP_K                = 10
@@ -397,7 +408,7 @@ if __name__ == "__main__":
         from dotenv import load_dotenv
         load_dotenv(Path(__file__).parent / ".env")
         OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
-        SUPABASE_URL   = os.environ.get("SUPABASE_URL", "")
+        SUPABASE_URL   = normalize_supabase_url(os.environ.get("SUPABASE_URL", ""))
         SUPABASE_KEY   = (
             os.environ.get("SUPABASE_KEY", "")
             or os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
