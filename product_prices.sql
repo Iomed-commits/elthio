@@ -70,3 +70,10 @@ VALUES
   ('https://www.iherb.com/pr/now-foods-omega-3-180-epa-120-dha-200-softgels/571',
    'iherb', 'omega-3', 'scraped', '?rcode=ELTHIO')
 ON CONFLICT (url) DO NOTHING;
+
+-- RLS: backend-only (price_monitor.py uses service role)
+ALTER TABLE public.product_prices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.monitor_urls ENABLE ROW LEVEL SECURITY;
+
+REVOKE ALL ON public.product_prices FROM anon, authenticated;
+REVOKE ALL ON public.monitor_urls FROM anon, authenticated;

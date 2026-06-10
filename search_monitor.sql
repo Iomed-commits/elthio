@@ -151,3 +151,14 @@ VALUES
 ON CONFLICT (name) DO UPDATE SET
   notes = EXCLUDED.notes,
   affiliate_tag = EXCLUDED.affiliate_tag;
+
+-- RLS: price monitor tables are backend-only (price_monitor.py uses service role).
+-- Enables RLS to clear Supabase "RLS Disabled in Public" warnings.
+-- Service role bypasses RLS; anon/authenticated cannot read or write via PostgREST.
+ALTER TABLE public.retailers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.tracked_supplements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.product_prices ENABLE ROW LEVEL SECURITY;
+
+REVOKE ALL ON public.retailers FROM anon, authenticated;
+REVOKE ALL ON public.tracked_supplements FROM anon, authenticated;
+REVOKE ALL ON public.product_prices FROM anon, authenticated;
