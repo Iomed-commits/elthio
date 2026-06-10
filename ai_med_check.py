@@ -368,8 +368,20 @@ def ai_med_check(
             "ai_enhanced": True, "rules_checked": 0,
         }
 
-    # Check local 114-rule DB
-    result       = run_med_check(medications, supplements, [])
+    # Hybrid vector + keyword search
+    try:
+        from vector_search import hybrid_search
+        result = hybrid_search(medications, supplements)
+        result["supp_interactions"] = [
+            i for i in result.get("interactions", [])
+            if i.get("check_type") == "supplement_supplement"
+            or i.get("_rule_type") == "supplement_supplement"
+        ]
+        result["supp_synergies"] = result.get("synergies", [])
+    except Exception as e:
+        log.warning("Hybrid search unavailable, using keyword: %s", e)
+        from med_check_engine import run_med_check
+        result = run_med_check(medications, supplements, [])
     interactions = result.get("interactions", [])
     near_misses  = result.get("near_misses", [])
 

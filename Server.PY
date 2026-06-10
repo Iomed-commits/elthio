@@ -998,9 +998,44 @@ class ElthioHandler(BaseHTTPRequestHandler):
                     self._send_json({"error": "medications and supplements must be lists"}, 400)
                     return
 
-                from med_check_engine import run_med_check
+                from med_check_engine import run_med_check, _LEGACY_SEVERITY
+                from vector_search import hybrid_search
 
-                result = run_med_check(medications, supplements, ingredients)
+                base = run_med_check(medications, supplements, ingredients)
+                try:
+                    hybrid = hybrid_search(medications, supplements)
+                    interactions = hybrid.get("interactions", base["interactions"])
+                    findings = []
+                    for it in interactions:
+                        leg_sev = _LEGACY_SEVERITY.get(it.get("severity", "moderate"), "moderate")
+                        findings.append({
+                            **it,
+                            "severity": leg_sev,
+                            "action": it.get("instruction"),
+                            "icon": "🚫" if leg_sev == "severe" else "⚠️",
+                            "sources": [{"label": it.get("source")}] if it.get("source") else [],
+                        })
+                    synergies = hybrid.get("synergies", base.get("synergies", []))
+                    result = {
+                        **base,
+                        "interactions":     interactions,
+                        "near_misses":      hybrid.get("near_misses",      base["near_misses"]),
+                        "synergies":        synergies,
+                        "timing_conflicts": hybrid.get("timing_conflicts", base.get("timing_conflicts", [])),
+                        "rules_checked":    hybrid.get("rules_checked",    base["rules_checked"]),
+                        "findings":         findings,
+                        "retrieval_method": hybrid.get("retrieval_method", "keyword"),
+                        "semantic_matches": hybrid.get("semantic_matches", 0),
+                        "supp_interactions": [
+                            i for i in interactions
+                            if i.get("check_type") == "supplement_supplement"
+                            or i.get("_rule_type") == "supplement_supplement"
+                        ],
+                        "supp_synergies": synergies,
+                    }
+                except Exception as hybrid_err:
+                    log.warning("Hybrid search failed, keyword only: %s", hybrid_err)
+                    result = base
                 self._send_json(result)
             except Exception as e:
                 log.error("Med check error: %s", e)
