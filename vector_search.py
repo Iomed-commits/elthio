@@ -40,7 +40,7 @@ SUPABASE_KEY         = (
     or os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 )
 EMBEDDING_MODEL      = "text-embedding-3-small"
-SIMILARITY_THRESHOLD = 0.65
+SIMILARITY_THRESHOLD = 0.55
 TOP_K                = 10
 
 DRUG_SUPP_DB = Path(__file__).parent / "interactions_db.json"
@@ -344,7 +344,7 @@ def hybrid_search(
         seen_ids.add(rule_id)
 
         sev     = (rule.get("severity") or "informational").lower()
-        min_sim = 0.80 if sev in ("critical", "high") else 0.65
+        min_sim = 0.80 if sev in ("critical", "high") else SIMILARITY_THRESHOLD
 
         if similarity < min_sim:
             sem_near_misses.append({**rule, "_source": "semantic_low_conf"})
@@ -404,6 +404,12 @@ def get_status() -> dict:
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
+    import sys
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
     try:
         from dotenv import load_dotenv
         load_dotenv(Path(__file__).parent / ".env")
