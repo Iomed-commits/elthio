@@ -22,6 +22,7 @@ import shutil
 import sys
 import time
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -105,11 +106,55 @@ NIH_ODS_SUPPLEMENTS = {
     "schisandra":       "https://ods.od.nih.gov/factsheets/Schisandra-HealthProfessional/",
 }
 
+# NCCIH — herbs without NIH ODS HealthProfessional pages
+NCCIH_SUPPLEMENTS = {
+    "garlic":           "https://www.nccih.nih.gov/health/garlic",
+    "ginkgo":           "https://www.nccih.nih.gov/health/ginkgo",
+    "ginseng":          "https://www.nccih.nih.gov/health/asian-ginseng",
+    "st_johns_wort":    "https://www.nccih.nih.gov/health/st-johns-wort",
+    "turmeric":         "https://www.nccih.nih.gov/health/turmeric-and-curcumin",
+    "melatonin":        "https://www.nccih.nih.gov/health/melatonin-what-you-need-to-know",
+    "probiotics":       "https://www.nccih.nih.gov/health/probiotics-what-you-need-to-know",
+    "coq10":            "https://www.nccih.nih.gov/health/coenzyme-q10",
+    "echinacea":        "https://www.nccih.nih.gov/health/echinacea",
+    "valerian":         "https://www.nccih.nih.gov/health/valerian",
+    "kava":             "https://www.nccih.nih.gov/health/kava",
+    "milk_thistle":     "https://www.nccih.nih.gov/health/milk-thistle",
+    "cranberry":        "https://www.nccih.nih.gov/health/cranberry",
+    "evening_primrose": "https://www.nccih.nih.gov/health/evening-primrose-oil",
+    "fenugreek":        "https://www.nccih.nih.gov/health/fenugreek",
+    "ginger":           "https://www.nccih.nih.gov/health/ginger",
+    "glucosamine":      "https://www.nccih.nih.gov/health/glucosamine-and-chondroitin-for-osteoarthritis",
+    "licorice":         "https://www.nccih.nih.gov/health/licorice-root",
+    "peppermint":       "https://www.nccih.nih.gov/health/peppermint-oil",
+    "red_clover":       "https://www.nccih.nih.gov/health/red-clover",
+    "saw_palmetto":     "https://www.nccih.nih.gov/health/saw-palmetto",
+    "soy":              "https://www.nccih.nih.gov/health/soy",
+    "aloe_vera":        "https://www.nccih.nih.gov/health/aloe-vera",
+    "cats_claw":        "https://www.nccih.nih.gov/health/cats-claw",
+    "chamomile":        "https://www.nccih.nih.gov/health/chamomile",
+    "elderberry":       "https://www.nccih.nih.gov/health/elderberry",
+    "green_tea":        "https://www.nccih.nih.gov/health/green-tea",
+    "lavender":         "https://www.nccih.nih.gov/health/lavender",
+    "rhodiola":         "https://www.nccih.nih.gov/health/rhodiola",
+    "berberine":        "https://www.nccih.nih.gov/health/berberine",
+    "ashwagandha":      "https://www.nccih.nih.gov/health/ashwagandha",
+    "schisandra":       "https://www.nccih.nih.gov/health/schisandra",
+}
+
+NCCIH_HERB_DRUG_PAGE = (
+    "https://www.nccih.nih.gov/health/providers/digest/herb-drug-interactions-science"
+)
+
+NCCIH_SOURCE = (
+    "NCCIH (National Center for Complementary and Integrative Health)"
+)
+
 REQUEST_DELAY = 1.5
 
 
 def fetch_nih_factsheet(url: str) -> str:
-    """Fetch a NIH ODS fact sheet and extract interaction-related text."""
+    """Fetch NIH ODS or NCCIH page and extract interaction-related text."""
     try:
         req = urllib.request.Request(
             url,
@@ -128,36 +173,93 @@ def fetch_nih_factsheet(url: str) -> str:
                       flags=re.DOTALL | re.IGNORECASE)
 
         relevant_html = html
-        toc_match = re.search(
-            r'href="#(h\d+)"[^>]*>\s*Interactions with Medications',
-            html,
-            re.IGNORECASE,
-        )
-        if toc_match:
-            section_id = toc_match.group(1)
-            start = html.find(f'id="{section_id}"')
-            if start >= 0:
-                nxt = re.search(r'id="h\d+"', html[start + 20:])
-                end = start + 20 + nxt.start() if nxt else start + 20000
-                relevant_html = html[start:end]
+        if "nccih.nih.gov" in url:
+            sections: list[str] = []
+            for pattern in (
+                r"(?:herb-drug interactions.*?)(?=<h[23][^>]*>|$)",
+                r"(?:potential for herb-drug interactions.*?)(?=<h[23][^>]*>|$)",
+                r"(?:interactions with medications.*?)(?=<h[23][^>]*>|$)",
+                r"(?:interactions.*?(?:medications|drugs).*?)(?=<h[23][^>]*>|$)",
+            ):
+                for match in re.finditer(pattern, html, re.DOTALL | re.IGNORECASE):
+                    chunk = match.group(0)
+                    if len(chunk) > 80:
+                        sections.append(chunk)
+            if sections:
+                relevant_html = "\n".join(sections)
+            else:
+                main = re.search(r"<main[^>]*>(.*?)</main>", html, re.DOTALL | re.IGNORECASE)
+                relevant_html = main.group(1) if main else html
         else:
-            interactions_match = re.search(
-                r"(interactions with medications.*?)(?=<h[23]|$)",
+            toc_match = re.search(
+                r'href="#(h\d+)"[^>]*>\s*Interactions with Medications',
                 html,
-                re.DOTALL | re.IGNORECASE,
+                re.IGNORECASE,
             )
-            if interactions_match:
-                relevant_html = interactions_match.group(1)
+            if toc_match:
+                section_id = toc_match.group(1)
+                start = html.find(f'id="{section_id}"')
+                if start >= 0:
+                    nxt = re.search(r'id="h\d+"', html[start + 20:])
+                    end = start + 20 + nxt.start() if nxt else start + 20000
+                    relevant_html = html[start:end]
+            else:
+                interactions_match = re.search(
+                    r"(interactions with medications.*?)(?=<h[23]|$)",
+                    html,
+                    re.DOTALL | re.IGNORECASE,
+                )
+                if interactions_match:
+                    relevant_html = interactions_match.group(1)
 
         text = re.sub(r"<[^>]+>", " ", relevant_html)
         text = re.sub(r"\s+", " ", text).strip()
 
-        log.info("Fetched %s: %d chars", url.split("/")[-2], len(text))
+        label = url.rstrip("/").split("/")[-1] or url
+        log.info("Fetched %s: %d chars", label, len(text))
         return text[:12000]
 
     except Exception as e:
         log.warning("Fetch failed for %s: %s", url, e)
         return ""
+
+
+def fetch_all_parallel(
+    supplements: dict[str, str],
+    source_label: str = "NIH ODS",
+) -> dict[str, str]:
+    """Fetch all fact sheets in parallel."""
+    results: dict[str, str] = {}
+    if not supplements:
+        return results
+
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        futures = {
+            pool.submit(fetch_nih_factsheet, url): (name, url)
+            for name, url in supplements.items()
+        }
+        for future in as_completed(futures):
+            name, url = futures[future]
+            try:
+                text = future.result()
+                if text and len(text) > 200:
+                    results[name] = text
+                    log.info("[%s] %s: %d chars", source_label, name, len(text))
+                else:
+                    log.warning("[%s] %s: empty or too short", source_label, name)
+            except Exception as e:
+                log.warning("[%s] %s failed: %s", source_label, name, e)
+    return results
+
+
+def _filter_supplements(supplements: dict[str, str], supplement_filter: str | None) -> dict[str, str]:
+    if not supplement_filter:
+        return supplements
+    needle = supplement_filter.lower().replace(" ", "_")
+    return {
+        k: v for k, v in supplements.items()
+        if needle in k.lower() or supplement_filter.lower() in k.lower()
+    }
 
 
 def extract_interactions_from_text(
@@ -352,25 +454,19 @@ def expand_rules(
     supplement_filter: str | None = None,
     dry_run: bool = False,
 ) -> dict:
-    """Fetch NIH sheets, extract rules, dedupe, merge into interactions_db.json."""
+    """Fetch NIH/NCCIH sheets, extract rules, dedupe, merge into interactions_db.json."""
     existing_rules: list[dict] = []
     if INTERACTIONS_DB.exists():
         with open(INTERACTIONS_DB, encoding="utf-8") as f:
             existing_rules = json.load(f)
     log.info("Existing rules: %d", len(existing_rules))
 
-    supplements_to_process = NIH_ODS_SUPPLEMENTS
-    if supplement_filter:
-        supplements_to_process = {
-            k: v for k, v in NIH_ODS_SUPPLEMENTS.items()
-            if supplement_filter.lower().replace(" ", "_") in k.lower()
-            or supplement_filter.lower() in k.lower()
-        }
-        if not supplements_to_process:
-            log.warning("No supplement found matching '%s'", supplement_filter)
-            return {"error": f"No supplement matching '{supplement_filter}'"}
+    supplements_to_process = _filter_supplements(NIH_ODS_SUPPLEMENTS, supplement_filter)
+    nccih_to_process = _filter_supplements(NCCIH_SUPPLEMENTS, supplement_filter)
 
-    log.info("Processing %d supplements...", len(supplements_to_process))
+    if supplement_filter and not supplements_to_process and not nccih_to_process:
+        log.warning("No supplement found matching '%s'", supplement_filter)
+        return {"error": f"No supplement matching '{supplement_filter}'"}
 
     all_new_rules: list[dict] = []
     total_fetched = 0
@@ -378,42 +474,49 @@ def expand_rules(
     total_dupes = 0
     failed: list[str] = []
 
-    for supp_key, url in supplements_to_process.items():
-        supp_name = supp_key.replace("_", " ")
-        log.info("Processing: %s", supp_name)
+    log.info("Phase 1: Fetching %d NIH ODS fact sheets...", len(supplements_to_process))
+    ods_texts = fetch_all_parallel(supplements_to_process, "NIH ODS")
+    total_fetched += len(ods_texts)
 
-        text = fetch_nih_factsheet(url)
-        if not text:
-            log.warning("No content for %s — skipping", supp_name)
-            failed.append(supp_name)
-            time.sleep(REQUEST_DELAY)
-            continue
-        total_fetched += 1
+    log.info("Phase 2: Fetching %d NCCIH herb pages...", len(nccih_to_process))
+    nccih_texts = fetch_all_parallel(nccih_to_process, "NCCIH")
+    total_fetched += len(nccih_texts)
 
+    log.info("Phase 3: Fetching NCCIH herb-drug interactions digest...")
+    digest_text = ""
+    if not supplement_filter:
+        digest_text = fetch_nih_factsheet(NCCIH_HERB_DRUG_PAGE)
+        if digest_text and len(digest_text) > 200:
+            total_fetched += 1
+
+    all_texts = {**ods_texts, **nccih_texts}
+    if digest_text and len(digest_text) > 200:
+        all_texts["herb_drug_digest"] = digest_text
+
+    log.info("Extracting rules from %d pages with Claude...", len(all_texts))
+    for supp_name, text in all_texts.items():
+        display_name = supp_name.replace("_", " ")
         try:
-            raw_rules = extract_interactions_from_text(text, supp_name)
+            raw_rules = extract_interactions_from_text(text, display_name)
+            unique_count = 0
+            for rule in raw_rules:
+                if supp_name in nccih_texts or supp_name == "herb_drug_digest":
+                    rule["source"] = NCCIH_SOURCE
+                elthio = to_elthio_rule(rule, supp_name)
+                if is_duplicate(elthio, existing_rules + all_new_rules):
+                    total_dupes += 1
+                else:
+                    all_new_rules.append(elthio)
+                    unique_count += 1
+            total_extracted += len(raw_rules)
+            log.info(
+                "  %s: %d extracted, %d unique, %d dupes",
+                display_name, len(raw_rules), unique_count,
+                len(raw_rules) - unique_count,
+            )
         except Exception as e:
-            log.error("Extraction failed for %s: %s", supp_name, e)
-            failed.append(supp_name)
-            time.sleep(REQUEST_DELAY * 2)
-            continue
-
-        new_rules = [to_elthio_rule(r, supp_key) for r in raw_rules]
-        total_extracted += len(new_rules)
-
-        unique_rules = []
-        for rule in new_rules:
-            if is_duplicate(rule, existing_rules + all_new_rules):
-                total_dupes += 1
-            else:
-                unique_rules.append(rule)
-
-        all_new_rules.extend(unique_rules)
-        log.info(
-            "  %s: %d extracted, %d unique, %d dupes",
-            supp_name, len(new_rules), len(unique_rules),
-            len(new_rules) - len(unique_rules),
-        )
+            log.error("  %s extraction failed: %s", display_name, e)
+            failed.append(display_name)
 
         if not dry_run:
             with open(EXPANDED_DB, "w", encoding="utf-8") as f:
@@ -497,6 +600,7 @@ def get_status() -> dict:
         }
 
     status["nih_supplements_configured"] = len(NIH_ODS_SUPPLEMENTS)
+    status["nccih_supplements_configured"] = len(NCCIH_SUPPLEMENTS)
     status["target_rules"] = "400-600 after full extraction"
     return status
 
