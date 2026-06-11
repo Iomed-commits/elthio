@@ -1203,6 +1203,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 
 <!-- ══ TAB 5: MED CHECK ══ (iframe from Blob URL after fetch — separate DOM, no duplicate IDs vs main app) -->
 <div id="tab-medcheck" class="main" style="display:none">
+  <div id="returningUserGreeting" style="display:none;margin-bottom:12px"></div>
   <!-- AI Conversational Med Check -->
   <div class="card" style="margin-bottom:16px;border:1.5px solid var(--gold)">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -4094,10 +4095,11 @@ async function runAiMedCheck(opts) {
   res.innerHTML   = '<div style="font-size:12px;color:var(--muted);padding:8px 0">Resolving your query and checking interactions...</div>';
 
   try {
+    const email = localStorage.getItem('elthio_saved_email') || '';
     const resp = await fetch(apiOrigin() + '/api/ai-med-check', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ query }),
+      body:    JSON.stringify({ query, meds: [], supps: [], email }),
     });
     const data = await resp.json();
     if (data.error) throw new Error(data.error);
@@ -4142,6 +4144,13 @@ function renderAiMedCheckResult(data) {
         <div style="font-size:13px;font-weight:500;color:${color};margin-bottom:4px">⚠ ${lbl} — ${escapeHtml(ix.title||'')}</div>
         <div style="font-size:12px;color:${color};line-height:1.65;margin-bottom:8px">${escapeHtml(ix.ai_explanation||ix.detail||'')}</div>
         <div style="font-size:11px;color:${color};padding:6px 10px;background:rgba(255,255,255,0.6);border-radius:4px">${escapeHtml(ix.instruction||'')}</div>
+        ${(ix.severity === 'critical' || ix.severity === 'high') ? `
+          <button onclick="markResolved('${(ix.title||'').replace(/'/g,"\\'")}',this)"
+            style="margin-top:8px;font-size:10px;background:transparent;
+                   border:1px solid ${color};color:${color};padding:4px 10px;
+                   border-radius:4px;cursor:pointer;opacity:0.7">
+            ✓ Mark as resolved
+          </button>` : ''}
         ${buildInteractionCitation(ix, color)}
       </div>`;
     });
@@ -4408,6 +4417,13 @@ async function heroRunCheck() {
                       background:rgba(255,255,255,0.6);border-radius:5px;line-height:1.5">
             ${escapeHtml(item.instruction || '')}
           </div>
+          ${(item.severity === 'critical' || item.severity === 'high') ? `
+            <button onclick="markResolved('${(item.title||'').replace(/'/g,"\\'")}',this)"
+              style="margin-top:8px;font-size:10px;background:transparent;
+                     border:1px solid ${color};color:${color};padding:4px 10px;
+                     border-radius:4px;cursor:pointer;opacity:0.7">
+              ✓ Mark as resolved
+            </button>` : ''}
           ${item.monitor ? `<div style="font-size:10px;color:${color};margin-top:6px;opacity:0.75">
             Monitor: ${escapeHtml(item.monitor)}
           </div>` : ''}
@@ -4658,6 +4674,78 @@ function initSavedStackEmail() {
   if (el2) el2.value = saved;
 }
 
+async function loadReturningUserGreeting() {
+  const email = localStorage.getItem('elthio_saved_email');
+  if (!email) return;
+
+  try {
+    const resp = await fetch(
+      apiOrigin() + `/api/memory?email=${encodeURIComponent(email)}`
+    );
+    const data = await resp.json();
+    if (!data.session_count || data.session_count === 0) return;
+
+    const last     = data.sessions[0];
+    const score    = last.safety_score;
+    const critical = last.critical_count || 0;
+    const high     = last.high_count     || 0;
+
+    const greetDiv = document.getElementById('returningUserGreeting');
+    if (!greetDiv) return;
+
+    let msg   = '';
+    let color = 'var(--gold)';
+
+    if (critical > 0) {
+      msg   = `⚠️ Last check: ${critical} critical interaction(s) were flagged. Have you resolved them?`;
+      color = 'var(--red)';
+    } else if (high > 0) {
+      msg   = `Last check: ${high} high-severity interaction(s) were flagged. Worth reviewing.`;
+      color = '#EF9F27';
+    } else if (score >= 75) {
+      msg   = `Welcome back! Your last Safety Score was ${score}/100. Run a new check to update it.`;
+      color = '#1D9E75';
+    } else if (score) {
+      msg   = `Welcome back! Your last Safety Score was ${score}/100. Add your stack below to check again.`;
+    } else {
+      msg   = `Welcome back! You've checked ${data.session_count} time(s). Run a new check below.`;
+    }
+
+    greetDiv.style.display = 'block';
+    greetDiv.innerHTML = `
+      <div style="font-size:12px;color:${color};padding:10px 14px;
+           background:var(--surface);border:1px solid ${color};
+           border-radius:8px;line-height:1.6">
+        ${msg}
+      </div>`;
+  } catch(e) {
+    // Silently fail — greeting is non-critical
+  }
+}
+
+async function markResolved(title, btn) {
+  const email = localStorage.getItem('elthio_saved_email');
+  if (!email) {
+    alert('Save your stack with an email first to track resolved interactions.');
+    return;
+  }
+  try {
+    await fetch(apiOrigin() + '/api/memory/resolve', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, interaction_title: title }),
+    });
+    btn.textContent = '✓ Resolved';
+    btn.disabled    = true;
+    btn.style.opacity = '0.4';
+  } catch(e) {
+    console.error('Mark resolved failed:', e);
+  }
+}
+
+window.markResolved = markResolved;
+window.loadReturningUserGreeting = loadReturningUserGreeting;
+
 window.showSaveStackCard = showSaveStackCard;
 window.saveMyStack = saveMyStack;
 window.loadMyStack = loadMyStack;
@@ -4719,6 +4807,9 @@ function showTab(tab) {
       if (vw) vw.style.display = 'block';
       invalidateVisitPacketFrame();
       loadVisitPacket();
+    }
+    if (tab === 'medcheck') {
+      loadReturningUserGreeting();
     }
   } catch (e) {
     console.error('showTab', tab, e);
@@ -6059,6 +6150,7 @@ function initOnboarding() {
 setupElthioNav();
 setupMedcheckLegacyDetails();
 initSavedStackEmail();
+loadReturningUserGreeting();
 heroRenderTags();
 try {
   initChemistry();

@@ -647,6 +647,26 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": str(e)}, 500)
             return
 
+        if path.startswith("/api/memory"):
+            try:
+                qs    = parse_qs(urlparse(self.path).query)
+                email = (qs.get("email") or [""])[0].strip()
+                if not email:
+                    self._send_json({"error": "email required"}, 400)
+                    return
+                from memory import get_memory, build_memory_context
+                sessions = get_memory(email, limit=5)
+                context  = build_memory_context(email)
+                self._send_json({
+                    "sessions":        sessions,
+                    "context_summary": context,
+                    "session_count":   len(sessions),
+                })
+            except Exception as e:
+                log.error("memory GET error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
         if path.startswith("/api/faers"):
             try:
                 qs   = urlparse(self.path).query
@@ -1362,11 +1382,12 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 query  = str(data.get("query", "")).strip()
                 meds   = data.get("meds",  [])
                 supps  = data.get("supps", [])
+                email  = str(data.get("email", "")).strip()
                 if not query:
                     self._send_json({"error": "query is required"}, 400)
                     return
                 from ai_med_check import ai_med_check
-                result = ai_med_check(query, meds, supps)
+                result = ai_med_check(query, meds, supps, email=email)
                 self._send_json(result)
             except Exception as e:
                 log.error("AI Med Check error: %s", e)
@@ -1477,6 +1498,19 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 save_stack(email, meds, supps)
                 result = run_med_check(meds, supps, [])
                 record_check(email, meds, supps, result.get("interactions", []))
+                try:
+                    from memory import save_session
+                    from safety_score import score_from_med_check_result
+                    score_data = score_from_med_check_result(meds, supps, result)
+                    save_session(
+                        email            = email,
+                        medications      = meds,
+                        supplements      = supps,
+                        med_check_result = result,
+                        safety_score     = score_data.get("score"),
+                    )
+                except Exception as e:
+                    log.warning("Memory save error: %s", e)
                 self._send_json({
                     "saved": True,
                     "email": email,
@@ -1484,6 +1518,21 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 })
             except Exception as e:
                 log.error("save-stack error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
+        if path == "/api/memory/resolve":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body   = json.loads(self.rfile.read(length).decode())
+                from memory import mark_resolved
+                ok = mark_resolved(
+                    body.get("email", ""),
+                    body.get("interaction_title", ""),
+                )
+                self._send_json({"resolved": ok})
+            except Exception as e:
+                log.error("memory resolve error: %s", e)
                 self._send_json({"error": str(e)}, 500)
             return
 

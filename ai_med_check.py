@@ -345,6 +345,7 @@ def ai_med_check(
     query: str,
     explicit_meds:  list[str] | None = None,
     explicit_supps: list[str] | None = None,
+    email: str = "",
 ) -> dict[str, Any]:
     """
     Full AI Med Check pipeline.
@@ -355,6 +356,39 @@ def ai_med_check(
     intent      = resolve_intent(query)
     medications = list(dict.fromkeys((explicit_meds or []) + intent.get("medications", [])))
     supplements = list(dict.fromkeys((explicit_supps or []) + intent.get("supplements", [])))
+
+    memory_context = ""
+    stack_changes  = {}
+    try:
+        from memory import build_memory_context, detect_stack_changes
+        if email:
+            memory_context = build_memory_context(email)
+            stack_changes  = detect_stack_changes(email, medications, supplements)
+            log.info("Memory context loaded for %s (%d chars)",
+                     email, len(memory_context))
+    except Exception as e:
+        log.warning("Memory load failed: %s", e)
+
+    def _with_memory(prompt: str) -> str:
+        if memory_context:
+            prompt = (
+                f"RETURNING USER CONTEXT:\n{memory_context}\n\n"
+                f"CURRENT SESSION:\n{prompt}"
+            )
+        if stack_changes.get("has_changes"):
+            added_s   = stack_changes.get("added_supps",  [])
+            removed_s = stack_changes.get("removed_supps", [])
+            added_m   = stack_changes.get("added_meds",   [])
+            if added_s or added_m or removed_s:
+                change_note = "STACK CHANGES SINCE LAST VISIT: "
+                if added_m:
+                    change_note += f"New medications: {', '.join(added_m)}. "
+                if added_s:
+                    change_note += f"New supplements: {', '.join(added_s)}. "
+                if removed_s:
+                    change_note += f"Removed: {', '.join(removed_s)}. "
+                prompt = change_note + "\n\n" + prompt
+        return prompt
 
     if not medications and not supplements:
         return {
@@ -501,7 +535,10 @@ Never say definitely safe or definitely dangerous.
         expl = ix.get("instruction", "") or ix.get("detail", "")
         try:
             claude_calls += 1
-            expl = call_claude([{"role": "user", "content": prompt}], explain_system)
+            expl = call_claude(
+                [{"role": "user", "content": _with_memory(prompt)}],
+                explain_system,
+            )
             if len(expl.strip()) > len((ix.get("instruction") or "").strip()) + 30:
                 claude_ok += 1
         except Exception as e:
@@ -555,7 +592,10 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'.
         )
         try:
             claude_calls += 1
-            overall = call_claude([{"role": "user", "content": prompt}], match_system)
+            overall = call_claude(
+                [{"role": "user", "content": _with_memory(prompt)}],
+                match_system,
+            )
             claude_ok += 1
         except Exception as e:
             if not claude_error:
@@ -571,7 +611,7 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'.
     if faers_context:    sources.add("FDA FAERS (OpenFDA adverse events)")
     sources.add("Educational only — not medical advice. Consult your pharmacist.")
 
-    return {
+    out = {
         "query":                query,
         "intent":               intent,
         "resolved_medications": medications,
@@ -597,7 +637,27 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'.
         "timing_conflicts":     timing_conflicts,
         "supp_interactions":    result.get("supp_interactions", []),
         "supp_synergies":       result.get("supp_synergies", []),
+        "memory_context_used":  bool(memory_context),
+        "stack_changes":        stack_changes,
     }
+
+    if email:
+        try:
+            from memory import save_session
+            save_session(
+                email            = email,
+                medications      = medications,
+                supplements      = supplements,
+                med_check_result = {
+                    "interactions": interactions,
+                    "synergies":    synergies,
+                },
+                safety_score     = None,
+            )
+        except Exception as e:
+            log.warning("Session save failed: %s", e)
+
+    return out
 
 
 # ── Self-test ─────────────────────────────────────────────────────────────────
