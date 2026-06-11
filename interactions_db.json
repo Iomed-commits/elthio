@@ -5233,5 +5233,1326 @@
       "neurological",
       "drug class"
     ]
+  },
+  {
+    "id": "nih-garlic-anticoagulants-1",
+    "title": "Anticoagulants ↔ Garlic — increased bleeding risk",
+    "severity": "high",
+    "med_keywords": [
+      "anticoagulants"
+    ],
+    "supp_keywords": [
+      "garlic"
+    ],
+    "detail": "Taking garlic supplements may increase the risk of bleeding when combined with anticoagulants. Patients should inform their health care providers before using garlic supplements, especially before surgery.",
+    "instruction": "Talk with your health care provider before using garlic if you take anticoagulants. Make sure to inform all providers if you are taking garlic supplements.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Garlic may affect blood clotting mechanisms",
+    "evidence": "moderate",
+    "tags": [
+      "bleeding",
+      "anticoagulants",
+      "surgery",
+      "cardiovascular"
+    ]
+  },
+  {
+    "id": "nih-probiotics-chemotherapy-1",
+    "title": "Chemotherapy ↔ Probiotics — diarrhea management",
+    "severity": "informational",
+    "med_keywords": [
+      "chemotherapy"
+    ],
+    "supp_keywords": [
+      "probiotics"
+    ],
+    "detail": "Evidence for probiotics preventing or treating chemotherapy-induced diarrhea is inconclusive. A 2018 review of 12 studies found insufficient evidence to confirm benefit.",
+    "instruction": "Inform your oncologist if considering probiotics for chemotherapy-related diarrhea, as evidence of effectiveness is unclear.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Theoretical benefit through gut microbiome support during cancer treatment, but not established.",
+    "evidence": "low",
+    "tags": [
+      "chemotherapy",
+      "cancer treatment",
+      "diarrhea",
+      "inconclusive"
+    ]
+  },
+  {
+    "id": "nih-probiotics-radiotherapy-1",
+    "title": "Radiotherapy ↔ Probiotics — diarrhea management",
+    "severity": "informational",
+    "med_keywords": [
+      "radiotherapy"
+    ],
+    "supp_keywords": [
+      "probiotics"
+    ],
+    "detail": "Evidence for probiotics preventing or treating radiotherapy-induced diarrhea is inconclusive. A 2018 review found insufficient evidence to confirm benefit for this common side effect.",
+    "instruction": "Inform your oncologist if considering probiotics for radiation-related diarrhea, as evidence of effectiveness is unclear.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Theoretical benefit through gut microbiome support during cancer treatment, but not established.",
+    "evidence": "low",
+    "tags": [
+      "radiotherapy",
+      "cancer treatment",
+      "diarrhea",
+      "inconclusive"
+    ]
+  },
+  {
+    "id": "nih-niacin-rifater-1",
+    "title": "Rifater ↔ Niacin — depletes niacin levels",
+    "severity": "high",
+    "med_keywords": [
+      "rifater"
+    ],
+    "supp_keywords": [
+      "niacin"
+    ],
+    "detail": "Rifater (contains isoniazid and pyrazinamide) interrupts niacin production from tryptophan and interferes with niacin conversion to NAD. Can cause pellagra.",
+    "instruction": "Discuss niacin supplementation with your healthcare provider. Increased niacin intake may be needed to prevent deficiency during Rifater treatment.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Components compete with vitamin B6-dependent enzyme required for niacin production from tryptophan",
+    "evidence": "strong",
+    "tags": [
+      "tuberculosis",
+      "combination_drug",
+      "vitamin_depletion",
+      "pellagra_risk"
+    ]
+  },
+  {
+    "id": "nih-ashwagandha-diabetes-medications-1",
+    "title": "Diabetes Medications ↔ Ashwagandha",
+    "severity": "moderate",
+    "med_keywords": [
+      "diabetes medications"
+    ],
+    "supp_keywords": [
+      "ashwagandha"
+    ],
+    "detail": "Ashwagandha may interact with medications used to control blood sugar levels in diabetes, potentially affecting glucose control.",
+    "instruction": "Monitor blood sugar levels closely and consult your healthcare provider before combining ashwagandha with diabetes medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "May affect blood glucose regulation through unknown mechanisms.",
+    "evidence": "moderate",
+    "tags": [
+      "diabetes",
+      "blood sugar",
+      "endocrine"
+    ]
+  },
+  {
+    "id": "nih-ashwagandha-antihypertensives-2",
+    "title": "Blood Pressure Medications ↔ Ashwagandha",
+    "severity": "moderate",
+    "med_keywords": [
+      "antihypertensive medications"
+    ],
+    "supp_keywords": [
+      "ashwagandha"
+    ],
+    "detail": "Ashwagandha may interact with medications used to treat high blood pressure, potentially altering blood pressure control.",
+    "instruction": "Monitor blood pressure regularly and inform your doctor if taking ashwagandha with blood pressure medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "May affect cardiovascular function and blood pressure regulation.",
+    "evidence": "moderate",
+    "tags": [
+      "cardiovascular",
+      "blood pressure",
+      "hypertension"
+    ]
+  },
+  {
+    "id": "nih-ashwagandha-immunosuppressants-3",
+    "title": "Immunosuppressants ↔ Ashwagandha",
+    "severity": "high",
+    "med_keywords": [
+      "immunosuppressants"
+    ],
+    "supp_keywords": [
+      "ashwagandha"
+    ],
+    "detail": "Ashwagandha may interact with medications that decrease immune system response, potentially reducing their effectiveness or causing immune system complications.",
+    "instruction": "Avoid ashwagandha if taking immunosuppressant medications and consult your healthcare provider before use.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "May affect immune system function and response.",
+    "evidence": "moderate",
+    "tags": [
+      "immunology",
+      "transplant",
+      "autoimmune"
+    ]
+  },
+  {
+    "id": "nih-ashwagandha-anticonvulsants-5",
+    "title": "Anti-Seizure Medications ↔ Ashwagandha",
+    "severity": "moderate",
+    "med_keywords": [
+      "anticonvulsants"
+    ],
+    "supp_keywords": [
+      "ashwagandha"
+    ],
+    "detail": "Ashwagandha may interact with anti-seizure medications, potentially affecting seizure control or medication effectiveness.",
+    "instruction": "Consult your healthcare provider before using ashwagandha if taking anticonvulsant medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "May affect neurological pathways and seizure threshold.",
+    "evidence": "moderate",
+    "tags": [
+      "neurology",
+      "epilepsy",
+      "seizures"
+    ]
+  },
+  {
+    "id": "nih-ashwagandha-thyroid-hormones-6",
+    "title": "Thyroid Medications ↔ Ashwagandha",
+    "severity": "moderate",
+    "med_keywords": [
+      "thyroid hormone medications"
+    ],
+    "supp_keywords": [
+      "ashwagandha"
+    ],
+    "detail": "Ashwagandha may interact with thyroid hormone medications and is not recommended for people with thyroid disorders.",
+    "instruction": "Avoid ashwagandha if you have thyroid disorders or are taking thyroid hormone medications without consulting your doctor.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "May affect thyroid hormone levels and thyroid function.",
+    "evidence": "moderate",
+    "tags": [
+      "endocrine",
+      "thyroid",
+      "hormones"
+    ]
+  },
+  {
+    "id": "nih-valerian-alcohol-1",
+    "title": "Alcohol ↔ Valerian — Enhanced Sedation",
+    "severity": "high",
+    "med_keywords": [
+      "alcohol"
+    ],
+    "supp_keywords": [
+      "valerian"
+    ],
+    "detail": "Valerian might have a sleep-inducing effect and should not be taken with alcohol. Combined use may result in excessive sedation or central nervous system depression.",
+    "instruction": "Do not combine valerian with alcohol. Avoid alcohol consumption while taking valerian supplements.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Potential additive sedative effects on the central nervous system",
+    "evidence": "moderate",
+    "tags": [
+      "sedation",
+      "CNS depressant",
+      "alcohol",
+      "sleep"
+    ]
+  },
+  {
+    "id": "nih-valerian-sedatives-1",
+    "title": "Sedatives ↔ Valerian — Enhanced Sedation",
+    "severity": "high",
+    "med_keywords": [
+      "sedatives"
+    ],
+    "supp_keywords": [
+      "valerian"
+    ],
+    "detail": "Valerian might have a sleep-inducing effect and should not be taken with sedative medications. Combined use may cause excessive drowsiness or central nervous system depression.",
+    "instruction": "Do not combine valerian with sedative medications. Consult your healthcare provider before use if taking any sedatives.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Potential additive sedative effects on the central nervous system",
+    "evidence": "moderate",
+    "tags": [
+      "sedation",
+      "CNS depressant",
+      "sleep aids",
+      "anxiolytics"
+    ]
+  },
+  {
+    "id": "nih-st-johns-wort-life-saving-medicines-1",
+    "title": "Life-Saving Medicines ↔ St. John's Wort — Weakened Effects",
+    "severity": "critical",
+    "med_keywords": [
+      "life-saving medicines (unspecified)"
+    ],
+    "supp_keywords": [
+      "st. john's wort",
+      "st johns wort"
+    ],
+    "detail": "St. John's wort can weaken the effects of life-saving medicines, potentially leading to treatment failure or reduced therapeutic efficacy.",
+    "instruction": "Do not use St. John's wort with life-saving medications without consulting your healthcare provider. Inform all doctors about supplement use.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Not specified in text",
+    "evidence": "strong",
+    "tags": [
+      "drug-herb interaction",
+      "reduced efficacy",
+      "treatment failure"
+    ]
+  },
+  {
+    "id": "nih-st-johns-wort-general-medications-2",
+    "title": "Various Medications ↔ St. John's Wort — Dangerous Side Effects",
+    "severity": "critical",
+    "med_keywords": [
+      "various medications (unspecified)"
+    ],
+    "supp_keywords": [
+      "st. john's wort",
+      "st johns wort"
+    ],
+    "detail": "Interactions with St. John's wort can cause dangerous side effects when combined with various medications.",
+    "instruction": "Consult your healthcare provider before combining St. John's wort with any medications to avoid dangerous interactions.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Not specified in text",
+    "evidence": "strong",
+    "tags": [
+      "drug-herb interaction",
+      "adverse effects",
+      "safety concern"
+    ]
+  },
+  {
+    "id": "nih-ginseng-anticoagulants-1",
+    "title": "Ginseng ↔ Anticoagulants — Blood Clotting Risk",
+    "severity": "high",
+    "med_keywords": [
+      "anticoagulants"
+    ],
+    "supp_keywords": [
+      "ginseng"
+    ],
+    "detail": "Asian ginseng may interfere with blood clotting, potentially affecting the effectiveness or safety of anticoagulant medications.",
+    "instruction": "Consult your healthcare provider before using Asian ginseng if you take blood thinning medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Ginseng may affect blood clotting mechanisms",
+    "evidence": "moderate",
+    "tags": [
+      "anticoagulant",
+      "bleeding",
+      "blood clotting"
+    ]
+  },
+  {
+    "id": "nih-ginseng-diabetes-medications-1",
+    "title": "Ginseng ↔ Diabetes Medications — Blood Sugar",
+    "severity": "high",
+    "med_keywords": [
+      "diabetes medications"
+    ],
+    "supp_keywords": [
+      "ginseng"
+    ],
+    "detail": "Asian ginseng might lower blood sugar levels, which could enhance the effects of diabetes medications and increase risk of hypoglycemia.",
+    "instruction": "If you have diabetes, consult your healthcare provider before using Asian ginseng to monitor blood sugar levels appropriately.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Ginseng may lower blood glucose levels",
+    "evidence": "moderate",
+    "tags": [
+      "diabetes",
+      "blood sugar",
+      "hypoglycemia"
+    ]
+  },
+  {
+    "id": "nih-ginseng-immunosuppressants-1",
+    "title": "Ginseng ↔ Immunosuppressants — Autoimmune Risk",
+    "severity": "high",
+    "med_keywords": [
+      "immunosuppressants"
+    ],
+    "supp_keywords": [
+      "ginseng"
+    ],
+    "detail": "Asian ginseng may worsen autoimmune disorders, potentially counteracting immunosuppressive medications used to manage these conditions.",
+    "instruction": "Consult your healthcare provider before using ginseng if you have an autoimmune disorder or take immunosuppressive medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Ginseng may stimulate immune system activity",
+    "evidence": "moderate",
+    "tags": [
+      "autoimmune",
+      "immunosuppressant",
+      "immune system"
+    ]
+  },
+  {
+    "id": "nih-melatonin-antiepileptics-1",
+    "title": "Antiepileptics ↔ Melatonin — requires medical supervision",
+    "severity": "high",
+    "med_keywords": [
+      "antiepileptic medications"
+    ],
+    "supp_keywords": [
+      "melatonin"
+    ],
+    "detail": "People with epilepsy taking antiepileptic medications need to be under medical supervision when using melatonin supplements due to potential interaction risks.",
+    "instruction": "Consult your healthcare provider before using melatonin if you have epilepsy or take seizure medications. Use only under medical supervision.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism not specified in source text",
+    "evidence": "moderate",
+    "tags": [
+      "epilepsy",
+      "seizure",
+      "neurological",
+      "medical supervision required"
+    ]
+  },
+  {
+    "id": "nih-melatonin-anticoagulants-2",
+    "title": "Blood Thinners ↔ Melatonin — requires medical supervision",
+    "severity": "high",
+    "med_keywords": [
+      "blood thinner medications"
+    ],
+    "supp_keywords": [
+      "melatonin"
+    ],
+    "detail": "People taking blood thinner medications need to be under medical supervision when taking melatonin supplements due to potential interaction effects.",
+    "instruction": "Consult your healthcare provider and maintain medical supervision if you take blood thinners and want to use melatonin.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism not specified in source text",
+    "evidence": "moderate",
+    "tags": [
+      "anticoagulant",
+      "blood thinner",
+      "cardiovascular",
+      "medical supervision required"
+    ]
+  },
+  {
+    "id": "nih-echinacea-immunosuppressants-1",
+    "title": "Immunosuppressants ↔ Echinacea — potential immune stimulation",
+    "severity": "high",
+    "med_keywords": [
+      "immunosuppressants"
+    ],
+    "supp_keywords": [
+      "echinacea"
+    ],
+    "detail": "Echinacea may stimulate the immune system, which could theoretically counteract the effects of immunosuppressant medications used after organ transplants or for autoimmune conditions.",
+    "instruction": "Talk to your health care provider before using echinacea if you take immunosuppressant medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Echinacea may stimulate immune system activity, opposing immunosuppressant drug action.",
+    "evidence": "low",
+    "tags": [
+      "immunosuppressants",
+      "immune system",
+      "transplant",
+      "autoimmune"
+    ]
+  },
+  {
+    "id": "nih-echinacea-caffeine-1",
+    "title": "Caffeine ↔ Echinacea — possible interaction",
+    "severity": "informational",
+    "med_keywords": [
+      "caffeine"
+    ],
+    "supp_keywords": [
+      "echinacea"
+    ],
+    "detail": "There are theoretical reasons to suspect that echinacea might interact with caffeine, though the specific nature of the interaction is not detailed.",
+    "instruction": "Talk to your health care provider before using echinacea if you consume caffeine regularly or take caffeine-containing medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism not specified in the text.",
+    "evidence": "low",
+    "tags": [
+      "caffeine",
+      "stimulants"
+    ]
+  },
+  {
+    "id": "nih-echinacea-liver-metabolized-drugs-1",
+    "title": "Liver-Metabolized Drugs ↔ Echinacea — conflicting evidence",
+    "severity": "moderate",
+    "med_keywords": [
+      "drugs metabolized by the liver"
+    ],
+    "supp_keywords": [
+      "echinacea"
+    ],
+    "detail": "There is conflicting evidence about whether echinacea interacts with some drugs that are metabolized by the liver, potentially affecting drug levels or effectiveness.",
+    "instruction": "If you take any type of medicine, talk to your health care provider before using echinacea or other herbal products.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "May affect hepatic drug metabolism pathways.",
+    "evidence": "moderate",
+    "tags": [
+      "liver metabolism",
+      "cytochrome P450",
+      "drug metabolism"
+    ]
+  },
+  {
+    "id": "nih-coq10-insulin-1",
+    "title": "Insulin ↔ CoQ10 — potential blood sugar effects",
+    "severity": "moderate",
+    "med_keywords": [
+      "insulin"
+    ],
+    "supp_keywords": [
+      "coq10"
+    ],
+    "detail": "CoQ10 may interact with insulin, potentially affecting blood sugar control in diabetes patients.",
+    "instruction": "Monitor blood glucose levels closely if taking CoQ10 with insulin. Inform your healthcare provider of supplement use.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "CoQ10 may influence cellular energy metabolism affecting glucose regulation",
+    "evidence": "moderate",
+    "tags": [
+      "diabetes",
+      "insulin",
+      "blood sugar",
+      "glucose"
+    ]
+  },
+  {
+    "id": "nih-coq10-cancer-treatment-1",
+    "title": "Chemotherapy ↔ CoQ10 — compatibility concerns",
+    "severity": "moderate",
+    "med_keywords": [
+      "cancer chemotherapy drugs"
+    ],
+    "supp_keywords": [
+      "coq10"
+    ],
+    "detail": "CoQ10 may not be compatible with some types of cancer treatment, though it may reduce heart damage from certain chemotherapy drugs.",
+    "instruction": "Discuss CoQ10 use with your oncologist before starting supplementation during cancer treatment.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Potential interference with oxidative mechanisms of some chemotherapy agents",
+    "evidence": "moderate",
+    "tags": [
+      "cancer",
+      "chemotherapy",
+      "oncology",
+      "cardioprotection"
+    ]
+  },
+  {
+    "id": "nih-kava-alcohol-1",
+    "title": "Alcohol ↔ Kava — Dangerous Sedative and Liver Risk",
+    "severity": "critical",
+    "med_keywords": [
+      "alcohol"
+    ],
+    "supp_keywords": [
+      "kava"
+    ],
+    "detail": "Kava should not be used together with alcohol due to combined sedative effects. Consumption of kava together with alcohol has been suggested as a possible contributor to liver toxicity.",
+    "instruction": "Do not consume alcohol while using kava products. This combination increases risk of excessive sedation and potential liver injury.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Additive sedative effects and potentially increased hepatotoxicity risk",
+    "evidence": "moderate",
+    "tags": [
+      "sedative",
+      "cns-depressant",
+      "hepatotoxicity",
+      "contraindicated"
+    ]
+  },
+  {
+    "id": "nih-kava-sedatives-1",
+    "title": "Sedatives ↔ Kava — Excessive CNS Depression",
+    "severity": "critical",
+    "med_keywords": [
+      "sedative medications"
+    ],
+    "supp_keywords": [
+      "kava"
+    ],
+    "detail": "Kava should not be combined with any substances that have sedative effects. The interaction may cause dangerous levels of sedation and central nervous system depression.",
+    "instruction": "Avoid using kava with any sedative medications or substances. Talk with your healthcare provider before combining kava with any medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Additive central nervous system depressant effects",
+    "evidence": "strong",
+    "tags": [
+      "sedative",
+      "cns-depressant",
+      "contraindicated"
+    ]
+  },
+  {
+    "id": "nih-cranberry-warfarin-1",
+    "title": "Warfarin ↔ Cranberry — potential bleeding risk",
+    "severity": "high",
+    "med_keywords": [
+      "warfarin"
+    ],
+    "supp_keywords": [
+      "cranberry"
+    ],
+    "detail": "There is conflicting evidence about whether cranberry interacts with warfarin (blood thinner). The interaction nature and clinical significance remain unclear but warrant caution.",
+    "instruction": "Talk with your health care provider before using cranberry if you take warfarin or any other medicine, as some herbs and medicines interact in harmful ways.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "mechanism not specified in source text",
+    "evidence": "moderate",
+    "tags": [
+      "anticoagulant",
+      "blood thinner",
+      "cardiovascular",
+      "bleeding risk",
+      "warfarin"
+    ]
+  },
+  {
+    "id": "nih-cranberry-anticoagulants-1",
+    "title": "Anticoagulants ↔ Cranberry — interaction concern",
+    "severity": "high",
+    "med_keywords": [
+      "anticoagulants"
+    ],
+    "supp_keywords": [
+      "cranberry"
+    ],
+    "detail": "Cranberry may interact with anticoagulant medications (blood thinners). Evidence is conflicting but the potential for interaction requires medical consultation before use.",
+    "instruction": "Consult your health care provider before using cranberry if you take any anticoagulant or blood thinner medication.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "mechanism not specified in source text",
+    "evidence": "moderate",
+    "tags": [
+      "anticoagulant",
+      "blood thinner",
+      "cardiovascular",
+      "bleeding risk"
+    ]
+  },
+  {
+    "id": "nih-milkthistle-all-medications-1",
+    "title": "Medications ↔ Milk Thistle — potential interactions",
+    "severity": "moderate",
+    "med_keywords": [
+      "all medications"
+    ],
+    "supp_keywords": [
+      "milk thistle"
+    ],
+    "detail": "Some herbs and medicines interact in harmful ways. Health care provider consultation is recommended before combining milk thistle with any medication.",
+    "instruction": "Talk with your health care provider before using milk thistle if you take any type of medicine.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism not specified in text",
+    "evidence": "low",
+    "tags": [
+      "general precaution",
+      "medication interaction",
+      "consultation required"
+    ]
+  },
+  {
+    "id": "nih-fenugreek-diabetes-medications-1",
+    "title": "Diabetes Medications ↔ Fenugreek — blood sugar drop risk",
+    "severity": "high",
+    "med_keywords": [
+      "diabetes medications"
+    ],
+    "supp_keywords": [
+      "fenugreek"
+    ],
+    "detail": "Fenugreek may help lower blood sugar levels in people with type 2 diabetes. When combined with diabetes medications, large doses may cause a harmful drop in blood sugar (hypoglycemia).",
+    "instruction": "Talk with your health care provider before using fenugreek if you take diabetes medications. Monitor blood sugar levels closely and watch for signs of hypoglycemia.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Fenugreek has blood sugar-lowering effects that may add to the effects of diabetes medications",
+    "evidence": "moderate",
+    "tags": [
+      "diabetes",
+      "blood sugar",
+      "hypoglycemia",
+      "endocrine"
+    ]
+  },
+  {
+    "id": "nih-fenugreek-all-medications-1",
+    "title": "Prescription Medications ↔ Fenugreek — potential interactions",
+    "severity": "moderate",
+    "med_keywords": [
+      "any prescription medication"
+    ],
+    "supp_keywords": [
+      "fenugreek"
+    ],
+    "detail": "Some herbs and medicines interact in harmful ways. The NIH fact sheet specifically advises consulting healthcare providers before combining fenugreek with any type of medicine.",
+    "instruction": "Talk with your health care provider before using fenugreek or other herbal products if you take any type of medicine.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Specific interaction mechanisms vary by medication type",
+    "evidence": "low",
+    "tags": [
+      "general precaution",
+      "herb-drug interaction"
+    ]
+  },
+  {
+    "id": "nih-ginger-medications-1",
+    "title": "Medications ↔ Ginger — potential harmful interactions",
+    "severity": "moderate",
+    "med_keywords": [
+      "medications (general)"
+    ],
+    "supp_keywords": [
+      "ginger"
+    ],
+    "detail": "Ginger and some medications may interact in harmful ways. The specific interactions depend on the type of medication being taken.",
+    "instruction": "Talk with your health care provider before using ginger if you take any type of medicine. Discuss potential interactions specific to your medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism varies depending on the specific medication class",
+    "evidence": "moderate",
+    "tags": [
+      "general warning",
+      "medication interaction",
+      "consultation required"
+    ]
+  },
+  {
+    "id": "nih-licorice-corticosteroids-1",
+    "title": "Corticosteroids ↔ Licorice — reported interactions",
+    "severity": "high",
+    "med_keywords": [
+      "corticosteroids"
+    ],
+    "supp_keywords": [
+      "licorice"
+    ],
+    "detail": "Interactions between licorice and corticosteroids have been reported. The combination may affect corticosteroid activity or increase side effects.",
+    "instruction": "Talk with your health care provider before using licorice if you take corticosteroids, as some herbs and medicines interact in harmful ways.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism not specified in source text",
+    "evidence": "moderate",
+    "tags": [
+      "corticosteroids",
+      "hormonal",
+      "caution"
+    ]
+  },
+  {
+    "id": "nih-glucosamine-warfarin-1",
+    "title": "Warfarin ↔ Glucosamine — Increased Bleeding Risk",
+    "severity": "high",
+    "med_keywords": [
+      "warfarin"
+    ],
+    "supp_keywords": [
+      "glucosamine"
+    ],
+    "detail": "Glucosamine has been associated with an increased risk of bleeding in people taking the anticoagulant warfarin. This combination may enhance warfarin's blood-thinning effects.",
+    "instruction": "Consult your doctor before combining glucosamine with warfarin. Monitor for signs of unusual bleeding and consider more frequent INR testing.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Glucosamine may potentiate the anticoagulant effects of warfarin",
+    "evidence": "moderate",
+    "tags": [
+      "anticoagulant",
+      "bleeding risk",
+      "warfarin",
+      "blood thinner"
+    ]
+  },
+  {
+    "id": "nih-aloe-vera-digoxin-1",
+    "title": "Digoxin ↔ Aloe Vera — increased risk of adverse effects",
+    "severity": "high",
+    "med_keywords": [
+      "digoxin"
+    ],
+    "supp_keywords": [
+      "aloe vera"
+    ],
+    "detail": "Overuse of aloe latex may increase the risk of adverse effects from cardiac glycosides like digoxin, which are used for heart problems.",
+    "instruction": "Talk with your health care provider before using aloe vera if you take digoxin or similar heart medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Aloe latex overuse potentiates cardiac glycoside adverse effects through unspecified mechanisms",
+    "evidence": "moderate",
+    "tags": [
+      "cardiac",
+      "heart medication",
+      "cardiac glycosides",
+      "drug potentiation"
+    ]
+  },
+  {
+    "id": "nih-aloe-vera-cardiac-glycosides-2",
+    "title": "Cardiac Glycosides ↔ Aloe Vera — increased adverse effects",
+    "severity": "high",
+    "med_keywords": [
+      "cardiac glycosides"
+    ],
+    "supp_keywords": [
+      "aloe vera"
+    ],
+    "detail": "Overuse of aloe latex may increase the risk of adverse effects from cardiac glycosides, which are medications used to treat certain heart conditions.",
+    "instruction": "Consult your health care provider before using aloe if you take any cardiac glycoside medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Aloe latex overuse may potentiate the adverse effects of cardiac glycosides",
+    "evidence": "moderate",
+    "tags": [
+      "cardiac",
+      "heart medication",
+      "drug class interaction"
+    ]
+  },
+  {
+    "id": "nih-soy-maoi-1",
+    "title": "Soy (high tyramine) ↔ MAOIs — Hypertensive Crisis",
+    "severity": "critical",
+    "med_keywords": [
+      "monoamine oxidase inhibitors (maois)"
+    ],
+    "supp_keywords": [
+      "soy"
+    ],
+    "detail": "Certain soy products high in tyramine (tofu, soy sauce) can interact with MAOI antidepressants causing dangerously high blood pressure (hypertensive crisis).",
+    "instruction": "Do not consume high-tyramine soy products while taking MAOIs. Consult your healthcare provider immediately if currently using both.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Tyramine in soy products combined with MAOIs prevents tyramine breakdown, leading to dangerous blood pressure elevation.",
+    "evidence": "moderate",
+    "tags": [
+      "antidepressant",
+      "MAOI",
+      "tyramine",
+      "hypertensive crisis",
+      "blood pressure",
+      "tofu",
+      "soy sauce"
+    ]
+  },
+  {
+    "id": "nih-catsclaw-anticoagulant-1",
+    "title": "Anticoagulants ↔ Cat's Claw — increased bleeding risk",
+    "severity": "high",
+    "med_keywords": [
+      "anticoagulants"
+    ],
+    "supp_keywords": [
+      "cat's claw",
+      "cats claw"
+    ],
+    "detail": "Cat's claw may slow blood clotting, which could increase the risk of bleeding when combined with anticoagulant medications. This interaction is based on theoretical concerns about the herb's effects on blood clotting.",
+    "instruction": "Consult your healthcare provider before using cat's claw if you take anticoagulants. Stop cat's claw before scheduled surgery to avoid bleeding complications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Cat's claw may have anticoagulant properties that slow blood clotting",
+    "evidence": "low",
+    "tags": [
+      "bleeding",
+      "blood clotting",
+      "anticoagulant",
+      "surgery"
+    ]
+  },
+  {
+    "id": "nih-catsclaw-antiplatelet-1",
+    "title": "Antiplatelet Drugs ↔ Cat's Claw — increased bleeding risk",
+    "severity": "high",
+    "med_keywords": [
+      "antiplatelet agents"
+    ],
+    "supp_keywords": [
+      "cat's claw",
+      "cats claw"
+    ],
+    "detail": "Cat's claw may slow blood clotting, which could increase bleeding risk when combined with antiplatelet medications. There are theoretical concerns about this interaction based on the herb's potential effects.",
+    "instruction": "Talk with your healthcare provider before using cat's claw if you take antiplatelet medications. Discontinue use before any scheduled surgical procedures.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Cat's claw may affect platelet function and blood clotting mechanisms",
+    "evidence": "low",
+    "tags": [
+      "bleeding",
+      "platelets",
+      "antiplatelet",
+      "surgery"
+    ]
+  },
+  {
+    "id": "nih-catsclaw-bloodpressure-1",
+    "title": "Blood Pressure Drugs ↔ Cat's Claw — potential interaction",
+    "severity": "moderate",
+    "med_keywords": [
+      "antihypertensive medications"
+    ],
+    "supp_keywords": [
+      "cat's claw",
+      "cats claw"
+    ],
+    "detail": "There are theoretical reasons to suspect that cat's claw might interact with blood pressure medications. The nature and clinical significance of this interaction has not been well established.",
+    "instruction": "Consult your healthcare provider before using cat's claw if you take blood pressure medications. Monitor your blood pressure regularly if using both.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism of interaction with antihypertensive drugs is not specified",
+    "evidence": "low",
+    "tags": [
+      "blood pressure",
+      "antihypertensive",
+      "cardiovascular"
+    ]
+  },
+  {
+    "id": "nih-chamomile-warfarin-1",
+    "title": "Warfarin ↔ Chamomile — bleeding risk",
+    "severity": "high",
+    "med_keywords": [
+      "warfarin"
+    ],
+    "supp_keywords": [
+      "chamomile"
+    ],
+    "detail": "Interactions between chamomile and warfarin (a blood thinner) have been reported. This combination may affect blood clotting and increase bleeding risk.",
+    "instruction": "Talk with your health care provider before using chamomile if you take warfarin or other blood thinners.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Chamomile may interact with warfarin's anticoagulant effects",
+    "evidence": "moderate",
+    "tags": [
+      "anticoagulant",
+      "blood thinner",
+      "bleeding",
+      "cardiovascular"
+    ]
+  },
+  {
+    "id": "nih-chamomile-cyp450-2",
+    "title": "Liver-metabolized drugs ↔ Chamomile — altered metabolism",
+    "severity": "moderate",
+    "med_keywords": [
+      "drugs metabolized by the liver"
+    ],
+    "supp_keywords": [
+      "chamomile"
+    ],
+    "detail": "Interactions between chamomile and some drugs metabolized by the liver have been reported. Chamomile may affect how the liver processes certain medications.",
+    "instruction": "Consult your health care provider before using chamomile if you take medications metabolized by the liver.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Chamomile may interfere with hepatic drug metabolism",
+    "evidence": "moderate",
+    "tags": [
+      "liver metabolism",
+      "CYP450",
+      "drug metabolism"
+    ]
+  },
+  {
+    "id": "nih-chamomile-sedatives-3",
+    "title": "Sedatives ↔ Chamomile — increased sedation",
+    "severity": "moderate",
+    "med_keywords": [
+      "sedatives"
+    ],
+    "supp_keywords": [
+      "chamomile"
+    ],
+    "detail": "There are theoretical reasons to suspect that chamomile might interact with sedatives. The combination may cause excessive drowsiness or sedation.",
+    "instruction": "Talk with your health care provider before combining chamomile with sedative medications.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Chamomile has sedative properties that may be additive with sedative medications",
+    "evidence": "low",
+    "tags": [
+      "sedative",
+      "CNS depressant",
+      "drowsiness",
+      "sleep"
+    ]
+  },
+  {
+    "id": "nih-elderberry-medications-general-1",
+    "title": "Medications ↔ Elderberry — potential harmful interactions",
+    "severity": "moderate",
+    "med_keywords": [
+      "medications (general)"
+    ],
+    "supp_keywords": [
+      "elderberry"
+    ],
+    "detail": "Some herbs and medicines may interact in harmful ways when combined with elderberry. The specific nature of these interactions is not detailed in available research.",
+    "instruction": "Talk with your health care provider before using elderberry if you take any type of medicine to assess potential interactions.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism not specified in source text",
+    "evidence": "low",
+    "tags": [
+      "general warning",
+      "medication interaction",
+      "consult provider"
+    ]
+  },
+  {
+    "id": "nih-green-tea-nadolol-1",
+    "title": "Nadolol ↔ Green Tea — Reduced Blood Pressure Control",
+    "severity": "high",
+    "med_keywords": [
+      "nadolol"
+    ],
+    "supp_keywords": [
+      "green tea"
+    ],
+    "detail": "Green tea at high doses reduces blood levels and effectiveness of nadolol, a beta-blocker used for high blood pressure and heart problems.",
+    "instruction": "Consult your doctor before using green tea supplements if taking nadolol. Monitor blood pressure closely and avoid high-dose green tea products.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Green tea at high doses reduces blood levels of nadolol, decreasing its therapeutic effectiveness.",
+    "evidence": "strong",
+    "tags": [
+      "cardiovascular",
+      "beta-blocker",
+      "blood-pressure",
+      "antihypertensive"
+    ]
+  },
+  {
+    "id": "nih-green-tea-atorvastatin-1",
+    "title": "Atorvastatin ↔ Green Tea — Reduced Cholesterol Control",
+    "severity": "high",
+    "med_keywords": [
+      "atorvastatin"
+    ],
+    "supp_keywords": [
+      "green tea"
+    ],
+    "detail": "Green tea extract can reduce blood levels of atorvastatin, a cholesterol-lowering statin medication, potentially decreasing its effectiveness.",
+    "instruction": "Talk with your healthcare provider before using green tea extract if taking atorvastatin. Your cholesterol levels may need closer monitoring.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Green tea extract reduces blood levels of atorvastatin, potentially decreasing its cholesterol-lowering effectiveness.",
+    "evidence": "strong",
+    "tags": [
+      "cardiovascular",
+      "statin",
+      "cholesterol",
+      "lipid-lowering"
+    ]
+  },
+  {
+    "id": "nih-green-tea-raloxifene-1",
+    "title": "Raloxifene ↔ Green Tea — Reduced Drug Absorption",
+    "severity": "high",
+    "med_keywords": [
+      "raloxifene"
+    ],
+    "supp_keywords": [
+      "green tea"
+    ],
+    "detail": "Co-consuming green tea with raloxifene decreases raloxifene systemic exposure, potentially reducing its effectiveness for treating osteoporosis.",
+    "instruction": "Avoid taking green tea with raloxifene. Consult your healthcare provider about proper timing or alternative approaches if you wish to use both.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Green tea decreases raloxifene systemic exposure when taken together.",
+    "evidence": "strong",
+    "tags": [
+      "bone-health",
+      "osteoporosis",
+      "selective-estrogen-receptor-modulator"
+    ]
+  },
+  {
+    "id": "nih-green-tea-medications-general-1",
+    "title": "Medications ↔ Green Tea — Potential Interactions",
+    "severity": "moderate",
+    "med_keywords": [
+      "medications (general)"
+    ],
+    "supp_keywords": [
+      "green tea"
+    ],
+    "detail": "Green tea may interact with other medicines beyond those specifically documented. Some herbs and medicines interact in harmful ways.",
+    "instruction": "Talk with your healthcare provider before using green tea supplements or extracts if you take any medications to assess potential interaction risks.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Interaction mechanisms vary depending on the specific medication involved.",
+    "evidence": "moderate",
+    "tags": [
+      "general-caution",
+      "polypharmacy",
+      "drug-interaction"
+    ]
+  },
+  {
+    "id": "nih-lavender-sedatives-1",
+    "title": "Sedatives ↔ Lavender — potential interaction concerns",
+    "severity": "moderate",
+    "med_keywords": [
+      "sedative drugs"
+    ],
+    "supp_keywords": [
+      "lavender"
+    ],
+    "detail": "There are theoretical reasons to suspect that lavender might interact with sedative drugs, which is especially important if you have an upcoming surgical procedure.",
+    "instruction": "Talk with your health care provider before using lavender if you take any sedative medications, particularly before surgery.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Lavender may have additive sedative effects when combined with sedative medications",
+    "evidence": "low",
+    "tags": [
+      "sedation",
+      "surgery",
+      "CNS depressants",
+      "theoretical"
+    ]
+  },
+  {
+    "id": "nih-lavender-sedative-herbs-2",
+    "title": "Sedative Herbs ↔ Lavender — potential interaction concerns",
+    "severity": "moderate",
+    "med_keywords": [
+      "sedative herbs"
+    ],
+    "supp_keywords": [
+      "lavender"
+    ],
+    "detail": "There are theoretical reasons to suspect that lavender might interact with sedative herbs, which is especially important if you have an upcoming surgical procedure.",
+    "instruction": "Talk with your health care provider before using lavender if you take any sedative herbal products, particularly before surgery.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Lavender may have additive sedative effects when combined with other sedative herbs",
+    "evidence": "low",
+    "tags": [
+      "sedation",
+      "surgery",
+      "herbal interactions",
+      "theoretical"
+    ]
+  },
+  {
+    "id": "nih-rhodiola-losartan-1",
+    "title": "Losartan ↔ Rhodiola — reported interactions",
+    "severity": "moderate",
+    "med_keywords": [
+      "losartan"
+    ],
+    "supp_keywords": [
+      "rhodiola"
+    ],
+    "detail": "Interactions between rhodiola and losartan have been reported, though specific effects are not detailed in available literature.",
+    "instruction": "Consult your healthcare provider before combining rhodiola with losartan. Monitor blood pressure closely if using both.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism of interaction not specified in source material.",
+    "evidence": "low",
+    "tags": [
+      "cardiovascular",
+      "blood pressure",
+      "antihypertensive"
+    ]
+  },
+  {
+    "id": "nih-cats-claw-anticoagulant-1",
+    "title": "Cat's Claw ↔ Anticoagulants — increased bleeding risk",
+    "severity": "high",
+    "med_keywords": [
+      "anticoagulant drugs"
+    ],
+    "supp_keywords": [
+      "cat's claw",
+      "herb drug digest"
+    ],
+    "detail": "Cat's claw may slow blood clotting, which could increase the risk of bleeding when combined with anticoagulant medications.",
+    "instruction": "Use caution when combining cat's claw with anticoagulants. Consult your healthcare provider and monitor for signs of bleeding.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Cat's claw may slow blood clotting processes",
+    "evidence": "low",
+    "tags": [
+      "bleeding",
+      "anticoagulant",
+      "blood clotting",
+      "surgery"
+    ]
+  },
+  {
+    "id": "nih-cats-claw-antiplatelet-2",
+    "title": "Cat's Claw ↔ Antiplatelet Drugs — increased bleeding risk",
+    "severity": "high",
+    "med_keywords": [
+      "antiplatelet drugs"
+    ],
+    "supp_keywords": [
+      "cat's claw",
+      "herb drug digest"
+    ],
+    "detail": "Cat's claw may slow blood clotting, which could increase the risk of bleeding when combined with antiplatelet medications.",
+    "instruction": "Use caution when combining cat's claw with antiplatelet drugs. Consult your healthcare provider and monitor for bleeding.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Cat's claw may slow blood clotting processes",
+    "evidence": "low",
+    "tags": [
+      "bleeding",
+      "antiplatelet",
+      "blood clotting"
+    ]
+  },
+  {
+    "id": "nih-cats-claw-antihypertensive-3",
+    "title": "Cat's Claw ↔ Antihypertensives — potential interaction",
+    "severity": "moderate",
+    "med_keywords": [
+      "antihypertensive drugs"
+    ],
+    "supp_keywords": [
+      "cat's claw",
+      "herb drug digest"
+    ],
+    "detail": "There are theoretical reasons to suspect that cat's claw might interact with antihypertensive drugs, potentially affecting blood pressure control.",
+    "instruction": "Monitor blood pressure closely if using cat's claw with antihypertensive medications. Consult your healthcare provider.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism not specified in source text",
+    "evidence": "low",
+    "tags": [
+      "blood pressure",
+      "antihypertensive",
+      "cardiovascular"
+    ]
+  },
+  {
+    "id": "nih-cats-claw-calcium-channel-blockers-4",
+    "title": "Cat's Claw ↔ Calcium Channel Blockers — potential interaction",
+    "severity": "moderate",
+    "med_keywords": [
+      "calcium channel blockers"
+    ],
+    "supp_keywords": [
+      "cat's claw",
+      "herb drug digest"
+    ],
+    "detail": "Cat's claw may interact with calcium channel blockers, potentially affecting their efficacy or safety.",
+    "instruction": "Inform your doctor if you're taking calcium channel blockers before using cat's claw. Monitor for changes in blood pressure control.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism not specified in source text",
+    "evidence": "low",
+    "tags": [
+      "calcium channel blocker",
+      "cardiovascular",
+      "blood pressure"
+    ]
+  },
+  {
+    "id": "nih-cats-claw-cyp3a4-5",
+    "title": "Cat's Claw ↔ CYP3A4 Substrates — potential interaction",
+    "severity": "moderate",
+    "med_keywords": [
+      "cytochrome p450 3a4 substrates"
+    ],
+    "supp_keywords": [
+      "cat's claw",
+      "herb drug digest"
+    ],
+    "detail": "Cat's claw may interact with drugs metabolized by cytochrome P450 3A4, potentially affecting drug levels and efficacy.",
+    "instruction": "Inform your healthcare provider about all medications before using cat's claw, especially those metabolized by CYP3A4.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "May affect CYP3A4 enzyme metabolism",
+    "evidence": "low",
+    "tags": [
+      "drug metabolism",
+      "CYP3A4",
+      "liver enzyme"
+    ]
+  },
+  {
+    "id": "nih-cats-claw-immunosuppressants-6",
+    "title": "Cat's Claw ↔ Immunosuppressants — reduced drug effectiveness",
+    "severity": "high",
+    "med_keywords": [
+      "immunosuppressants"
+    ],
+    "supp_keywords": [
+      "cat's claw",
+      "herb drug digest"
+    ],
+    "detail": "Cat's claw might make the immune system more active, which could counteract the effects of immunosuppressant medications.",
+    "instruction": "Avoid using cat's claw if taking immunosuppressants. Consult your healthcare provider before combining these treatments.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Cat's claw may increase immune system activity",
+    "evidence": "moderate",
+    "tags": [
+      "immunosuppressant",
+      "immune system",
+      "autoimmune"
+    ]
+  },
+  {
+    "id": "nih-chamomile-oral-contraceptives-1",
+    "title": "Chamomile ↔ Birth Control Pills — decreased effectiveness",
+    "severity": "moderate",
+    "med_keywords": [
+      "oral contraceptives"
+    ],
+    "supp_keywords": [
+      "chamomile",
+      "herb drug digest"
+    ],
+    "detail": "Preliminary studies suggest that taking chamomile along with oral contraceptives might decrease the effectiveness of birth control pills.",
+    "instruction": "Use additional contraceptive methods if taking chamomile with oral contraceptives. Consult your healthcare provider about alternatives.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Chamomile might have some of the same effects as estrogen",
+    "evidence": "moderate",
+    "tags": [
+      "contraception",
+      "birth control",
+      "hormonal",
+      "estrogen"
+    ]
+  },
+  {
+    "id": "nih-ginkgo-efavirenz-2",
+    "title": "Ginkgo Biloba ↔ Efavirenz — not recommended",
+    "severity": "critical",
+    "med_keywords": [
+      "efavirenz"
+    ],
+    "supp_keywords": [
+      "ginkgo biloba",
+      "herb drug digest"
+    ],
+    "detail": "Concomitant use of Ginkgo biloba preparations and efavirenz (a non-nucleoside reverse transcriptase inhibitor) is not recommended.",
+    "instruction": "Do not use ginkgo biloba if taking efavirenz. Discuss alternative supplements with your healthcare provider.",
+    "source": "NCCIH (National Center for Complementary and Integrative Health)",
+    "pair_type": "drug_supplement",
+    "mechanism": "Mechanism not specified in source text",
+    "evidence": "strong",
+    "tags": [
+      "efavirenz",
+      "HIV",
+      "NNRTI",
+      "antiretroviral",
+      "contraindicated"
+    ]
   }
 ]
