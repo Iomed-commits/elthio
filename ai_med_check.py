@@ -91,6 +91,408 @@ COMMON_SUPPLEMENT_PHRASES = [
     "melatonin", "valerian", "echinacea", "kava", "biotin", "selenium",
 ]
 
+# Known nutrient depletions and gaps caused by medications
+MEDICATION_GAPS: dict[str, Any] = {
+    "metformin": [
+        {
+            "nutrient":    "vitamin b12",
+            "reason":      "Metformin reduces B12 absorption by blocking the calcium-dependent uptake mechanism in the terminal ileum.",
+            "severity":    "high",
+            "instruction": "Consider 1000mcg methylcobalamin B12 daily. Get B12 levels checked annually if on metformin long-term.",
+            "source":      "New England Journal of Medicine",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "folate",
+            "reason":      "Metformin can modestly reduce folate levels over time.",
+            "severity":    "moderate",
+            "instruction": "Ensure adequate folate intake through diet or a B-complex supplement.",
+            "source":      "Diabetes Care",
+            "evidence":    "moderate",
+        },
+    ],
+    "atorvastatin": [
+        {
+            "nutrient":    "coq10",
+            "reason":      "Statins block the mevalonate pathway which is required for both cholesterol AND CoQ10 synthesis. All statins deplete CoQ10.",
+            "severity":    "high",
+            "instruction": "Take 100-200mg CoQ10 daily (ubiquinol form for better absorption). Especially important if experiencing muscle weakness.",
+            "source":      "Biofactors Journal",
+            "evidence":    "strong",
+        },
+    ],
+    "simvastatin": [
+        {
+            "nutrient":    "coq10",
+            "reason":      "Statins block the mevalonate pathway which is required for both cholesterol AND CoQ10 synthesis.",
+            "severity":    "high",
+            "instruction": "Take 100-200mg CoQ10 daily (ubiquinol form for better absorption).",
+            "source":      "Biofactors Journal",
+            "evidence":    "strong",
+        },
+    ],
+    "rosuvastatin": [
+        {
+            "nutrient":    "coq10",
+            "reason":      "Statins block CoQ10 synthesis via the mevalonate pathway.",
+            "severity":    "high",
+            "instruction": "Take 100-200mg CoQ10 daily.",
+            "source":      "Biofactors Journal",
+            "evidence":    "strong",
+        },
+    ],
+    "lovastatin": [
+        {
+            "nutrient":    "coq10",
+            "reason":      "Statins block CoQ10 synthesis via the mevalonate pathway.",
+            "severity":    "high",
+            "instruction": "Take 100-200mg CoQ10 daily.",
+            "source":      "Biofactors Journal",
+            "evidence":    "strong",
+        },
+    ],
+    "omeprazole": [
+        {
+            "nutrient":    "magnesium",
+            "reason":      "Long-term PPI use reduces magnesium absorption. Hypomagnesemia is an FDA-recognized risk of PPIs.",
+            "severity":    "high",
+            "instruction": "Take magnesium glycinate 200-400mg daily if on PPIs long-term. Get magnesium levels checked after 1 year of PPI use.",
+            "source":      "FDA Drug Safety Communication",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "vitamin b12",
+            "reason":      "PPIs reduce stomach acid which is required to absorb B12 from food.",
+            "severity":    "moderate",
+            "instruction": "Consider sublingual or methylcobalamin B12 which bypasses the need for stomach acid.",
+            "source":      "Journal of the American Medical Association",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "calcium",
+            "reason":      "PPIs reduce stomach acid needed to absorb calcium carbonate. Linked to increased fracture risk.",
+            "severity":    "moderate",
+            "instruction": "Use calcium citrate (not carbonate) which absorbs without stomach acid.",
+            "source":      "Archives of Internal Medicine",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "iron",
+            "reason":      "Stomach acid converts ferric iron to absorbable ferrous form. PPIs reduce this conversion.",
+            "severity":    "moderate",
+            "instruction": "Take iron with vitamin C to improve absorption. Consider iron levels if on PPIs long-term.",
+            "source":      "Alimentary Pharmacology & Therapeutics",
+            "evidence":    "moderate",
+        },
+    ],
+    "esomeprazole":  "omeprazole",
+    "pantoprazole":  "omeprazole",
+    "lansoprazole":  "omeprazole",
+    "levothyroxine": [
+        {
+            "nutrient":    "selenium",
+            "reason":      "Selenium is required to convert T4 to active T3 thyroid hormone. Deficiency reduces thyroid medication effectiveness.",
+            "severity":    "moderate",
+            "instruction": "Ensure adequate selenium (55-200mcg/day). Brazil nuts (1-2/day) or a selenium supplement.",
+            "source":      "Journal of Clinical Endocrinology",
+            "evidence":    "moderate",
+        },
+        {
+            "nutrient":    "zinc",
+            "reason":      "Zinc is required for thyroid hormone synthesis and receptor activity.",
+            "severity":    "moderate",
+            "instruction": "Ensure adequate zinc (8-11mg/day). Zinc picolinate or citrate are well absorbed.",
+            "source":      "Biological Trace Element Research",
+            "evidence":    "moderate",
+        },
+    ],
+    "furosemide": [
+        {
+            "nutrient":    "magnesium",
+            "reason":      "Loop diuretics cause significant urinary magnesium wasting. Hypomagnesemia is common in patients on furosemide.",
+            "severity":    "high",
+            "instruction": "Magnesium supplementation (300-400mg/day) is often recommended with loop diuretics. Discuss with your doctor.",
+            "source":      "American Journal of Medicine",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "potassium",
+            "reason":      "Furosemide causes significant potassium loss in urine.",
+            "severity":    "high",
+            "instruction": "Potassium levels should be monitored regularly. Dietary potassium and/or supplementation may be needed.",
+            "source":      "Journal of Clinical Pharmacology",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "zinc",
+            "reason":      "Loop diuretics increase urinary zinc excretion.",
+            "severity":    "moderate",
+            "instruction": "Consider zinc supplementation (15-30mg/day) if on furosemide long-term.",
+            "source":      "Nephron",
+            "evidence":    "moderate",
+        },
+    ],
+    "hydrochlorothiazide": [
+        {
+            "nutrient":    "magnesium",
+            "reason":      "Thiazide diuretics cause urinary magnesium wasting.",
+            "severity":    "moderate",
+            "instruction": "Magnesium glycinate 200-400mg/day may help replace losses.",
+            "source":      "Journal of Hypertension",
+            "evidence":    "moderate",
+        },
+        {
+            "nutrient":    "potassium",
+            "reason":      "Thiazide diuretics increase urinary potassium excretion.",
+            "severity":    "moderate",
+            "instruction": "Monitor potassium levels. Dietary sources (bananas, avocado) or supplementation may be needed.",
+            "source":      "Hypertension",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "zinc",
+            "reason":      "Thiazide diuretics increase urinary zinc excretion.",
+            "severity":    "moderate",
+            "instruction": "Consider zinc supplementation if on thiazides long-term.",
+            "source":      "Nephron",
+            "evidence":    "moderate",
+        },
+    ],
+    "prednisone": [
+        {
+            "nutrient":    "calcium",
+            "reason":      "Long-term corticosteroid use reduces calcium absorption and increases urinary calcium loss, causing bone loss.",
+            "severity":    "high",
+            "instruction": "Calcium (1200mg/day) + Vitamin D3 (2000IU) is standard with long-term corticosteroids to prevent osteoporosis.",
+            "source":      "American College of Rheumatology",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "vitamin d3",
+            "reason":      "Corticosteroids reduce vitamin D activation and calcium absorption.",
+            "severity":    "high",
+            "instruction": "Vitamin D3 2000-4000 IU daily when on long-term corticosteroids.",
+            "source":      "American College of Rheumatology",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "magnesium",
+            "reason":      "Corticosteroids increase urinary magnesium excretion.",
+            "severity":    "moderate",
+            "instruction": "Magnesium 300-400mg/day to replace losses.",
+            "source":      "Steroids Journal",
+            "evidence":    "moderate",
+        },
+        {
+            "nutrient":    "zinc",
+            "reason":      "Corticosteroids increase zinc excretion and impair immune function.",
+            "severity":    "moderate",
+            "instruction": "Zinc 15-30mg/day to support immune function.",
+            "source":      "Journal of Nutritional Biochemistry",
+            "evidence":    "moderate",
+        },
+    ],
+    "prednisolone":  "prednisone",
+    "dexamethasone": "prednisone",
+    "sertraline": [
+        {
+            "nutrient":    "magnesium",
+            "reason":      "SSRIs can reduce magnesium levels. Magnesium also modulates serotonin receptors and has synergistic effects with antidepressants.",
+            "severity":    "moderate",
+            "instruction": "Magnesium glycinate 200-400mg at night supports mood and sleep. Discuss with prescriber.",
+            "source":      "Pharmacological Reports",
+            "evidence":    "moderate",
+        },
+    ],
+    "fluoxetine":    "sertraline",
+    "escitalopram":  "sertraline",
+    "paroxetine":    "sertraline",
+    "warfarin": [
+        {
+            "nutrient":    "vitamin d3",
+            "reason":      "Patients on warfarin are often vitamin D deficient. Vitamin D deficiency may also affect warfarin sensitivity.",
+            "severity":    "moderate",
+            "instruction": "Vitamin D3 supplementation is generally safe with warfarin at standard doses (1000-2000 IU). Monitor INR when starting.",
+            "source":      "Thrombosis Research",
+            "evidence":    "moderate",
+        },
+    ],
+    "methotrexate": [
+        {
+            "nutrient":    "folate",
+            "reason":      "Methotrexate is a folate antagonist — it works by blocking folate metabolism. Folate supplementation reduces side effects without reducing efficacy.",
+            "severity":    "high",
+            "instruction": "Folic acid 1-5mg/day is standard with methotrexate to prevent side effects. Take on days you don't take methotrexate.",
+            "source":      "Annals of the Rheumatic Diseases",
+            "evidence":    "strong",
+        },
+    ],
+    "lisinopril": [
+        {
+            "nutrient":    "zinc",
+            "reason":      "ACE inhibitors chelate zinc and increase urinary zinc excretion over time.",
+            "severity":    "moderate",
+            "instruction": "Consider zinc 15-30mg/day if on ACE inhibitors long-term.",
+            "source":      "Journal of the American College of Nutrition",
+            "evidence":    "moderate",
+        },
+    ],
+    "enalapril":  "lisinopril",
+    "ramipril":   "lisinopril",
+    "amlodipine": [
+        {
+            "nutrient":    "coq10",
+            "reason":      "Calcium channel blockers may reduce CoQ10 levels and CoQ10 may enhance their blood pressure lowering effects.",
+            "severity":    "moderate",
+            "instruction": "CoQ10 100mg/day may complement blood pressure management and offset potential depletion.",
+            "source":      "Molecular Aspects of Medicine",
+            "evidence":    "moderate",
+        },
+    ],
+    "phenytoin": [
+        {
+            "nutrient":    "vitamin d3",
+            "reason":      "Phenytoin induces liver enzymes that break down vitamin D, causing deficiency and bone loss.",
+            "severity":    "high",
+            "instruction": "Vitamin D3 2000-4000 IU daily. Bone density monitoring recommended with long-term use.",
+            "source":      "Epilepsia",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "folate",
+            "reason":      "Phenytoin reduces folate absorption and increases folate metabolism.",
+            "severity":    "high",
+            "instruction": "Folate supplementation (1mg/day) with phenytoin. Note: high-dose folate may reduce phenytoin levels.",
+            "source":      "Neurology",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "calcium",
+            "reason":      "Phenytoin reduces calcium absorption by reducing vitamin D levels.",
+            "severity":    "moderate",
+            "instruction": "Calcium 1000-1200mg/day alongside vitamin D supplementation.",
+            "source":      "Epilepsia",
+            "evidence":    "moderate",
+        },
+    ],
+    "carbamazepine": [
+        {
+            "nutrient":    "vitamin d3",
+            "reason":      "Carbamazepine induces CYP enzymes that break down vitamin D.",
+            "severity":    "high",
+            "instruction": "Vitamin D3 2000-4000 IU daily. Monitor vitamin D levels.",
+            "source":      "Epilepsia",
+            "evidence":    "strong",
+        },
+        {
+            "nutrient":    "folate",
+            "reason":      "Carbamazepine reduces folate absorption.",
+            "severity":    "moderate",
+            "instruction": "Folate 1mg/day recommended with carbamazepine.",
+            "source":      "Neurology",
+            "evidence":    "moderate",
+        },
+    ],
+    "isoniazid": [
+        {
+            "nutrient":    "vitamin b6",
+            "reason":      "Isoniazid inhibits the enzyme that activates B6 (pyridoxal kinase), causing B6 deficiency and peripheral neuropathy.",
+            "severity":    "high",
+            "instruction": "Vitamin B6 (pyridoxine) 25-50mg/day is standard with isoniazid to prevent neuropathy.",
+            "source":      "American Thoracic Society",
+            "evidence":    "strong",
+        },
+    ],
+    "digoxin": [
+        {
+            "nutrient":    "magnesium",
+            "reason":      "Magnesium deficiency increases digoxin toxicity risk. Hypomagnesemia sensitizes the heart to digoxin.",
+            "severity":    "high",
+            "instruction": "Maintain adequate magnesium levels when on digoxin. Magnesium deficiency is dangerous with this medication.",
+            "source":      "American Journal of Cardiology",
+            "evidence":    "strong",
+        },
+    ],
+}
+
+DRUG_CLASS_GAPS = {
+    "statin":         ["coq10"],
+    "ppi":            ["magnesium", "vitamin b12", "calcium", "iron"],
+    "diuretic":       ["magnesium", "potassium", "zinc"],
+    "corticosteroid": ["calcium", "vitamin d3", "magnesium", "zinc"],
+    "ssri":           ["magnesium"],
+    "ace inhibitor":  ["zinc"],
+    "anticonvulsant": ["vitamin d3", "folate", "calcium"],
+}
+
+
+def detect_gaps(
+    medications: list[str],
+    supplements: list[str],
+) -> list[dict]:
+    """
+    Detect nutrients depleted by medications but missing from the supplement stack.
+    """
+    if not medications:
+        return []
+
+    supps_lower = [s.lower().strip() for s in supplements]
+    gaps        = []
+    seen        = set()
+
+    for med in medications:
+        med_lower = med.lower().strip()
+
+        gaps_for_med = MEDICATION_GAPS.get(med_lower)
+
+        if isinstance(gaps_for_med, str):
+            gaps_for_med = MEDICATION_GAPS.get(gaps_for_med, [])
+
+        if not gaps_for_med:
+            for known_drug in MEDICATION_GAPS:
+                if known_drug in med_lower or med_lower in known_drug:
+                    gaps_for_med = MEDICATION_GAPS[known_drug]
+                    if isinstance(gaps_for_med, str):
+                        gaps_for_med = MEDICATION_GAPS.get(gaps_for_med, [])
+                    break
+
+        if not gaps_for_med:
+            continue
+
+        for gap in gaps_for_med:
+            nutrient    = gap["nutrient"].lower()
+            gap_key     = f"{med_lower}:{nutrient}"
+
+            if gap_key in seen:
+                continue
+
+            nutrient_covered = False
+            nutrient_words   = set(nutrient.split())
+
+            for supp in supps_lower:
+                supp_words = set(supp.split())
+                overlap = nutrient_words & supp_words
+                if overlap and len(overlap) >= min(1, len(nutrient_words) - 1):
+                    nutrient_covered = True
+                    break
+                if nutrient in supp or any(w in supp for w in nutrient_words if len(w) > 3):
+                    nutrient_covered = True
+                    break
+
+            if not nutrient_covered:
+                seen.add(gap_key)
+                gaps.append({
+                    **gap,
+                    "medication": med,
+                    "gap_type":   "drug_depletion",
+                    "check_type": "gap_detection",
+                })
+
+    severity_order = {"high": 0, "moderate": 1, "low": 2}
+    gaps.sort(key=lambda x: severity_order.get(x.get("severity", "low"), 2))
+
+    return gaps[:5]
+
 
 # ── HTTP helper ───────────────────────────────────────────────────────────────
 def _get_json(url: str, timeout: int = 6) -> Any:
@@ -400,6 +802,24 @@ def ai_med_check(
                 "'I take levothyroxine and want to start magnesium'."
             ),
             "ai_enhanced": True, "rules_checked": 0,
+            "gaps": [], "gap_count": 0,
+        }
+
+    if query.strip().lower() == "__gaps_only__":
+        gaps = detect_gaps(medications, supplements)
+        return {
+            "query":                query,
+            "intent":               intent,
+            "resolved_medications": medications,
+            "resolved_supplements": supplements,
+            "gaps":                 gaps,
+            "gap_count":            len(gaps),
+            "interactions":         [],
+            "synergies":            [],
+            "near_misses":          [],
+            "explanation":          "",
+            "ai_enhanced":          False,
+            "rules_checked":        0,
         }
 
     # Hybrid vector + keyword search
@@ -507,6 +927,31 @@ def ai_med_check(
             )
         ctx += "\n" + tim_text
 
+    gaps = []
+    try:
+        gaps = detect_gaps(medications, supplements)
+        if gaps:
+            gap_text = "NUTRIENT GAPS DETECTED (medications depleting nutrients not in stack):\n"
+            for g in gaps:
+                gap_text += (
+                    f"- {g['medication']} depletes {g['nutrient']}: "
+                    f"{g['reason'][:100]}. "
+                    f"Instruction: {g['instruction'][:100]}\n"
+                )
+            ctx += "\n" + gap_text
+            log.info("Gap detection: %d gaps found", len(gaps))
+    except Exception as e:
+        log.warning("Gap detection error: %s", e)
+
+    gap_prompt_lines = (
+        "- If nutrient gaps are provided, mention the most important one naturally\n"
+        "- Frame gaps as helpful insights not warnings: 'You might want to consider...'\n"
+        "- Only mention gaps if they are HIGH severity or there are 2+ moderate ones\n"
+        "- Never list more than 2 gap suggestions in one response\n"
+        "- Gap suggestions should feel like a knowledgeable friend noticing something\n"
+        "  not a clinical recommendation\n"
+    )
+
     # Enhance each interaction with Claude explanation
     explain_system = """You are a pharmacist assistant for Elthio.
 Explain drug-supplement interactions clearly. 2-3 short paragraphs.
@@ -514,7 +959,8 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'.
 Never say definitely safe or definitely dangerous.
 - If synergies are present, mention them positively — these are good combinations
 - If timing conflicts exist, clearly state what needs to be separated and by how long
-- Distinguish between drug-supplement interactions (safety) and supplement-supplement interactions (optimization)"""
+- Distinguish between drug-supplement interactions (safety) and supplement-supplement interactions (optimization)
+""" + gap_prompt_lines
 
     enhanced = []
     claude_calls = 0
@@ -550,13 +996,15 @@ Never say definitely safe or definitely dangerous.
     # Overall explanation
     no_match_system = """Pharmacist assistant for Elthio.
 Combination not in our database. Use FDA/PubChem data provided.
-2 short paragraphs. Never invent interactions. Recommend pharmacist consultation."""
+2 short paragraphs. Never invent interactions. Recommend pharmacist consultation.
+""" + gap_prompt_lines
     match_system = """Pharmacist assistant for Elthio.
 Summarize the interaction findings for the user in 2 short paragraphs.
 Plain English. Always end with 'discuss with your pharmacist or doctor'.
 - If synergies are present, mention them positively — these are good combinations
 - If timing conflicts exist, clearly state what needs to be separated and by how long
-- Distinguish between drug-supplement interactions (safety) and supplement-supplement interactions (optimization)"""
+- Distinguish between drug-supplement interactions (safety) and supplement-supplement interactions (optimization)
+""" + gap_prompt_lines
 
     if not interactions:
         prompt = (
@@ -570,7 +1018,10 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'.
         )
         try:
             claude_calls += 1
-            overall = call_claude([{"role": "user", "content": prompt}], no_match_system)
+            overall = call_claude(
+                [{"role": "user", "content": _with_memory(prompt)}],
+                no_match_system,
+            )
             claude_ok += 1
         except Exception as e:
             if not claude_error:
@@ -639,6 +1090,8 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'.
         "supp_synergies":       result.get("supp_synergies", []),
         "memory_context_used":  bool(memory_context),
         "stack_changes":        stack_changes,
+        "gaps":                 gaps,
+        "gap_count":            len(gaps),
     }
 
     if email:

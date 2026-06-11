@@ -3969,6 +3969,46 @@ function renderSynergies(synergies) {
   </div>`;
 }
 
+function renderGaps(gaps) {
+  if (!gaps || !gaps.length) return '';
+
+  const highGaps = gaps.filter(g => g.severity === 'high');
+  const modGaps  = gaps.filter(g => g.severity === 'moderate');
+
+  if (!highGaps.length && modGaps.length < 2) return '';
+
+  const displayGaps = [...highGaps, ...modGaps].slice(0, 2);
+
+  return `
+  <div style="background:#1e1a2e;border:1px solid #6366f1;
+    border-radius:8px;padding:12px 14px;margin-bottom:8px">
+    <div style="font-size:11px;font-weight:600;color:#818cf8;
+         letter-spacing:0.08em;margin-bottom:8px">
+      💡 CONSIDER ADDING — YOUR MEDICATIONS DEPLETE THESE
+    </div>
+    ${displayGaps.map(g => `
+      <div style="padding:8px 0;border-bottom:1px solid rgba(99,102,241,0.2);
+           font-size:12px">
+        <div style="font-weight:500;color:#a5b4fc;margin-bottom:3px">
+          ${escapeHtml(g.medication || '')} → needs ${escapeHtml(g.nutrient || '')}
+        </div>
+        <div style="color:#818cf8;line-height:1.5;margin-bottom:4px">
+          ${escapeHtml((g.reason || '').slice(0, 120))}${(g.reason || '').length > 120 ? '…' : ''}
+        </div>
+        <div style="font-size:11px;color:#a5b4fc;padding:4px 8px;
+             background:rgba(99,102,241,0.1);border-radius:4px">
+          💊 ${escapeHtml((g.instruction || '').slice(0, 120))}${(g.instruction || '').length > 120 ? '…' : ''}
+        </div>
+        ${g.source ? `<div style="font-size:10px;color:#6366f1;
+          margin-top:4px;opacity:0.8">📚 ${escapeHtml(g.source)}</div>` : ''}
+      </div>`).join('')}
+    <div style="font-size:10px;color:#6366f1;margin-top:6px;opacity:0.7">
+      These are common nutrient depletions associated with your medications.
+      Discuss with your pharmacist before adding new supplements.
+    </div>
+  </div>`;
+}
+
 function renderTimingConflicts(conflicts) {
   if (!conflicts || !conflicts.length) return '';
   return `
@@ -4122,7 +4162,7 @@ async function runAiMedCheck(opts) {
     const supps = data.resolved_supplements  || [];
     const email = localStorage.getItem('elthio_saved_email') || '';
     const scoreData = await fetchSafetyScoreData(meds, supps, email);
-    storeResultForSharing(data, scoreData);
+    storeResultForSharing({ ...data, gaps: data.gaps || [] }, scoreData);
   } catch(e) {
     res.innerHTML = `<div style="background:var(--red-light);border:1px solid var(--red);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--red)">Error: ${String(e.message||e)}</div>`;
   } finally {
@@ -4177,6 +4217,7 @@ function renderAiMedCheckResult(data) {
 
   html += renderSynergies(data.synergies || []);
   html += renderTimingConflicts(data.timing_conflicts || []);
+  html += renderGaps(data.gaps || []);
 
   html += renderNearMisses(near);
 
@@ -4408,8 +4449,21 @@ async function heroRunCheck() {
     const interactions = data.interactions || [];
     const nearMisses = data.near_misses || [];
 
-    const email       = localStorage.getItem('elthio_saved_email') || '';
-    const { html: scoreWidget, scoreData } = await fetchAndRenderSafetyScore(_heroMeds, _heroSupps, email);
+    const email = localStorage.getItem('elthio_saved_email') || '';
+    const [scoreResult, gapResult] = await Promise.all([
+      fetchAndRenderSafetyScore(_heroMeds, _heroSupps, email),
+      fetch(apiOrigin() + '/api/ai-med-check', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          query: '__gaps_only__',
+          meds:  _heroMeds,
+          supps: _heroSupps,
+        }),
+      }).then(r => r.json()).catch(() => ({})),
+    ]);
+    const { html: scoreWidget, scoreData } = scoreResult;
+    const gaps = gapResult.gaps || [];
     let html = scoreWidget + buildSeveritySummary(interactions, nearMisses);
 
     if (interactions.length) {
@@ -4453,6 +4507,7 @@ async function heroRunCheck() {
 
     html += renderSynergies(data.synergies || []);
     html += renderTimingConflicts(data.timing_conflicts || []);
+    html += renderGaps(gaps);
 
     html += renderNearMisses(nearMisses);
 
@@ -4460,7 +4515,7 @@ async function heroRunCheck() {
     html += buildNextStepsBar(interactions.length > 0);
     res.innerHTML = html;
     res.dataset.hasResults = '1';
-    storeResultForSharing(data, scoreData);
+    storeResultForSharing({ ...data, gaps }, scoreData);
     showSaveStackCard();
     if (_heroMeds.length && typeof _coachMeds !== 'undefined') {
       _coachMeds = [..._heroMeds];
