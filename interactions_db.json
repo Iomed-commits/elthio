@@ -5209,5 +5209,29 @@
       "sedation",
       "central-nervous-system"
     ]
+  },
+  {
+    "id": "nih-biotin-anticonvulsants-1",
+    "title": "Anticonvulsants ↔ Biotin — reduces biotin levels",
+    "severity": "moderate",
+    "med_keywords": [
+      "anticonvulsants"
+    ],
+    "supp_keywords": [
+      "biotin"
+    ],
+    "detail": "Long-term anticonvulsant treatment (1+ years) is associated with significantly lower serum biotin levels. These medications may increase biotin breakdown and inhibit intestinal biotin absorption.",
+    "instruction": "If taking anticonvulsants long-term, discuss biotin status with your healthcare provider. Biotin supplementation may be considered.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Anticonvulsant treatment increases biotin catabolism and inhibits intestinal biotin absorption",
+    "evidence": "strong",
+    "tags": [
+      "anticonvulsant",
+      "epilepsy",
+      "nutrient depletion",
+      "neurological",
+      "drug class"
+    ]
   }
 ]
