@@ -2955,5 +2955,2259 @@
     "instruction": "Take potassium only as directed by your clinician, who will monitor your levels. Do not start potassium supplements on your own.",
     "source": "FDA diuretic labeling / MedlinePlus",
     "monitor": "serum potassium"
+  },
+  {
+    "id": "nih-vitamin-d-orlistat-1",
+    "title": "Orlistat ↔ Vitamin D — Reduced Absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "orlistat"
+    ],
+    "supp_keywords": [
+      "vitamin d"
+    ],
+    "detail": "Orlistat, together with a reduced-fat diet, can reduce the absorption of vitamin D from food and supplements, leading to lower vitamin D levels in the body.",
+    "instruction": "Monitor vitamin D levels if taking orlistat regularly. Consider vitamin D supplementation and discuss intake with your healthcare provider.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Orlistat blocks fat absorption, which impairs absorption of fat-soluble vitamin D.",
+    "evidence": "strong",
+    "tags": [
+      "weight-loss",
+      "fat-soluble",
+      "malabsorption",
+      "nutrient-depletion"
+    ]
+  },
+  {
+    "id": "nih-vitamin-d-statins-1",
+    "title": "Statins ↔ Vitamin D — Reduced Synthesis",
+    "severity": "moderate",
+    "med_keywords": [
+      "statins"
+    ],
+    "supp_keywords": [
+      "vitamin d"
+    ],
+    "detail": "Statin medications reduce cholesterol synthesis. Because vitamin D is derived from cholesterol, statins may also reduce vitamin D synthesis in the body.",
+    "instruction": "Monitor vitamin D levels when taking statins. Discuss vitamin D supplementation needs with your healthcare provider.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Statins reduce cholesterol synthesis, which is the precursor for endogenous vitamin D production.",
+    "evidence": "moderate",
+    "tags": [
+      "cholesterol",
+      "cardiovascular",
+      "synthesis-inhibition"
+    ]
+  },
+  {
+    "id": "nih-vitamin-d-atorvastatin-1",
+    "title": "Atorvastatin ↔ Vitamin D — Reduced Statin Potency",
+    "severity": "moderate",
+    "med_keywords": [
+      "atorvastatin"
+    ],
+    "supp_keywords": [
+      "vitamin d"
+    ],
+    "detail": "High intakes of vitamin D, especially from supplements, might reduce the effectiveness of atorvastatin because they compete for the same metabolizing enzyme.",
+    "instruction": "Avoid high-dose vitamin D supplements without medical supervision if taking atorvastatin. Discuss appropriate vitamin D dosing with your doctor.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Atorvastatin and vitamin D compete for the same metabolizing enzyme in the liver.",
+    "evidence": "moderate",
+    "tags": [
+      "cholesterol",
+      "cardiovascular",
+      "enzyme-competition",
+      "drug-efficacy"
+    ]
+  },
+  {
+    "id": "nih-vitamin-d-lovastatin-1",
+    "title": "Lovastatin ↔ Vitamin D — Reduced Statin Potency",
+    "severity": "moderate",
+    "med_keywords": [
+      "lovastatin"
+    ],
+    "supp_keywords": [
+      "vitamin d"
+    ],
+    "detail": "High intakes of vitamin D, especially from supplements, might reduce the effectiveness of lovastatin because they compete for the same metabolizing enzyme.",
+    "instruction": "Avoid high-dose vitamin D supplements without medical supervision if taking lovastatin. Discuss appropriate vitamin D dosing with your doctor.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Lovastatin and vitamin D compete for the same metabolizing enzyme in the liver.",
+    "evidence": "moderate",
+    "tags": [
+      "cholesterol",
+      "cardiovascular",
+      "enzyme-competition",
+      "drug-efficacy"
+    ]
+  },
+  {
+    "id": "nih-vitamin-d-simvastatin-1",
+    "title": "Simvastatin ↔ Vitamin D — Reduced Statin Potency",
+    "severity": "moderate",
+    "med_keywords": [
+      "simvastatin"
+    ],
+    "supp_keywords": [
+      "vitamin d"
+    ],
+    "detail": "High intakes of vitamin D, especially from supplements, might reduce the effectiveness of simvastatin because they compete for the same metabolizing enzyme.",
+    "instruction": "Avoid high-dose vitamin D supplements without medical supervision if taking simvastatin. Discuss appropriate vitamin D dosing with your doctor.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Simvastatin and vitamin D compete for the same metabolizing enzyme in the liver.",
+    "evidence": "moderate",
+    "tags": [
+      "cholesterol",
+      "cardiovascular",
+      "enzyme-competition",
+      "drug-efficacy"
+    ]
+  },
+  {
+    "id": "nih-magnesium-bisphosphonates-1",
+    "title": "Bisphosphonates ↔ Magnesium — reduced absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "bisphosphonates"
+    ],
+    "supp_keywords": [
+      "magnesium"
+    ],
+    "detail": "Magnesium-rich supplements or medications can decrease the absorption of oral bisphosphonates such as alendronate (Fosamax) used to treat osteoporosis.",
+    "instruction": "Take magnesium supplements or medications at least 2 hours before or after oral bisphosphonates to minimize this interaction.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Magnesium forms complexes that interfere with bisphosphonate absorption.",
+    "evidence": "strong",
+    "tags": [
+      "absorption",
+      "osteoporosis",
+      "bone health",
+      "timing-dependent"
+    ],
+    "timing_hours": 2
+  },
+  {
+    "id": "nih-magnesium-tetracyclines-1",
+    "title": "Tetracyclines ↔ Magnesium — reduced antibiotic absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "tetracyclines"
+    ],
+    "supp_keywords": [
+      "magnesium"
+    ],
+    "detail": "Magnesium can form insoluble complexes with tetracyclines such as demeclocycline (Declomycin) and doxycycline (Vibramycin), reducing antibiotic effectiveness.",
+    "instruction": "Take these antibiotics at least 2 hours before or 4 to 6 hours after a magnesium-containing supplement.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Magnesium forms insoluble complexes with tetracyclines.",
+    "evidence": "strong",
+    "tags": [
+      "antibiotics",
+      "absorption",
+      "timing-dependent",
+      "complexation"
+    ],
+    "timing_hours": 2
+  },
+  {
+    "id": "nih-magnesium-quinolones-1",
+    "title": "Quinolones ↔ Magnesium — reduced antibiotic absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "quinolone antibiotics"
+    ],
+    "supp_keywords": [
+      "magnesium"
+    ],
+    "detail": "Magnesium can form insoluble complexes with quinolone antibiotics such as ciprofloxacin (Cipro) and levofloxacin (Levaquin), reducing antibiotic effectiveness.",
+    "instruction": "Take these antibiotics at least 2 hours before or 4 to 6 hours after a magnesium-containing supplement.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Magnesium forms insoluble complexes with quinolone antibiotics.",
+    "evidence": "strong",
+    "tags": [
+      "antibiotics",
+      "absorption",
+      "timing-dependent",
+      "complexation"
+    ],
+    "timing_hours": 2
+  },
+  {
+    "id": "nih-magnesium-potassium-sparing-diuretics-1",
+    "title": "Potassium-Sparing Diuretics ↔ Magnesium — reduced magnesium loss",
+    "severity": "informational",
+    "med_keywords": [
+      "potassium-sparing diuretics"
+    ],
+    "supp_keywords": [
+      "magnesium"
+    ],
+    "detail": "Potassium-sparing diuretics such as amiloride (Midamor) and spironolactone (Aldactone) reduce magnesium excretion, helping to preserve magnesium levels.",
+    "instruction": "Inform your healthcare provider about magnesium supplementation to avoid potential excessive magnesium levels.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Potassium-sparing diuretics reduce urinary magnesium excretion.",
+    "evidence": "strong",
+    "tags": [
+      "diuretics",
+      "retention",
+      "cardiovascular",
+      "protective"
+    ]
+  },
+  {
+    "id": "nih-magnesium-proton-pump-inhibitors-1",
+    "title": "Proton Pump Inhibitors ↔ Magnesium — magnesium depletion",
+    "severity": "high",
+    "med_keywords": [
+      "proton pump inhibitors"
+    ],
+    "supp_keywords": [
+      "magnesium"
+    ],
+    "detail": "Prescription PPIs such as esomeprazole magnesium (Nexium) and lansoprazole (Prevacid) can cause hypomagnesemia when taken for prolonged periods (typically more than a year).",
+    "instruction": "Healthcare providers should measure serum magnesium levels before starting long-term PPI treatment and check periodically. Supplements may help but in 25% of cases patients must discontinue the PPI.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Prolonged PPI use can cause magnesium depletion.",
+    "evidence": "strong",
+    "tags": [
+      "acid-reducers",
+      "depletion",
+      "hypomagnesemia",
+      "long-term-use",
+      "monitoring-needed",
+      "FDA-warning"
+    ]
+  },
+  {
+    "id": "nih-calcium-dolutegravir-1",
+    "title": "Dolutegravir ↔ Calcium — Reduced Drug Absorption",
+    "severity": "high",
+    "med_keywords": [
+      "dolutegravir"
+    ],
+    "supp_keywords": [
+      "calcium"
+    ],
+    "detail": "Calcium supplements can substantially reduce blood levels of dolutegravir through chelation, potentially reducing the effectiveness of this HIV medication.",
+    "instruction": "Take dolutegravir 2 hours before or 6 hours after taking calcium supplements.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Chelation between calcium and dolutegravir reduces drug absorption",
+    "evidence": "strong",
+    "tags": [
+      "HIV",
+      "antiretroviral",
+      "chelation",
+      "absorption"
+    ],
+    "timing_hours": 2
+  },
+  {
+    "id": "nih-calcium-lithium-1",
+    "title": "Lithium ↔ Calcium — Increased Hypercalcemia Risk",
+    "severity": "moderate",
+    "med_keywords": [
+      "lithium"
+    ],
+    "supp_keywords": [
+      "calcium"
+    ],
+    "detail": "Long-term use of lithium can lead to hypercalcemia. Using both lithium and calcium supplements together could increase the risk of elevated calcium levels.",
+    "instruction": "Monitor calcium levels if using lithium long-term with calcium supplements. Discuss with your healthcare provider.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Lithium can cause hypercalcemia, which may be compounded by calcium supplementation",
+    "evidence": "moderate",
+    "tags": [
+      "bipolar disorder",
+      "hypercalcemia",
+      "psychiatric",
+      "electrolyte"
+    ]
+  },
+  {
+    "id": "nih-calcium-gemifloxacin-1",
+    "title": "Gemifloxacin ↔ Calcium — Reduced Antibiotic Absorption",
+    "severity": "high",
+    "med_keywords": [
+      "gemifloxacin"
+    ],
+    "supp_keywords": [
+      "calcium"
+    ],
+    "detail": "Simultaneous use of calcium supplements and gemifloxacin can reduce the absorption of the antibiotic, potentially decreasing its effectiveness against bacterial infections.",
+    "instruction": "Take gemifloxacin 2 hours before or 2 hours after calcium supplements.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Calcium reduces quinolone antibiotic absorption",
+    "evidence": "strong",
+    "tags": [
+      "antibiotic",
+      "quinolone",
+      "infection",
+      "absorption"
+    ],
+    "timing_hours": 2
+  },
+  {
+    "id": "nih-calcium-quinolone-antibiotics-1",
+    "title": "Quinolone Antibiotics ↔ Calcium — Reduced Antibiotic Absorption",
+    "severity": "high",
+    "med_keywords": [
+      "quinolone antibiotics"
+    ],
+    "supp_keywords": [
+      "calcium"
+    ],
+    "detail": "Simultaneous use of calcium supplements and quinolone antibiotics can reduce the absorption of these antibiotics, potentially decreasing their effectiveness.",
+    "instruction": "Take quinolone antibiotics 2 hours before or 2 hours after calcium supplements.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Calcium reduces quinolone antibiotic absorption",
+    "evidence": "strong",
+    "tags": [
+      "antibiotic",
+      "quinolone",
+      "infection",
+      "absorption",
+      "drug-class"
+    ],
+    "timing_hours": 2
+  },
+  {
+    "id": "nih-zinc-quinolone-1",
+    "title": "Quinolone Antibiotics ↔ Zinc — Reduced Absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "quinolone antibiotics"
+    ],
+    "supp_keywords": [
+      "zinc"
+    ],
+    "detail": "Zinc interacts with quinolone antibiotics (such as Cipro) in the gastrointestinal tract, which can inhibit the absorption of both zinc and the antibiotic when taken together.",
+    "instruction": "Take the antibiotic at least 2 hours before or 4-6 hours after the zinc supplement to minimize this interaction.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Zinc binds with quinolone antibiotics in the GI tract, preventing absorption of both substances.",
+    "evidence": "strong",
+    "tags": [
+      "antibiotics",
+      "quinolones",
+      "absorption",
+      "separation required"
+    ],
+    "timing_hours": 4
+  },
+  {
+    "id": "nih-zinc-tetracycline-2",
+    "title": "Tetracycline Antibiotics ↔ Zinc — Reduced Absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "tetracycline antibiotics"
+    ],
+    "supp_keywords": [
+      "zinc"
+    ],
+    "detail": "Zinc interacts with tetracycline antibiotics (such as Achromycin and Sumycin) in the gastrointestinal tract, which can inhibit the absorption of both zinc and the antibiotic when taken simultaneously.",
+    "instruction": "Take the antibiotic at least 2 hours before or 4-6 hours after the zinc supplement to minimize this interaction.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Zinc binds with tetracycline antibiotics in the GI tract, preventing absorption of both substances.",
+    "evidence": "strong",
+    "tags": [
+      "antibiotics",
+      "tetracyclines",
+      "absorption",
+      "separation required"
+    ],
+    "timing_hours": 4
+  },
+  {
+    "id": "nih-zinc-penicillamine-3",
+    "title": "Penicillamine ↔ Zinc — Reduced Drug Effectiveness",
+    "severity": "high",
+    "med_keywords": [
+      "penicillamine"
+    ],
+    "supp_keywords": [
+      "zinc"
+    ],
+    "detail": "Zinc can reduce the absorption and action of penicillamine, a drug used to treat rheumatoid arthritis and Wilson disease.",
+    "instruction": "Take zinc supplements and penicillamine at least 1 hour apart to minimize this interaction.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Zinc interferes with the absorption and pharmacological action of penicillamine.",
+    "evidence": "strong",
+    "tags": [
+      "rheumatoid arthritis",
+      "Wilson disease",
+      "absorption",
+      "separation required"
+    ],
+    "timing_hours": 1
+  },
+  {
+    "id": "nih-zinc-thiazide-4",
+    "title": "Thiazide Diuretics ↔ Zinc — Decreased Zinc Levels",
+    "severity": "moderate",
+    "med_keywords": [
+      "thiazide diuretics"
+    ],
+    "supp_keywords": [
+      "zinc"
+    ],
+    "detail": "Thiazide diuretics, such as chlorthalidone and hydrochlorothiazide, increase zinc excretion in the urine, which decreases serum zinc concentrations.",
+    "instruction": "Monitor zinc status with your healthcare provider if taking thiazide diuretics regularly. Consider zinc supplementation if deficiency develops.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Thiazide diuretics increase urinary zinc excretion, leading to lower blood zinc levels.",
+    "evidence": "strong",
+    "tags": [
+      "diuretics",
+      "thiazides",
+      "nutrient depletion",
+      "monitoring required"
+    ]
+  },
+  {
+    "id": "nih-iron-ppi-1",
+    "title": "Proton Pump Inhibitors ↔ Iron — Reduced Iron Absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "proton pump inhibitors"
+    ],
+    "supp_keywords": [
+      "iron"
+    ],
+    "detail": "PPIs reduce stomach acidity, which can reduce nonheme iron absorption. Patients with iron deficiency taking PPIs can have suboptimal responses to iron supplementation.",
+    "instruction": "If you have iron deficiency and take PPIs, monitor iron levels regularly. Discuss alternative iron formulations or PPI alternatives with your doctor.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "PPIs reduce gastric acid production, which is necessary for nonheme iron absorption from the diet and supplements.",
+    "evidence": "strong",
+    "tags": [
+      "acid suppression",
+      "GERD",
+      "iron deficiency",
+      "absorption",
+      "lansoprazole",
+      "omeprazole"
+    ]
+  },
+  {
+    "id": "nih-vitamin-c-cyclophosphamide-1",
+    "title": "Vitamin C ↔ Cyclophosphamide — may reduce effectiveness",
+    "severity": "moderate",
+    "med_keywords": [
+      "cyclophosphamide"
+    ],
+    "supp_keywords": [
+      "vitamin c"
+    ],
+    "detail": "Antioxidants like vitamin C might protect tumor cells from the action of chemotherapeutic agents, potentially reducing treatment effectiveness.",
+    "instruction": "Consult with your oncologist prior to taking vitamin C supplements during chemotherapy, especially in high doses.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may protect tumor cells from chemotherapy-induced damage",
+    "evidence": "moderate",
+    "tags": [
+      "chemotherapy",
+      "cancer",
+      "antioxidant",
+      "oncology"
+    ]
+  },
+  {
+    "id": "nih-vitamin-c-chlorambucil-2",
+    "title": "Vitamin C ↔ Chlorambucil — may reduce effectiveness",
+    "severity": "moderate",
+    "med_keywords": [
+      "chlorambucil"
+    ],
+    "supp_keywords": [
+      "vitamin c"
+    ],
+    "detail": "Antioxidants like vitamin C might protect tumor cells from the action of chemotherapeutic agents, potentially reducing treatment effectiveness.",
+    "instruction": "Consult with your oncologist prior to taking vitamin C supplements during chemotherapy, especially in high doses.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may protect tumor cells from chemotherapy-induced damage",
+    "evidence": "moderate",
+    "tags": [
+      "chemotherapy",
+      "cancer",
+      "antioxidant",
+      "oncology"
+    ]
+  },
+  {
+    "id": "nih-vitamin-c-carmustine-3",
+    "title": "Vitamin C ↔ Carmustine — may reduce effectiveness",
+    "severity": "moderate",
+    "med_keywords": [
+      "carmustine"
+    ],
+    "supp_keywords": [
+      "vitamin c"
+    ],
+    "detail": "Antioxidants like vitamin C might protect tumor cells from the action of chemotherapeutic agents, potentially reducing treatment effectiveness.",
+    "instruction": "Consult with your oncologist prior to taking vitamin C supplements during chemotherapy, especially in high doses.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may protect tumor cells from chemotherapy-induced damage",
+    "evidence": "moderate",
+    "tags": [
+      "chemotherapy",
+      "cancer",
+      "antioxidant",
+      "oncology"
+    ]
+  },
+  {
+    "id": "nih-vitamin-c-busulfan-4",
+    "title": "Vitamin C ↔ Busulfan — may reduce effectiveness",
+    "severity": "moderate",
+    "med_keywords": [
+      "busulfan"
+    ],
+    "supp_keywords": [
+      "vitamin c"
+    ],
+    "detail": "Antioxidants like vitamin C might protect tumor cells from the action of chemotherapeutic agents, potentially reducing treatment effectiveness.",
+    "instruction": "Consult with your oncologist prior to taking vitamin C supplements during chemotherapy, especially in high doses.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may protect tumor cells from chemotherapy-induced damage",
+    "evidence": "moderate",
+    "tags": [
+      "chemotherapy",
+      "cancer",
+      "antioxidant",
+      "oncology"
+    ]
+  },
+  {
+    "id": "nih-vitamin-c-thiotepa-5",
+    "title": "Vitamin C ↔ Thiotepa — may reduce effectiveness",
+    "severity": "moderate",
+    "med_keywords": [
+      "thiotepa"
+    ],
+    "supp_keywords": [
+      "vitamin c"
+    ],
+    "detail": "Antioxidants like vitamin C might protect tumor cells from the action of chemotherapeutic agents, potentially reducing treatment effectiveness.",
+    "instruction": "Consult with your oncologist prior to taking vitamin C supplements during chemotherapy, especially in high doses.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may protect tumor cells from chemotherapy-induced damage",
+    "evidence": "moderate",
+    "tags": [
+      "chemotherapy",
+      "cancer",
+      "antioxidant",
+      "oncology"
+    ]
+  },
+  {
+    "id": "nih-vitamin-c-doxorubicin-6",
+    "title": "Vitamin C ↔ Doxorubicin — may reduce effectiveness",
+    "severity": "moderate",
+    "med_keywords": [
+      "doxorubicin"
+    ],
+    "supp_keywords": [
+      "vitamin c"
+    ],
+    "detail": "Antioxidants like vitamin C might protect tumor cells from the action of chemotherapeutic agents, potentially reducing treatment effectiveness.",
+    "instruction": "Consult with your oncologist prior to taking vitamin C supplements during chemotherapy, especially in high doses.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may protect tumor cells from chemotherapy-induced damage",
+    "evidence": "moderate",
+    "tags": [
+      "chemotherapy",
+      "cancer",
+      "antioxidant",
+      "oncology"
+    ]
+  },
+  {
+    "id": "nih-vitamin-c-radiation-therapy-7",
+    "title": "Vitamin C ↔ Radiation Therapy — controversial interaction",
+    "severity": "moderate",
+    "med_keywords": [
+      "radiation therapy"
+    ],
+    "supp_keywords": [
+      "vitamin c"
+    ],
+    "detail": "Some data indicate antioxidants might protect tumor cells from radiation, though other data suggest they may protect normal tissues or enhance treatment effectiveness.",
+    "instruction": "Consult with your oncologist prior to taking vitamin C or other antioxidant supplements during radiation therapy, especially in high doses.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may protect tumor cells or normal tissues from radiation-induced damage",
+    "evidence": "moderate",
+    "tags": [
+      "radiation",
+      "cancer",
+      "antioxidant",
+      "oncology"
+    ]
+  },
+  {
+    "id": "nih-vitamin-c-statins-8",
+    "title": "Vitamin C ↔ Statins — may reduce HDL benefits",
+    "severity": "moderate",
+    "med_keywords": [
+      "statins"
+    ],
+    "supp_keywords": [
+      "vitamin c"
+    ],
+    "detail": "Vitamin C combined with other antioxidants may attenuate the increase in HDL cholesterol levels from niacin/simvastatin combination therapy.",
+    "instruction": "Health care providers should monitor lipid levels in individuals taking both statins and antioxidant supplements.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may interfere with the HDL-raising effects of statin/niacin combinations",
+    "evidence": "moderate",
+    "tags": [
+      "cholesterol",
+      "cardiovascular",
+      "lipids",
+      "HDL"
+    ]
+  },
+  {
+    "id": "nih-vitamin-c-simvastatin-9",
+    "title": "Vitamin C ↔ Simvastatin — may reduce HDL benefits",
+    "severity": "moderate",
+    "med_keywords": [
+      "simvastatin"
+    ],
+    "supp_keywords": [
+      "vitamin c"
+    ],
+    "detail": "Vitamin C combined with other antioxidants may attenuate the increase in HDL cholesterol levels from niacin/simvastatin combination therapy.",
+    "instruction": "Health care providers should monitor lipid levels when taking both simvastatin combinations and antioxidant supplements.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may interfere with the HDL-raising effects of statin/niacin combinations",
+    "evidence": "moderate",
+    "tags": [
+      "cholesterol",
+      "cardiovascular",
+      "lipids",
+      "HDL"
+    ]
+  },
+  {
+    "id": "nih-vitamin-c-niacin-10",
+    "title": "Vitamin C ↔ Niacin — may reduce HDL benefits",
+    "severity": "moderate",
+    "med_keywords": [
+      "niacin"
+    ],
+    "supp_keywords": [
+      "vitamin c"
+    ],
+    "detail": "Vitamin C combined with other antioxidants may attenuate the increase in HDL cholesterol levels from niacin/simvastatin combination therapy.",
+    "instruction": "Health care providers should monitor lipid levels when taking niacin combinations with antioxidant supplements.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may interfere with the HDL-raising effects of statin/niacin combinations",
+    "evidence": "moderate",
+    "tags": [
+      "cholesterol",
+      "cardiovascular",
+      "lipids",
+      "HDL"
+    ]
+  },
+  {
+    "id": "nih-vitamin-e-anticoagulants-1",
+    "title": "Anticoagulants ↔ Vitamin E — increased bleeding risk",
+    "severity": "high",
+    "med_keywords": [
+      "anticoagulant medications"
+    ],
+    "supp_keywords": [
+      "vitamin e"
+    ],
+    "detail": "Vitamin E inhibits platelet aggregation and antagonizes vitamin K-dependent clotting factors. Large doses (likely >400 IU/day) with anticoagulants increase bleeding risk.",
+    "instruction": "Avoid high-dose vitamin E supplements (>400 IU/day) while taking anticoagulants. Consult your doctor about safe vitamin E levels.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Vitamin E inhibits platelet aggregation and antagonizes vitamin K-dependent clotting factors",
+    "evidence": "moderate",
+    "tags": [
+      "anticoagulant",
+      "bleeding",
+      "platelet aggregation"
+    ]
+  },
+  {
+    "id": "nih-vitamin-e-antiplatelet-1",
+    "title": "Antiplatelet Drugs ↔ Vitamin E — increased bleeding risk",
+    "severity": "high",
+    "med_keywords": [
+      "antiplatelet medications"
+    ],
+    "supp_keywords": [
+      "vitamin e"
+    ],
+    "detail": "Vitamin E inhibits platelet aggregation. Large doses (likely >400 IU/day) with antiplatelet medications increase bleeding risk, especially with low vitamin K intake.",
+    "instruction": "Avoid high-dose vitamin E supplements (>400 IU/day) while taking antiplatelet drugs. Discuss vitamin E use with your healthcare provider.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Vitamin E inhibits platelet aggregation",
+    "evidence": "moderate",
+    "tags": [
+      "antiplatelet",
+      "bleeding",
+      "platelet aggregation"
+    ]
+  },
+  {
+    "id": "nih-vitamin-e-simvastatin-niacin-1",
+    "title": "Simvastatin-Niacin ↔ Vitamin E — reduced HDL benefit",
+    "severity": "moderate",
+    "med_keywords": [
+      "simvastatin",
+      "niacin"
+    ],
+    "supp_keywords": [
+      "vitamin e"
+    ],
+    "detail": "Vitamin E with other antioxidants blunted the rise in HDL cholesterol, especially cardioprotective HDL2 levels, in people treated with simvastatin and niacin combination therapy.",
+    "instruction": "Avoid taking vitamin E with other antioxidants if you're on simvastatin-niacin therapy. Inform your doctor about any antioxidant supplements.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidant combination interferes with HDL cholesterol response to statin-niacin therapy",
+    "evidence": "strong",
+    "tags": [
+      "statin",
+      "simvastatin",
+      "niacin",
+      "HDL cholesterol",
+      "antioxidant"
+    ]
+  },
+  {
+    "id": "nih-vitamin-e-chemotherapy-1",
+    "title": "Chemotherapy ↔ Vitamin E — may reduce treatment effectiveness",
+    "severity": "high",
+    "med_keywords": [
+      "chemotherapy agents"
+    ],
+    "supp_keywords": [
+      "vitamin e"
+    ],
+    "detail": "Antioxidant supplements including vitamin E might reduce chemotherapy effectiveness by inhibiting cellular oxidative damage in cancerous cells, which is part of how chemotherapy works.",
+    "instruction": "Avoid vitamin E and other antioxidant supplements during chemotherapy unless approved by your oncologist. Discuss any supplement use with your cancer care team.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may inhibit cellular oxidative damage in cancerous cells that chemotherapy relies on",
+    "evidence": "moderate",
+    "tags": [
+      "chemotherapy",
+      "cancer",
+      "antioxidant",
+      "oncology"
+    ]
+  },
+  {
+    "id": "nih-vitamin-e-radiotherapy-1",
+    "title": "Radiotherapy ↔ Vitamin E — may reduce treatment effectiveness",
+    "severity": "high",
+    "med_keywords": [
+      "radiotherapy"
+    ],
+    "supp_keywords": [
+      "vitamin e"
+    ],
+    "detail": "Antioxidant supplements including vitamin E might reduce radiotherapy effectiveness by inhibiting cellular oxidative damage in cancerous cells, which radiation therapy relies on.",
+    "instruction": "Avoid vitamin E and other antioxidant supplements during radiotherapy unless approved by your oncologist. Consult your cancer care team before using any supplements.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antioxidants may inhibit cellular oxidative damage in cancerous cells that radiotherapy relies on",
+    "evidence": "moderate",
+    "tags": [
+      "radiotherapy",
+      "radiation",
+      "cancer",
+      "antioxidant",
+      "oncology"
+    ]
+  },
+  {
+    "id": "nih-vitamin-k-phenprocoumon-2",
+    "title": "Phenprocoumon ↔ Vitamin K — antagonizes anticoagulant effect",
+    "severity": "critical",
+    "med_keywords": [
+      "phenprocoumon"
+    ],
+    "supp_keywords": [
+      "vitamin k"
+    ],
+    "detail": "Vitamin K can seriously interfere with phenprocoumon's anticoagulant activity. Sudden changes in vitamin K intake can increase or decrease the anticoagulant effect.",
+    "instruction": "Maintain consistent vitamin K intake from food and supplements. Consult your doctor before changing vitamin K consumption.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Phenprocoumon antagonizes vitamin K activity, depleting vitamin K-dependent clotting factors.",
+    "evidence": "strong",
+    "tags": [
+      "anticoagulant",
+      "blood thinner",
+      "clotting",
+      "cardiovascular"
+    ]
+  },
+  {
+    "id": "nih-vitamin-k-acenocoumarol-3",
+    "title": "Acenocoumarol ↔ Vitamin K — antagonizes anticoagulant effect",
+    "severity": "critical",
+    "med_keywords": [
+      "acenocoumarol"
+    ],
+    "supp_keywords": [
+      "vitamin k"
+    ],
+    "detail": "Vitamin K can seriously interfere with acenocoumarol's anticoagulant activity. Sudden changes in vitamin K intake can increase or decrease the anticoagulant effect.",
+    "instruction": "Maintain consistent vitamin K intake from food and supplements. Consult your doctor before changing vitamin K consumption.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Acenocoumarol antagonizes vitamin K activity, depleting vitamin K-dependent clotting factors.",
+    "evidence": "strong",
+    "tags": [
+      "anticoagulant",
+      "blood thinner",
+      "clotting",
+      "cardiovascular"
+    ]
+  },
+  {
+    "id": "nih-vitamin-k-tioclomarol-4",
+    "title": "Tioclomarol ↔ Vitamin K — antagonizes anticoagulant effect",
+    "severity": "critical",
+    "med_keywords": [
+      "tioclomarol"
+    ],
+    "supp_keywords": [
+      "vitamin k"
+    ],
+    "detail": "Vitamin K can seriously interfere with tioclomarol's anticoagulant activity. Sudden changes in vitamin K intake can increase or decrease the anticoagulant effect.",
+    "instruction": "Maintain consistent vitamin K intake from food and supplements. Consult your doctor before changing vitamin K consumption.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Tioclomarol antagonizes vitamin K activity, depleting vitamin K-dependent clotting factors.",
+    "evidence": "strong",
+    "tags": [
+      "anticoagulant",
+      "blood thinner",
+      "clotting",
+      "cardiovascular"
+    ]
+  },
+  {
+    "id": "nih-vitamin-k-antibiotics-5",
+    "title": "Antibiotics ↔ Vitamin K — may deplete vitamin K levels",
+    "severity": "moderate",
+    "med_keywords": [
+      "antibiotics"
+    ],
+    "supp_keywords": [
+      "vitamin k"
+    ],
+    "detail": "Antibiotics can destroy vitamin K-producing bacteria in the gut, potentially decreasing vitamin K status. Usually not a concern unless antibiotic use is prolonged beyond several weeks.",
+    "instruction": "Monitor vitamin K status if taking antibiotics for extended periods (beyond several weeks) with poor vitamin K intake.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antibiotics destroy vitamin K-producing bacteria in the gut.",
+    "evidence": "moderate",
+    "tags": [
+      "antibiotics",
+      "gut bacteria",
+      "microbiome",
+      "deficiency risk"
+    ]
+  },
+  {
+    "id": "nih-vitamin-k-cefoperazone-6",
+    "title": "Cefoperazone ↔ Vitamin K — depletes and inhibits vitamin K",
+    "severity": "high",
+    "med_keywords": [
+      "cefoperazone"
+    ],
+    "supp_keywords": [
+      "vitamin k"
+    ],
+    "detail": "Cefoperazone can destroy vitamin K-producing gut bacteria and also directly inhibit vitamin K activity in the body, creating a more pronounced effect than other antibiotics.",
+    "instruction": "Monitor vitamin K status closely. May need supplementation if use is prolonged, especially with poor dietary vitamin K intake.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Destroys vitamin K-producing bacteria and inhibits vitamin K action in the body.",
+    "evidence": "moderate",
+    "tags": [
+      "cephalosporin",
+      "antibiotic",
+      "deficiency risk",
+      "gut bacteria"
+    ]
+  },
+  {
+    "id": "nih-vitamin-k-cephalosporins-7",
+    "title": "Cephalosporins ↔ Vitamin K — depletes and inhibits vitamin K",
+    "severity": "high",
+    "med_keywords": [
+      "cephalosporin antibiotics"
+    ],
+    "supp_keywords": [
+      "vitamin k"
+    ],
+    "detail": "Cephalosporin antibiotics can destroy vitamin K-producing gut bacteria and may also inhibit vitamin K action in the body, potentially causing more pronounced vitamin K depletion.",
+    "instruction": "Monitor vitamin K status closely. May need supplementation if use is prolonged, especially with poor dietary vitamin K intake.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Destroys vitamin K-producing bacteria and may inhibit vitamin K action in the body.",
+    "evidence": "moderate",
+    "tags": [
+      "cephalosporin",
+      "antibiotic",
+      "deficiency risk",
+      "gut bacteria"
+    ]
+  },
+  {
+    "id": "nih-vitamin-k-cholestyramine-8",
+    "title": "Cholestyramine ↔ Vitamin K — reduces vitamin K absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "cholestyramine"
+    ],
+    "supp_keywords": [
+      "vitamin k"
+    ],
+    "detail": "Cholestyramine can reduce absorption of vitamin K and other fat-soluble vitamins. The clinical significance is unclear but may be important with long-term use.",
+    "instruction": "Monitor vitamin K status if taking cholestyramine for many years. Consider vitamin K supplementation with prolonged use.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Bile acid sequestrants prevent reabsorption of bile acids, which can reduce fat-soluble vitamin absorption.",
+    "evidence": "moderate",
+    "tags": [
+      "bile acid sequestrant",
+      "cholesterol",
+      "absorption",
+      "fat-soluble vitamin"
+    ]
+  },
+  {
+    "id": "nih-vitamin-k-colestipol-9",
+    "title": "Colestipol ↔ Vitamin K — reduces vitamin K absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "colestipol"
+    ],
+    "supp_keywords": [
+      "vitamin k"
+    ],
+    "detail": "Colestipol can reduce absorption of vitamin K and other fat-soluble vitamins. The clinical significance is unclear but may be important with long-term use.",
+    "instruction": "Monitor vitamin K status if taking colestipol for many years. Consider vitamin K supplementation with prolonged use.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Bile acid sequestrants prevent reabsorption of bile acids, which can reduce fat-soluble vitamin absorption.",
+    "evidence": "moderate",
+    "tags": [
+      "bile acid sequestrant",
+      "cholesterol",
+      "absorption",
+      "fat-soluble vitamin"
+    ]
+  },
+  {
+    "id": "nih-vitamin-k-orlistat-10",
+    "title": "Orlistat ↔ Vitamin K — reduces vitamin K absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "orlistat"
+    ],
+    "supp_keywords": [
+      "vitamin k"
+    ],
+    "detail": "Orlistat reduces dietary fat absorption and can also reduce absorption of fat-soluble vitamins like vitamin K. Usually not clinically significant, but multivitamin supplementation is recommended.",
+    "instruction": "Take a multivitamin containing vitamin K while using orlistat. Inform your doctor if also taking warfarin, as combination may significantly affect clotting.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Orlistat blocks dietary fat absorption, which reduces absorption of fat-soluble vitamins.",
+    "evidence": "moderate",
+    "tags": [
+      "weight loss",
+      "fat absorption",
+      "fat-soluble vitamin",
+      "absorption"
+    ]
+  },
+  {
+    "id": "nih-vitaminb12-ppi-1",
+    "title": "Proton Pump Inhibitors ↔ Vitamin B12 — Reduced Absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "proton pump inhibitors"
+    ],
+    "supp_keywords": [
+      "vitamin b12"
+    ],
+    "detail": "PPIs like omeprazole and lansoprazole slow gastric acid release, interfering with vitamin B12 absorption from food and potentially leading to deficiency.",
+    "instruction": "Monitor vitamin B12 levels regularly if taking PPIs long-term. Discuss B12 supplementation with your healthcare provider.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Reduced gastric acid decreases the release of vitamin B12 from food proteins in the stomach.",
+    "evidence": "strong",
+    "tags": [
+      "gastric acid inhibitor",
+      "absorption",
+      "deficiency risk",
+      "long-term use"
+    ]
+  },
+  {
+    "id": "nih-vitaminb12-h2blocker-2",
+    "title": "H2 Blockers ↔ Vitamin B12 — Reduced Absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "histamine 2-receptor antagonists"
+    ],
+    "supp_keywords": [
+      "vitamin b12"
+    ],
+    "detail": "H2 blockers like cimetidine and ranitidine slow gastric acid release, interfering with vitamin B12 absorption from food and potentially leading to deficiency.",
+    "instruction": "Monitor vitamin B12 levels regularly if taking H2 blockers long-term. Discuss B12 supplementation with your healthcare provider.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Reduced gastric acid decreases the release of vitamin B12 from food proteins in the stomach.",
+    "evidence": "strong",
+    "tags": [
+      "gastric acid inhibitor",
+      "absorption",
+      "deficiency risk",
+      "long-term use"
+    ]
+  },
+  {
+    "id": "nih-folate-carbamazepine-1",
+    "title": "Carbamazepine ↔ Folate — Bidirectional interaction affects both levels",
+    "severity": "high",
+    "med_keywords": [
+      "carbamazepine"
+    ],
+    "supp_keywords": [
+      "folate"
+    ],
+    "detail": "Carbamazepine can reduce serum folate levels, causing potential deficiency. Conversely, folate supplements might reduce serum levels of carbamazepine, potentially decreasing therapeutic effectiveness.",
+    "instruction": "Check with your healthcare provider before taking folate supplements if you take carbamazepine for epilepsy, psychiatric conditions, or other conditions.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antiepileptic medications reduce folate absorption or increase metabolism; folate may enhance drug metabolism",
+    "evidence": "strong",
+    "tags": [
+      "epilepsy",
+      "psychiatric",
+      "antiepileptic",
+      "bidirectional"
+    ]
+  },
+  {
+    "id": "nih-folate-valproate-1",
+    "title": "Valproate ↔ Folate — Bidirectional interaction affects both levels",
+    "severity": "high",
+    "med_keywords": [
+      "valproate"
+    ],
+    "supp_keywords": [
+      "folate"
+    ],
+    "detail": "Valproate can reduce serum folate levels, causing potential deficiency. Conversely, folate supplements might reduce serum levels of valproate, potentially decreasing seizure control or mood stabilization.",
+    "instruction": "Check with your healthcare provider before taking folate supplements if you take valproate for epilepsy, psychiatric conditions, or other conditions.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antiepileptic medications reduce folate absorption or increase metabolism; folate may enhance drug metabolism",
+    "evidence": "strong",
+    "tags": [
+      "epilepsy",
+      "psychiatric",
+      "mood-stabilizer",
+      "antiepileptic",
+      "bidirectional"
+    ]
+  },
+  {
+    "id": "nih-folate-sulfasalazine-1",
+    "title": "Sulfasalazine ↔ Folate — Drug inhibits folate absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "sulfasalazine"
+    ],
+    "supp_keywords": [
+      "folate"
+    ],
+    "detail": "Sulfasalazine inhibits intestinal absorption of folate and can cause folate deficiency over time, particularly in patients with ulcerative colitis requiring long-term treatment.",
+    "instruction": "Ask your healthcare provider whether you should increase dietary folate intake or start a folate supplement while taking sulfasalazine.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Sulfasalazine inhibits intestinal folate absorption through competitive inhibition of folate transporters",
+    "evidence": "strong",
+    "tags": [
+      "ulcerative-colitis",
+      "inflammatory-bowel-disease",
+      "absorption",
+      "deficiency"
+    ]
+  },
+  {
+    "id": "nih-vitaminb6-cycloserine-1",
+    "title": "Cycloserine ↔ Vitamin B6 — Increased urinary loss",
+    "severity": "high",
+    "med_keywords": [
+      "cycloserine"
+    ],
+    "supp_keywords": [
+      "vitamin b6"
+    ],
+    "detail": "Cycloserine increases urinary excretion of pyridoxine, which might worsen seizures and neurotoxicity associated with the antibiotic.",
+    "instruction": "Take pyridoxine supplements to help prevent adverse effects. Discuss supplementation with your healthcare provider.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Cycloserine in combination with pyridoxal phosphate increases urinary excretion of pyridoxine",
+    "evidence": "strong",
+    "tags": [
+      "antibiotic",
+      "tuberculosis",
+      "neurotoxicity",
+      "seizures"
+    ]
+  },
+  {
+    "id": "nih-vitaminb6-valproicacid-1",
+    "title": "Valproic Acid ↔ Vitamin B6 — Depletes B6 levels",
+    "severity": "moderate",
+    "med_keywords": [
+      "valproic acid"
+    ],
+    "supp_keywords": [
+      "vitamin b6"
+    ],
+    "detail": "Valproic acid increases catabolism of vitamin B6, resulting in low plasma PLP concentrations and elevated homocysteine levels.",
+    "instruction": "Monitor vitamin B6 status regularly. Elevated homocysteine may increase seizure risk and cardiovascular events.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antiepileptic drugs increase the catabolism rate of vitamin B6 vitamers",
+    "evidence": "strong",
+    "tags": [
+      "antiepileptic",
+      "seizures",
+      "homocysteine",
+      "cardiovascular"
+    ]
+  },
+  {
+    "id": "nih-vitaminb6-carbamazepine-1",
+    "title": "Carbamazepine ↔ Vitamin B6 — Depletes B6 levels",
+    "severity": "moderate",
+    "med_keywords": [
+      "carbamazepine"
+    ],
+    "supp_keywords": [
+      "vitamin b6"
+    ],
+    "detail": "Carbamazepine increases catabolism of vitamin B6, resulting in low plasma PLP concentrations and elevated homocysteine levels.",
+    "instruction": "Monitor vitamin B6 status regularly. Elevated homocysteine may increase seizure risk and cardiovascular events.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Antiepileptic drugs increase the catabolism rate of vitamin B6 vitamers",
+    "evidence": "strong",
+    "tags": [
+      "antiepileptic",
+      "seizures",
+      "homocysteine",
+      "cardiovascular"
+    ]
+  },
+  {
+    "id": "nih-vitaminb6-phenytoin-1",
+    "title": "Phenytoin ↔ Vitamin B6 — Bidirectional interaction",
+    "severity": "high",
+    "med_keywords": [
+      "phenytoin"
+    ],
+    "supp_keywords": [
+      "vitamin b6"
+    ],
+    "detail": "Phenytoin depletes vitamin B6, while high-dose pyridoxine (200mg/day) can reduce phenytoin levels by increasing drug metabolism.",
+    "instruction": "Consult your doctor before taking vitamin B6 supplements. High doses may reduce seizure control effectiveness.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Pyridoxine supplementation increases the drugs' metabolism",
+    "evidence": "moderate",
+    "tags": [
+      "antiepileptic",
+      "seizures",
+      "drug metabolism",
+      "bidirectional"
+    ]
+  },
+  {
+    "id": "nih-vitaminb6-phenobarbital-1",
+    "title": "Phenobarbital ↔ Vitamin B6 — Reduced drug levels",
+    "severity": "high",
+    "med_keywords": [
+      "phenobarbital"
+    ],
+    "supp_keywords": [
+      "vitamin b6"
+    ],
+    "detail": "High-dose pyridoxine supplementation (200mg/day for 12-120 days) can reduce serum phenobarbital concentrations by increasing drug metabolism.",
+    "instruction": "Consult your doctor before taking vitamin B6 supplements. High doses may reduce seizure control effectiveness.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Pyridoxine supplementation increases the drugs' metabolism",
+    "evidence": "moderate",
+    "tags": [
+      "antiepileptic",
+      "seizures",
+      "drug metabolism"
+    ]
+  },
+  {
+    "id": "nih-vitaminb6-levetiracetam-1",
+    "title": "Levetiracetam ↔ Vitamin B6 — May reduce side effects",
+    "severity": "informational",
+    "med_keywords": [
+      "levetiracetam"
+    ],
+    "supp_keywords": [
+      "vitamin b6"
+    ],
+    "detail": "Preliminary evidence suggests vitamin B6 (50-350mg/day in children, 50-100mg/day in adults) might reduce behavioral side effects like irritability, agitation, and depression.",
+    "instruction": "Inform your doctor if considering B6 supplementation for behavioral side effects.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "evidence": "low",
+    "tags": [
+      "antiepileptic",
+      "behavioral",
+      "side effects",
+      "depression"
+    ]
+  },
+  {
+    "id": "nih-vitaminb6-theophylline-1",
+    "title": "Theophylline ↔ Vitamin B6 — Depletes B6 levels",
+    "severity": "moderate",
+    "med_keywords": [
+      "theophylline"
+    ],
+    "supp_keywords": [
+      "vitamin b6"
+    ],
+    "detail": "Theophylline treatment often causes low plasma PLP concentrations, which could contribute to neurological and CNS side effects including seizures.",
+    "instruction": "Monitor vitamin B6 status if using theophylline long-term. Consider supplementation to prevent neurological side effects.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "evidence": "moderate",
+    "tags": [
+      "bronchodilator",
+      "asthma",
+      "neurological",
+      "seizures"
+    ]
+  },
+  {
+    "id": "nih-vitamin-a-orlistat-1",
+    "title": "Orlistat ↔ Vitamin A — decreased absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "orlistat"
+    ],
+    "supp_keywords": [
+      "vitamin a"
+    ],
+    "detail": "Orlistat can decrease the absorption of vitamin A and other fat-soluble vitamins, resulting in low plasma levels in some patients.",
+    "instruction": "Take a multivitamin supplement containing vitamin A and beta-carotene while on orlistat treatment as recommended by manufacturers.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Orlistat blocks fat absorption, which reduces absorption of fat-soluble vitamins including vitamin A.",
+    "evidence": "strong",
+    "tags": [
+      "weight loss medication",
+      "fat-soluble vitamin",
+      "malabsorption",
+      "deficiency risk"
+    ]
+  },
+  {
+    "id": "nih-vitamin-a-acitretin-1",
+    "title": "Acitretin ↔ Vitamin A — hypervitaminosis A risk",
+    "severity": "high",
+    "med_keywords": [
+      "acitretin"
+    ],
+    "supp_keywords": [
+      "vitamin a"
+    ],
+    "detail": "Acitretin, a synthetic retinoid used for psoriasis treatment, can increase the risk of hypervitaminosis A when taken in combination with vitamin A supplements.",
+    "instruction": "Avoid vitamin A supplements or use only under medical supervision while taking acitretin to prevent vitamin A toxicity.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Both acitretin and vitamin A are retinoids, leading to additive effects and potential toxicity.",
+    "evidence": "strong",
+    "tags": [
+      "retinoid",
+      "psoriasis",
+      "toxicity risk",
+      "hypervitaminosis"
+    ]
+  },
+  {
+    "id": "nih-vitamin-a-bexarotene-1",
+    "title": "Bexarotene ↔ Vitamin A — hypervitaminosis A risk",
+    "severity": "high",
+    "med_keywords": [
+      "bexarotene"
+    ],
+    "supp_keywords": [
+      "vitamin a"
+    ],
+    "detail": "Bexarotene, used to treat skin effects of T-cell lymphoma, can increase the risk of hypervitaminosis A when taken in combination with vitamin A supplements.",
+    "instruction": "Avoid vitamin A supplements or use only under medical supervision while taking bexarotene to prevent vitamin A toxicity.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Both bexarotene and vitamin A are retinoids, leading to additive effects and potential toxicity.",
+    "evidence": "strong",
+    "tags": [
+      "retinoid",
+      "cancer treatment",
+      "lymphoma",
+      "toxicity risk",
+      "hypervitaminosis"
+    ]
+  },
+  {
+    "id": "nih-vitamin-a-retinoids-1",
+    "title": "Retinoids ↔ Vitamin A — hypervitaminosis A risk",
+    "severity": "high",
+    "med_keywords": [
+      "retinoids"
+    ],
+    "supp_keywords": [
+      "vitamin a"
+    ],
+    "detail": "Synthetic retinoids derived from vitamin A can increase the risk of hypervitaminosis A when taken in combination with vitamin A supplements.",
+    "instruction": "Avoid vitamin A supplements or consult your healthcare provider if taking any retinoid medication to prevent vitamin A toxicity.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Retinoids are vitamin A derivatives, leading to cumulative vitamin A effects and potential toxicity.",
+    "evidence": "strong",
+    "tags": [
+      "retinoid",
+      "drug class",
+      "toxicity risk",
+      "hypervitaminosis"
+    ]
+  },
+  {
+    "id": "nih-omega3-anticoagulants-1",
+    "title": "Anticoagulants ↔ Omega-3 — Monitor for Bleeding",
+    "severity": "moderate",
+    "med_keywords": [
+      "anticoagulants"
+    ],
+    "supp_keywords": [
+      "omega-3",
+      "omega3"
+    ],
+    "detail": "Omega-3 supplements can have antiplatelet effects at high doses. Studies have not produced clinically significant bleeding episodes, but monitoring is recommended when combined with anticoagulant medications.",
+    "instruction": "Patients taking anticoagulants with omega-3 products should be monitored periodically for changes in clotting status. Consult your healthcare provider.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Fish oil has antiplatelet effects that may theoretically enhance anticoagulant activity.",
+    "evidence": "strong",
+    "tags": [
+      "anticoagulant",
+      "bleeding",
+      "cardiovascular",
+      "monitoring-required"
+    ]
+  },
+  {
+    "id": "nih-probiotics-immunosuppressants-1",
+    "title": "Immunosuppressants ↔ Probiotics — infection risk",
+    "severity": "high",
+    "med_keywords": [
+      "immunosuppressants"
+    ],
+    "supp_keywords": [
+      "probiotics"
+    ],
+    "detail": "Immunosuppressed patients may be at increased risk of serious infections from live probiotic microorganisms. The immune system's reduced ability to control microbial growth could allow probiotic organisms to cause systemic infections.",
+    "instruction": "Consult your doctor before using probiotics if you are taking immunosuppressant medications or have a compromised immune system. Close monitoring may be necessary.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Immunosuppression reduces the body's ability to control and clear live microorganisms, including those in probiotic supplements.",
+    "evidence": "moderate",
+    "tags": [
+      "immunosuppression",
+      "infection risk",
+      "safety",
+      "immune system",
+      "contraindication"
+    ]
+  },
+  {
+    "id": "nih-selenium-cisplatin-1",
+    "title": "Cisplatin ↔ Selenium — reduced selenium levels",
+    "severity": "moderate",
+    "med_keywords": [
+      "cisplatin"
+    ],
+    "supp_keywords": [
+      "selenium"
+    ],
+    "detail": "Cisplatin chemotherapy can reduce selenium levels in hair and serum. The clinical significance of these reductions is not yet known.",
+    "instruction": "Monitor selenium levels if taking cisplatin. Discuss supplementation with your oncologist before starting.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Cisplatin depletes selenium through unclear mechanisms during cancer treatment",
+    "evidence": "moderate",
+    "tags": [
+      "chemotherapy",
+      "cancer treatment",
+      "nutrient depletion",
+      "platinum-based"
+    ]
+  },
+  {
+    "id": "nih-selenium-cisplatin-2",
+    "title": "Selenium ↔ Cisplatin — potential toxicity reduction",
+    "severity": "informational",
+    "med_keywords": [
+      "cisplatin"
+    ],
+    "supp_keywords": [
+      "selenium"
+    ],
+    "detail": "Some small studies suggest selenium supplementation may reduce cisplatin's toxicity, but a Cochrane Review found insufficient evidence that selenium alleviates chemotherapy side effects.",
+    "instruction": "Inform your oncologist if considering selenium during cisplatin treatment. Evidence for benefit is currently insufficient.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Selenium may have antioxidant effects that could theoretically protect against cisplatin toxicity",
+    "evidence": "low",
+    "tags": [
+      "chemotherapy",
+      "toxicity reduction",
+      "side effects",
+      "insufficient evidence"
+    ]
+  },
+  {
+    "id": "nih-iodine-methimazole-1",
+    "title": "Methimazole ↔ Iodine — Risk of Hypothyroidism",
+    "severity": "high",
+    "med_keywords": [
+      "methimazole"
+    ],
+    "supp_keywords": [
+      "iodine"
+    ],
+    "detail": "Taking high doses of iodine with methimazole can have an additive effect and could cause hypothyroidism by excessively suppressing thyroid function.",
+    "instruction": "Discuss iodine intake with your healthcare provider if taking methimazole regularly. Avoid high-dose iodine supplements.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Additive effect of both substances suppressing thyroid hormone production",
+    "evidence": "moderate",
+    "tags": [
+      "thyroid",
+      "antithyroid",
+      "hypothyroidism",
+      "endocrine"
+    ]
+  },
+  {
+    "id": "nih-iodine-antithyroid-1",
+    "title": "Antithyroid Medications ↔ Iodine — Risk of Hypothyroidism",
+    "severity": "high",
+    "med_keywords": [
+      "antithyroid medications"
+    ],
+    "supp_keywords": [
+      "iodine"
+    ],
+    "detail": "Taking high doses of iodine with antithyroid medications can have an additive effect and could cause hypothyroidism.",
+    "instruction": "Individuals taking antithyroid medications should discuss their iodine intakes with healthcare providers.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Additive effect suppressing thyroid hormone production",
+    "evidence": "moderate",
+    "tags": [
+      "thyroid",
+      "antithyroid",
+      "hypothyroidism",
+      "endocrine"
+    ]
+  },
+  {
+    "id": "nih-iodine-benazepril-1",
+    "title": "Benazepril ↔ Iodine — Risk of Hyperkalemia",
+    "severity": "high",
+    "med_keywords": [
+      "benazepril"
+    ],
+    "supp_keywords": [
+      "iodine"
+    ],
+    "detail": "Taking potassium iodide with benazepril can increase the risk of hyperkalemia (elevated blood levels of potassium).",
+    "instruction": "Discuss iodine supplement use with your healthcare provider if taking benazepril. Monitor potassium levels regularly.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Combined effect increasing blood potassium levels",
+    "evidence": "moderate",
+    "tags": [
+      "cardiovascular",
+      "ACE inhibitor",
+      "hyperkalemia",
+      "potassium"
+    ]
+  },
+  {
+    "id": "nih-iodine-lisinopril-1",
+    "title": "Lisinopril ↔ Iodine — Risk of Hyperkalemia",
+    "severity": "high",
+    "med_keywords": [
+      "lisinopril"
+    ],
+    "supp_keywords": [
+      "iodine"
+    ],
+    "detail": "Taking potassium iodide with lisinopril can increase the risk of hyperkalemia (elevated blood levels of potassium).",
+    "instruction": "Discuss iodine supplement use with your healthcare provider if taking lisinopril. Monitor potassium levels regularly.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Combined effect increasing blood potassium levels",
+    "evidence": "moderate",
+    "tags": [
+      "cardiovascular",
+      "ACE inhibitor",
+      "hyperkalemia",
+      "potassium"
+    ]
+  },
+  {
+    "id": "nih-iodine-fosinopril-1",
+    "title": "Fosinopril ↔ Iodine — Risk of Hyperkalemia",
+    "severity": "high",
+    "med_keywords": [
+      "fosinopril"
+    ],
+    "supp_keywords": [
+      "iodine"
+    ],
+    "detail": "Taking potassium iodide with fosinopril can increase the risk of hyperkalemia (elevated blood levels of potassium).",
+    "instruction": "Discuss iodine supplement use with your healthcare provider if taking fosinopril. Monitor potassium levels regularly.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Combined effect increasing blood potassium levels",
+    "evidence": "moderate",
+    "tags": [
+      "cardiovascular",
+      "ACE inhibitor",
+      "hyperkalemia",
+      "potassium"
+    ]
+  },
+  {
+    "id": "nih-iodine-ace-inhibitors-1",
+    "title": "ACE Inhibitors ↔ Iodine — Risk of Hyperkalemia",
+    "severity": "high",
+    "med_keywords": [
+      "ace inhibitors"
+    ],
+    "supp_keywords": [
+      "iodine"
+    ],
+    "detail": "Taking potassium iodide with ACE inhibitors can increase the risk of hyperkalemia (elevated blood levels of potassium).",
+    "instruction": "Individuals taking ACE inhibitors should discuss their iodine intakes with healthcare providers and monitor potassium levels.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Combined effect increasing blood potassium levels",
+    "evidence": "moderate",
+    "tags": [
+      "cardiovascular",
+      "ACE inhibitor",
+      "hyperkalemia",
+      "potassium"
+    ]
+  },
+  {
+    "id": "nih-iodine-spironolactone-1",
+    "title": "Spironolactone ↔ Iodine — Risk of Hyperkalemia",
+    "severity": "high",
+    "med_keywords": [
+      "spironolactone"
+    ],
+    "supp_keywords": [
+      "iodine"
+    ],
+    "detail": "Taking potassium iodide with spironolactone can increase the risk of hyperkalemia (elevated blood levels of potassium).",
+    "instruction": "Discuss iodine supplement use with your healthcare provider if taking spironolactone. Monitor potassium levels regularly.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Combined effect of potassium-sparing diuretic and potassium iodide increasing blood potassium",
+    "evidence": "moderate",
+    "tags": [
+      "diuretic",
+      "potassium-sparing",
+      "hyperkalemia",
+      "potassium"
+    ]
+  },
+  {
+    "id": "nih-iodine-amiloride-1",
+    "title": "Amiloride ↔ Iodine — Risk of Hyperkalemia",
+    "severity": "high",
+    "med_keywords": [
+      "amiloride"
+    ],
+    "supp_keywords": [
+      "iodine"
+    ],
+    "detail": "Taking potassium iodide with amiloride can increase the risk of hyperkalemia (elevated blood levels of potassium).",
+    "instruction": "Discuss iodine supplement use with your healthcare provider if taking amiloride. Monitor potassium levels regularly.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Combined effect of potassium-sparing diuretic and potassium iodide increasing blood potassium",
+    "evidence": "moderate",
+    "tags": [
+      "diuretic",
+      "potassium-sparing",
+      "hyperkalemia",
+      "potassium"
+    ]
+  },
+  {
+    "id": "nih-iodine-potassium-sparing-diuretics-1",
+    "title": "Potassium-Sparing Diuretics ↔ Iodine — Risk of Hyperkalemia",
+    "severity": "high",
+    "med_keywords": [
+      "potassium-sparing diuretics"
+    ],
+    "supp_keywords": [
+      "iodine"
+    ],
+    "detail": "Taking potassium iodide with potassium-sparing diuretics can increase the risk of hyperkalemia (elevated blood levels of potassium).",
+    "instruction": "Individuals taking potassium-sparing diuretics should discuss their iodine intakes with healthcare providers.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Combined effect of potassium-sparing diuretic and potassium iodide increasing blood potassium",
+    "evidence": "moderate",
+    "tags": [
+      "diuretic",
+      "potassium-sparing",
+      "hyperkalemia",
+      "potassium"
+    ]
+  },
+  {
+    "id": "nih-chromium-insulin-1",
+    "title": "Insulin ↔ Chromium — increased hypoglycemia risk",
+    "severity": "high",
+    "med_keywords": [
+      "insulin"
+    ],
+    "supp_keywords": [
+      "chromium"
+    ],
+    "detail": "Chromium might increase insulin sensitivity. Taking chromium with insulin could increase the risk of hypoglycemia (low blood sugar).",
+    "instruction": "Monitor blood glucose closely and consult your healthcare provider about potential dose adjustments.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Chromium enhances insulin sensitivity, potentially amplifying insulin's glucose-lowering effects",
+    "evidence": "moderate",
+    "tags": [
+      "diabetes",
+      "blood sugar",
+      "hypoglycemia",
+      "hormone"
+    ]
+  },
+  {
+    "id": "nih-chromium-antidiabetes-1",
+    "title": "Antidiabetes Medications ↔ Chromium — increased hypoglycemia risk",
+    "severity": "high",
+    "med_keywords": [
+      "antidiabetes medications"
+    ],
+    "supp_keywords": [
+      "chromium"
+    ],
+    "detail": "Chromium supplementation might lower blood glucose levels. Chromium supplements might have an additive effect with antidiabetes medications and increase the risk of hypoglycemia.",
+    "instruction": "Monitor blood sugar closely and consult your doctor before taking chromium with any diabetes medications.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Chromium may enhance the glucose-lowering effects of antidiabetic drugs through additive mechanisms",
+    "evidence": "moderate",
+    "tags": [
+      "diabetes",
+      "blood sugar",
+      "hypoglycemia",
+      "antidiabetic"
+    ]
+  },
+  {
+    "id": "nih-chromium-levothyroxine-1",
+    "title": "Levothyroxine ↔ Chromium — decreased thyroid hormone absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "levothyroxine"
+    ],
+    "supp_keywords": [
+      "chromium"
+    ],
+    "detail": "Taking chromium picolinate supplements at the same time as levothyroxine decreases levothyroxine absorption over 6 hours, potentially reducing thyroid medication effectiveness.",
+    "instruction": "Separate chromium and levothyroxine doses by at least several hours to avoid absorption interference.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Chromium picolinate interferes with levothyroxine absorption in the gastrointestinal tract",
+    "evidence": "low",
+    "tags": [
+      "thyroid",
+      "absorption",
+      "hypothyroidism",
+      "hormone"
+    ],
+    "timing_hours": 6
+  },
+  {
+    "id": "nih-potassium-arbs-1",
+    "title": "ARBs ↔ Potassium — Risk of Hyperkalemia",
+    "severity": "high",
+    "med_keywords": [
+      "angiotensin receptor blockers"
+    ],
+    "supp_keywords": [
+      "potassium"
+    ],
+    "detail": "Angiotensin receptor blockers reduce urinary potassium excretion, which can lead to dangerously high potassium levels (hyperkalemia) when combined with potassium supplements.",
+    "instruction": "Monitor potassium status regularly, especially if you have kidney disease or other risk factors. Consult your healthcare provider before taking potassium supplements.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "ARBs reduce urinary potassium excretion",
+    "evidence": "strong",
+    "tags": [
+      "cardiovascular",
+      "hypertension",
+      "kidney",
+      "hyperkalemia"
+    ]
+  },
+  {
+    "id": "nih-potassium-potassium-sparing-diuretics-1",
+    "title": "Potassium-Sparing Diuretics ↔ Potassium — Risk of Hyperkalemia",
+    "severity": "high",
+    "med_keywords": [
+      "potassium-sparing diuretics"
+    ],
+    "supp_keywords": [
+      "potassium"
+    ],
+    "detail": "Potassium-sparing diuretics reduce the excretion of potassium in the urine and can cause hyperkalemia when combined with potassium supplements.",
+    "instruction": "Monitor potassium status regularly, especially if you have impaired kidney function. Consult your healthcare provider before taking potassium supplements.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "These medications reduce urinary potassium excretion",
+    "evidence": "strong",
+    "tags": [
+      "diuretics",
+      "kidney",
+      "hyperkalemia",
+      "cardiovascular"
+    ]
+  },
+  {
+    "id": "nih-phosphorus-aluminum-hydroxide-antacids-1",
+    "title": "Aluminum Hydroxide Antacids ↔ Phosphorus — chronic use depletes phosphate",
+    "severity": "high",
+    "med_keywords": [
+      "aluminum hydroxide antacids"
+    ],
+    "supp_keywords": [
+      "phosphorus"
+    ],
+    "detail": "Aluminum hydroxide antacids (Maalox HRF, Rulox) bind phosphorus in the intestines. Chronic use for 3+ months can lead to hypophosphatemia and aggravate existing phosphate deficiency.",
+    "instruction": "Avoid long-term use of aluminum hydroxide antacids. If needed, discuss phosphorus supplementation with your healthcare provider.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Aluminum hydroxide binds phosphorus in the intestinal tract, preventing absorption",
+    "evidence": "strong",
+    "tags": [
+      "antacids",
+      "mineral-depletion",
+      "aluminum",
+      "gastrointestinal"
+    ]
+  },
+  {
+    "id": "nih-phosphorus-calcium-carbonate-antacids-2",
+    "title": "Calcium Carbonate Antacids ↔ Phosphorus — reduces absorption",
+    "severity": "moderate",
+    "med_keywords": [
+      "calcium carbonate antacids"
+    ],
+    "supp_keywords": [
+      "phosphorus"
+    ],
+    "detail": "Calcium carbonate antacids (Rolaids, Tums, Maalox) decrease intestinal absorption of dietary phosphorus.",
+    "instruction": "Be aware that calcium carbonate antacids may reduce phosphorus absorption. Monitor phosphorus status if using regularly.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Calcium carbonate interferes with intestinal absorption of phosphorus",
+    "evidence": "strong",
+    "tags": [
+      "antacids",
+      "calcium",
+      "mineral-absorption",
+      "gastrointestinal"
+    ]
+  },
+  {
+    "id": "nih-phosphorus-sodium-phosphate-laxatives-3",
+    "title": "Sodium Phosphate Laxatives ↔ Phosphorus — dangerous phosphate overload",
+    "severity": "critical",
+    "med_keywords": [
+      "sodium phosphate laxatives"
+    ],
+    "supp_keywords": [
+      "phosphorus"
+    ],
+    "detail": "Sodium phosphate laxatives (Fleet Prep Kit #1) increase serum phosphate levels. Exceeding recommended doses can be dangerous, especially in kidney disease, heart disease, or dehydration. FDA warned of 13 deaths.",
+    "instruction": "Never exceed recommended dose. Contraindicated if you have kidney disease, heart disease, or dehydration. Consult doctor before use.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Sodium phosphate laxatives directly increase serum phosphate levels through intestinal absorption",
+    "evidence": "strong",
+    "tags": [
+      "laxatives",
+      "hyperphosphatemia",
+      "kidney-disease",
+      "cardiac",
+      "FDA-warning",
+      "electrolyte-toxicity"
+    ]
+  },
+  {
+    "id": "nih-niacin-isoniazid-1",
+    "title": "Isoniazid ↔ Niacin — depletes niacin production",
+    "severity": "high",
+    "med_keywords": [
+      "isoniazid"
+    ],
+    "supp_keywords": [
+      "niacin"
+    ],
+    "detail": "Isoniazid is a structural analog of niacin that interrupts niacin production from tryptophan and interferes with niacin's conversion to NAD. Can cause pellagra in tuberculosis patients.",
+    "instruction": "Increase niacin intake if taking isoniazid. Discuss niacin supplementation with your healthcare provider to prevent deficiency.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Competes with vitamin B6-dependent enzyme required for niacin production from tryptophan and blocks conversion to NAD",
+    "evidence": "moderate",
+    "tags": [
+      "tuberculosis",
+      "vitamin-depletion",
+      "enzyme-competition",
+      "pellagra-risk"
+    ]
+  },
+  {
+    "id": "nih-niacin-pyrazinamide-1",
+    "title": "Pyrazinamide ↔ Niacin — depletes niacin production",
+    "severity": "high",
+    "med_keywords": [
+      "pyrazinamide"
+    ],
+    "supp_keywords": [
+      "niacin"
+    ],
+    "detail": "Pyrazinamide is a structural analog of niacin that interrupts niacin production from tryptophan by competing with required enzymes. Can lead to pellagra in tuberculosis patients.",
+    "instruction": "Increase niacin intake if taking pyrazinamide. Discuss niacin supplementation with your healthcare provider to prevent deficiency.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Competes with vitamin B6-dependent enzyme required for niacin production from tryptophan",
+    "evidence": "moderate",
+    "tags": [
+      "tuberculosis",
+      "vitamin-depletion",
+      "enzyme-competition",
+      "pellagra-risk"
+    ]
+  },
+  {
+    "id": "nih-niacin-antidiabetes-1",
+    "title": "Antidiabetes Medications ↔ Niacin — raises blood glucose",
+    "severity": "high",
+    "med_keywords": [
+      "antidiabetes medications"
+    ],
+    "supp_keywords": [
+      "niacin"
+    ],
+    "detail": "Large doses of nicotinic acid (1.5g/day or more) can raise blood glucose levels by causing or aggravating insulin resistance and increasing hepatic glucose production.",
+    "instruction": "Have blood glucose monitored regularly if taking high-dose niacin with diabetes medications. Medication dose adjustments may be required.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Causes or aggravates insulin resistance and increases hepatic production of glucose",
+    "evidence": "strong",
+    "tags": [
+      "diabetes",
+      "blood-glucose",
+      "insulin-resistance",
+      "dose-dependent",
+      "high-dose"
+    ]
+  },
+  {
+    "id": "nih-thiamin-furosemide-1",
+    "title": "Furosemide ↔ Thiamin — Depletes thiamin levels",
+    "severity": "high",
+    "med_keywords": [
+      "furosemide"
+    ],
+    "supp_keywords": [
+      "thiamin"
+    ],
+    "detail": "Furosemide (Lasix), a loop diuretic, decreases thiamin concentrations possibly to deficient levels through increased urinary thiamin loss.",
+    "instruction": "Discuss thiamin status with healthcare provider if taking furosemide regularly. Thiamin supplementation may be needed to prevent deficiency.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Loop diuretics increase urinary output and thiamin excretion in urine.",
+    "evidence": "strong",
+    "tags": [
+      "diuretic",
+      "loop diuretic",
+      "thiamin depletion",
+      "edema",
+      "hypertension"
+    ]
+  },
+  {
+    "id": "nih-thiamin-fluorouracil-1",
+    "title": "Fluorouracil ↔ Thiamin — Risk of beriberi/encephalopathy",
+    "severity": "critical",
+    "med_keywords": [
+      "fluorouracil"
+    ],
+    "supp_keywords": [
+      "thiamin"
+    ],
+    "detail": "Fluorouracil (5-fluorouracil, Adrucil) chemotherapy has caused cases of beriberi or Wernicke's encephalopathy, possibly by increasing thiamin metabolism and blocking TDP formation.",
+    "instruction": "Inform oncologist if receiving fluorouracil chemotherapy. Thiamin supplements might reverse these neurological effects.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "The drug may increase thiamin metabolism and block the formation of TDP, the active form of thiamin.",
+    "evidence": "moderate",
+    "tags": [
+      "chemotherapy",
+      "colorectal cancer",
+      "beriberi",
+      "Wernicke's encephalopathy",
+      "neurological",
+      "cancer treatment"
+    ]
+  },
+  {
+    "id": "nih-biotin-carbamazepine-1",
+    "title": "Carbamazepine ↔ Biotin — reduced biotin levels",
+    "severity": "moderate",
+    "med_keywords": [
+      "carbamazepine"
+    ],
+    "supp_keywords": [
+      "biotin"
+    ],
+    "detail": "Long-term carbamazepine treatment (≥1 year) is associated with significantly lower serum biotin levels. The anticonvulsant increases biotin breakdown and inhibits intestinal absorption.",
+    "instruction": "Monitor biotin status with your healthcare provider if taking carbamazepine long-term. Consider biotin supplementation if levels are low.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Anticonvulsant increases biotin catabolism and inhibits intestinal biotin absorption",
+    "evidence": "strong",
+    "tags": [
+      "anticonvulsant",
+      "epilepsy",
+      "nutrient depletion",
+      "seizure"
+    ]
+  },
+  {
+    "id": "nih-biotin-primidone-2",
+    "title": "Primidone ↔ Biotin — reduced biotin levels",
+    "severity": "moderate",
+    "med_keywords": [
+      "primidone"
+    ],
+    "supp_keywords": [
+      "biotin"
+    ],
+    "detail": "Long-term primidone treatment (≥1 year) is associated with significantly lower serum biotin levels. The anticonvulsant increases biotin breakdown and inhibits intestinal absorption.",
+    "instruction": "Monitor biotin status with your healthcare provider if taking primidone long-term. Consider biotin supplementation if levels are low.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Anticonvulsant increases biotin catabolism and inhibits intestinal biotin absorption",
+    "evidence": "strong",
+    "tags": [
+      "anticonvulsant",
+      "epilepsy",
+      "nutrient depletion",
+      "seizure"
+    ]
+  },
+  {
+    "id": "nih-biotin-phenytoin-3",
+    "title": "Phenytoin ↔ Biotin — reduced biotin levels",
+    "severity": "moderate",
+    "med_keywords": [
+      "phenytoin"
+    ],
+    "supp_keywords": [
+      "biotin"
+    ],
+    "detail": "Long-term phenytoin treatment (≥1 year) is associated with significantly lower serum biotin levels. The anticonvulsant increases biotin breakdown and inhibits intestinal absorption.",
+    "instruction": "Monitor biotin status with your healthcare provider if taking phenytoin long-term. Consider biotin supplementation if levels are low.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Anticonvulsant increases biotin catabolism and inhibits intestinal biotin absorption",
+    "evidence": "strong",
+    "tags": [
+      "anticonvulsant",
+      "epilepsy",
+      "nutrient depletion",
+      "seizure"
+    ]
+  },
+  {
+    "id": "nih-biotin-phenobarbital-4",
+    "title": "Phenobarbital ↔ Biotin — reduced biotin levels",
+    "severity": "moderate",
+    "med_keywords": [
+      "phenobarbital"
+    ],
+    "supp_keywords": [
+      "biotin"
+    ],
+    "detail": "Long-term phenobarbital treatment (≥1 year) is associated with significantly lower serum biotin levels. The anticonvulsant increases biotin breakdown and inhibits intestinal absorption.",
+    "instruction": "Monitor biotin status with your healthcare provider if taking phenobarbital long-term. Consider biotin supplementation if levels are low.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Anticonvulsant increases biotin catabolism and inhibits intestinal biotin absorption",
+    "evidence": "strong",
+    "tags": [
+      "anticonvulsant",
+      "epilepsy",
+      "nutrient depletion",
+      "seizure",
+      "barbiturate"
+    ]
+  },
+  {
+    "id": "nih-carnitine-pivampicillin-1",
+    "title": "Pivampicillin ↔ Carnitine — Depletion Risk",
+    "severity": "moderate",
+    "med_keywords": [
+      "pivampicillin"
+    ],
+    "supp_keywords": [
+      "carnitine"
+    ],
+    "detail": "Chronic administration of pivalate-conjugated antibiotics like pivampicillin can lead to carnitine depletion and tissue levels low enough to limit fatty acid oxidation.",
+    "instruction": "Monitor carnitine levels if using these antibiotics long-term. Discuss carnitine supplementation with your healthcare provider.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Pivalate-conjugated antibiotics interfere with carnitine metabolism leading to depletion",
+    "evidence": "moderate",
+    "tags": [
+      "antibiotics",
+      "urinary tract infection",
+      "depletion",
+      "fatty acid metabolism"
+    ]
+  },
+  {
+    "id": "nih-carnitine-pivalate-antibiotics-1",
+    "title": "Pivalate Antibiotics ↔ Carnitine — Depletion",
+    "severity": "moderate",
+    "med_keywords": [
+      "pivalate-conjugated antibiotics"
+    ],
+    "supp_keywords": [
+      "carnitine"
+    ],
+    "detail": "Chronic use of pivalate-conjugated antibiotics for urinary tract infection prevention can deplete carnitine levels, potentially limiting fatty acid oxidation.",
+    "instruction": "Discuss carnitine supplementation with your doctor if taking these antibiotics regularly for UTI prevention.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Chronic administration depletes tissue carnitine through interaction with pivalate compounds",
+    "evidence": "moderate",
+    "tags": [
+      "antibiotics",
+      "urinary tract infection",
+      "depletion",
+      "prevention"
+    ]
+  },
+  {
+    "id": "nih-carnitine-valproic-acid-1",
+    "title": "Valproic Acid ↔ Carnitine — Blood Level Reduction",
+    "severity": "high",
+    "med_keywords": [
+      "valproic acid"
+    ],
+    "supp_keywords": [
+      "carnitine"
+    ],
+    "detail": "Valproic acid treatment reduces blood carnitine levels and may cause hepatotoxicity and increased plasma ammonia, leading to encephalopathy.",
+    "instruction": "Monitor carnitine levels regularly. Intravenous L-carnitine may help treat valproic acid toxicity. Consult your doctor about supplementation.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Valproic acid reduces blood carnitine levels and may cause hepatotoxicity with elevated ammonia",
+    "evidence": "strong",
+    "tags": [
+      "anticonvulsant",
+      "epilepsy",
+      "hepatotoxicity",
+      "encephalopathy",
+      "ammonia"
+    ]
+  },
+  {
+    "id": "nih-carnitine-phenobarbital-1",
+    "title": "Phenobarbital ↔ Carnitine — Blood Level Reduction",
+    "severity": "moderate",
+    "med_keywords": [
+      "phenobarbital"
+    ],
+    "supp_keywords": [
+      "carnitine"
+    ],
+    "detail": "Treatment with phenobarbital anticonvulsant reduces blood levels of carnitine, potentially affecting carnitine-dependent metabolic functions.",
+    "instruction": "Monitor carnitine levels if taking phenobarbital long-term. Discuss supplementation needs with your healthcare provider.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Anticonvulsant treatment interferes with carnitine metabolism reducing blood levels",
+    "evidence": "strong",
+    "tags": [
+      "anticonvulsant",
+      "epilepsy",
+      "depletion",
+      "seizure"
+    ]
+  },
+  {
+    "id": "nih-carnitine-phenytoin-1",
+    "title": "Phenytoin ↔ Carnitine — Blood Level Reduction",
+    "severity": "moderate",
+    "med_keywords": [
+      "phenytoin"
+    ],
+    "supp_keywords": [
+      "carnitine"
+    ],
+    "detail": "Phenytoin anticonvulsant treatment reduces blood carnitine levels, which may impact fatty acid metabolism and energy production.",
+    "instruction": "Have carnitine levels checked regularly if using phenytoin. Talk to your doctor about potential supplementation.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Anticonvulsant therapy depletes blood carnitine through metabolic interference",
+    "evidence": "strong",
+    "tags": [
+      "anticonvulsant",
+      "epilepsy",
+      "depletion",
+      "seizure"
+    ]
+  },
+  {
+    "id": "nih-carnitine-carbamazepine-1",
+    "title": "Carbamazepine ↔ Carnitine — Blood Level Reduction",
+    "severity": "moderate",
+    "med_keywords": [
+      "carbamazepine"
+    ],
+    "supp_keywords": [
+      "carnitine"
+    ],
+    "detail": "Carbamazepine anticonvulsant treatment reduces blood carnitine concentrations, potentially affecting metabolic processes dependent on carnitine.",
+    "instruction": "Monitor carnitine levels during carbamazepine therapy. Consult your healthcare provider about supplementation if needed.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Anticonvulsant medication depletes blood carnitine levels",
+    "evidence": "strong",
+    "tags": [
+      "anticonvulsant",
+      "epilepsy",
+      "depletion",
+      "seizure"
+    ]
+  },
+  {
+    "id": "nih-carnitine-anticonvulsants-1",
+    "title": "Anticonvulsants ↔ Carnitine — Depletion Risk",
+    "severity": "moderate",
+    "med_keywords": [
+      "anticonvulsants"
+    ],
+    "supp_keywords": [
+      "carnitine"
+    ],
+    "detail": "Multiple anticonvulsant medications reduce blood carnitine levels. Valproic acid specifically may increase hepatotoxicity and ammonia levels when combined with other anticonvulsants.",
+    "instruction": "Regular monitoring of carnitine levels is recommended for anyone on anticonvulsant therapy. Discuss supplementation with your doctor.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Anticonvulsant drugs interfere with carnitine metabolism and blood levels",
+    "evidence": "strong",
+    "tags": [
+      "anticonvulsant",
+      "epilepsy",
+      "drug class",
+      "depletion"
+    ]
+  },
+  {
+    "id": "nih-ashwagandha-sedatives-1",
+    "title": "Sedatives ↔ Ashwagandha — enhanced sedation",
+    "severity": "moderate",
+    "med_keywords": [
+      "sedatives"
+    ],
+    "supp_keywords": [
+      "ashwagandha"
+    ],
+    "detail": "Ashwagandha may enhance sedative effects due to its sleep-promoting properties. The species name 'somnifera' means sleep-inducing, and clinical trials show improvements in sleep quality and latency.",
+    "instruction": "Monitor for excessive sedation. Consult healthcare provider before combining with sleep medications or sedatives.",
+    "source": "NIH Office of Dietary Supplements",
+    "pair_type": "drug_supplement",
+    "mechanism": "Ashwagandha has inherent sleep-inducing properties that may additively enhance sedative drug effects",
+    "evidence": "moderate",
+    "tags": [
+      "sleep",
+      "sedation",
+      "central-nervous-system"
+    ]
   }
 ]
