@@ -3753,7 +3753,7 @@ function buildSafetyScoreWidget(scoreData) {
   </div>`;
 }
 
-async function fetchAndRenderSafetyScore(meds, supps, email) {
+async function fetchSafetyScoreData(meds, supps, email) {
   try {
     const resp = await fetch(apiOrigin() + '/api/safety-score', {
       method:  'POST',
@@ -3761,12 +3761,18 @@ async function fetchAndRenderSafetyScore(meds, supps, email) {
       body:    JSON.stringify({ meds, supps, email: email || '' }),
     });
     const data = await resp.json();
-    if (data.error) return '';
-    return buildSafetyScoreWidget(data);
+    if (data.error) return null;
+    return data;
   } catch (e) {
     console.warn('Safety score fetch failed:', e);
-    return '';
+    return null;
   }
+}
+
+async function fetchAndRenderSafetyScore(meds, supps, email) {
+  const data = await fetchSafetyScoreData(meds, supps, email);
+  if (!data) return { html: '', scoreData: null };
+  return { html: buildSafetyScoreWidget(data), scoreData: data };
 }
 
 function buildSeveritySummary(interactions, nearMisses) {
@@ -4039,6 +4045,14 @@ function buildNextStepsBar(hasInteractions) {
                border-radius:6px;cursor:pointer;white-space:nowrap">
         🧾 Create doctor PDF →
       </button>
+      <button onclick="shareMyStack()"
+        id="shareStackBtn"
+        style="font-size:11px;font-weight:500;padding:8px 14px;
+               background:transparent;color:#fff;
+               border:1px solid rgba(255,255,255,0.2);
+               border-radius:6px;cursor:pointer;white-space:nowrap">
+        🔗 Share stack →
+      </button>
     </div>
   </div>`;
 }
@@ -4104,6 +4118,11 @@ async function runAiMedCheck(opts) {
     const data = await resp.json();
     if (data.error) throw new Error(data.error);
     res.innerHTML = renderAiMedCheckResult(data);
+    const meds  = data.resolved_medications || [];
+    const supps = data.resolved_supplements  || [];
+    const email = localStorage.getItem('elthio_saved_email') || '';
+    const scoreData = await fetchSafetyScoreData(meds, supps, email);
+    storeResultForSharing(data, scoreData);
   } catch(e) {
     res.innerHTML = `<div style="background:var(--red-light);border:1px solid var(--red);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--red)">Error: ${String(e.message||e)}</div>`;
   } finally {
@@ -4390,7 +4409,7 @@ async function heroRunCheck() {
     const nearMisses = data.near_misses || [];
 
     const email       = localStorage.getItem('elthio_saved_email') || '';
-    const scoreWidget = await fetchAndRenderSafetyScore(_heroMeds, _heroSupps, email);
+    const { html: scoreWidget, scoreData } = await fetchAndRenderSafetyScore(_heroMeds, _heroSupps, email);
     let html = scoreWidget + buildSeveritySummary(interactions, nearMisses);
 
     if (interactions.length) {
@@ -4441,6 +4460,7 @@ async function heroRunCheck() {
     html += buildNextStepsBar(interactions.length > 0);
     res.innerHTML = html;
     res.dataset.hasResults = '1';
+    storeResultForSharing(data, scoreData);
     showSaveStackCard();
     if (_heroMeds.length && typeof _coachMeds !== 'undefined') {
       _coachMeds = [..._heroMeds];
@@ -4745,6 +4765,303 @@ async function markResolved(title, btn) {
 
 window.markResolved = markResolved;
 window.loadReturningUserGreeting = loadReturningUserGreeting;
+
+let _lastMedCheckResult = null;
+let _lastSafetyScore    = null;
+let _currentShareUrl    = null;
+
+function storeResultForSharing(result, scoreData) {
+  _lastMedCheckResult = result;
+  _lastSafetyScore    = scoreData;
+}
+
+function shareMyStack() {
+  if (!_lastMedCheckResult) {
+    alert('Run a Med Check first to share your stack.');
+    return;
+  }
+  const modal = document.getElementById('shareModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    const titleInput = document.getElementById('shareTitle');
+    if (titleInput && !titleInput.value) {
+      titleInput.value = 'My Supplement Stack';
+    }
+  }
+}
+
+function closeShareModal() {
+  const modal = document.getElementById('shareModal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function createShare() {
+  const btn    = document.getElementById('createShareBtn');
+  const result = document.getElementById('shareResult');
+  const title  = document.getElementById('shareTitle').value.trim();
+  const note   = document.getElementById('shareNote').value.trim();
+  const email  = localStorage.getItem('elthio_saved_email') || '';
+
+  if (!_lastMedCheckResult) return;
+
+  btn.disabled    = true;
+  btn.textContent = '↻ Creating link...';
+
+  const meds  = collectCurrentMeds();
+  const supps = collectCurrentSupps();
+
+  try {
+    const resp = await fetch(apiOrigin() + '/api/share', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        meds,
+        supps,
+        interactions: _lastMedCheckResult.interactions || [],
+        synergies:    _lastMedCheckResult.synergies    || [],
+        near_misses:  _lastMedCheckResult.near_misses  || [],
+        safety_score: _lastSafetyScore?.score,
+        safety_band:  _lastSafetyScore?.band?.label,
+        email,
+        title: title || 'My Supplement Stack',
+        note,
+      }),
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+
+    _currentShareUrl = data.share_url;
+
+    const urlInput = document.getElementById('shareUrlInput');
+    if (urlInput) urlInput.value = data.share_url;
+
+    result.style.display = 'block';
+    btn.style.display    = 'none';
+
+  } catch(e) {
+    btn.disabled    = false;
+    btn.textContent = 'Create shareable link →';
+    alert(`Error creating share: ${e.message}`);
+  }
+}
+
+function copyShareUrl() {
+  const urlInput = document.getElementById('shareUrlInput');
+  const copyBtn  = document.getElementById('copyShareBtn');
+  if (!urlInput) return;
+
+  navigator.clipboard.writeText(urlInput.value).then(() => {
+    if (copyBtn) {
+      copyBtn.textContent = '✓ Copied!';
+      setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+    }
+  }).catch(() => {
+    urlInput.select();
+    document.execCommand('copy');
+  });
+}
+
+function shareToReddit() {
+  if (!_currentShareUrl) return;
+  const score = _lastSafetyScore?.score;
+  const text  = score
+    ? `My supplement stack — Safety Score ${score}/100 via Elthio`
+    : 'My supplement stack — checked for interactions via Elthio';
+  const url   = `https://reddit.com/submit?url=${encodeURIComponent(_currentShareUrl)}&title=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
+
+function shareToTwitter() {
+  if (!_currentShareUrl) return;
+  const score = _lastSafetyScore?.score;
+  const text  = score
+    ? `My supplement stack has a ${score}/100 Safety Score on @ElthioHealth — check yours free`
+    : 'Just checked my supplement stack for drug interactions on @ElthioHealth — free tool';
+  const url   = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(_currentShareUrl)}`;
+  window.open(url, '_blank');
+}
+
+async function loadSharedStack(slug) {
+  document.body.innerHTML = `
+    <div style="max-width:600px;margin:0 auto;padding:20px;
+         font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+         background:#1A1814;min-height:100vh;color:#E8E4DC">
+
+      <div style="text-align:center;padding:24px 0 16px">
+        <div style="font-size:22px;font-weight:800;
+             color:#D4AF37;letter-spacing:0.1em">ELTHIO</div>
+        <div style="font-size:11px;color:#6b6b6b;margin-top:2px">
+          Supplement Safety Co-Pilot
+        </div>
+      </div>
+
+      <div id="sharedStackContent" style="padding:16px 0">
+        <div style="text-align:center;color:#6b6b6b;padding:40px">
+          Loading stack...
+        </div>
+      </div>
+
+      <div style="text-align:center;padding:24px 0;border-top:1px solid #2a2520">
+        <a href="/"
+           style="display:inline-block;padding:12px 28px;
+                  background:#D4AF37;color:#000;border-radius:8px;
+                  text-decoration:none;font-weight:600;font-size:13px">
+          Check my own stack — free →
+        </a>
+        <div style="font-size:10px;color:#6b6b6b;margin-top:10px">
+          Free supplement + medication safety checker
+        </div>
+      </div>
+    </div>`;
+
+  try {
+    const resp  = await fetch(apiOrigin() + `/api/stack/${slug}`);
+    const stack = await resp.json();
+
+    if (!resp.ok || stack.error) {
+      document.getElementById('sharedStackContent').innerHTML = `
+        <div style="text-align:center;padding:40px;color:#9B9488">
+          <div style="font-size:32px;margin-bottom:12px">🔍</div>
+          <div style="font-size:15px;font-weight:500;margin-bottom:6px">
+            Stack not found
+          </div>
+          <div style="font-size:12px">
+            This link may have expired or been removed.
+          </div>
+        </div>`;
+      return;
+    }
+
+    const score      = stack.safety_score;
+    const band       = stack.safety_band || '';
+    const scoreColor = score >= 90 ? '#1D9E75'
+                     : score >= 75 ? '#EF9F27'
+                     : score >= 50 ? '#F97316'
+                     : score ? '#E24B4A' : '#6b6b6b';
+
+    const ixCards = (stack.interactions || []).map(ix => {
+      const sev   = (ix.severity || '').toLowerCase();
+      const color = sev === 'critical' ? '#E24B4A'
+                  : sev === 'high'     ? '#EF9F27'
+                  : sev === 'moderate' ? '#3B82F6'
+                  : '#6b7280';
+      return `<div style="border:1px solid ${color};border-radius:8px;
+                   padding:12px 14px;margin-bottom:8px;
+                   background:rgba(255,255,255,0.02)">
+        <div style="font-size:12px;font-weight:500;color:${color};
+             margin-bottom:4px">
+          ${sev.toUpperCase()} — ${ix.title || ''}
+        </div>
+        <div style="font-size:11px;color:#9B9488;line-height:1.5">
+          ${ix.instruction || ix.detail || ''}
+        </div>
+        ${ix.source ? `<div style="font-size:10px;color:#6b6b6b;margin-top:4px">
+          📚 ${ix.source}</div>` : ''}
+      </div>`;
+    }).join('');
+
+    const synCards = (stack.synergies || []).map(s =>
+      `<div style="border:1px solid #1D9E75;border-radius:8px;
+            padding:10px 12px;margin-bottom:6px;
+            background:rgba(29,158,117,0.05)">
+        <div style="font-size:12px;font-weight:500;color:#1D9E75;
+             margin-bottom:3px">✅ ${s.title || ''}</div>
+        <div style="font-size:11px;color:#4ade80;line-height:1.5">
+          ${s.detail || ''}
+        </div>
+      </div>`
+    ).join('');
+
+    document.getElementById('sharedStackContent').innerHTML = `
+
+      <div style="background:#221F1A;border:1px solid #2a2520;
+           border-radius:12px;padding:20px;margin-bottom:16px">
+        <div style="font-size:16px;font-weight:600;margin-bottom:4px">
+          ${stack.title || 'Supplement Stack'}
+        </div>
+        ${stack.note ? `<div style="font-size:12px;color:#9B9488;
+          margin-bottom:12px">${stack.note}</div>` : ''}
+
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
+          ${(stack.medications||[]).map(m =>
+            `<span style="background:rgba(59,130,246,0.15);color:#60a5fa;
+                   padding:3px 10px;border-radius:20px;font-size:11px;
+                   border:1px solid rgba(59,130,246,0.3)">${m}</span>`
+          ).join('')}
+          ${(stack.supplements||[]).map(s =>
+            `<span style="background:rgba(29,158,117,0.15);color:#4ade80;
+                   padding:3px 10px;border-radius:20px;font-size:11px;
+                   border:1px solid rgba(29,158,117,0.3)">${s}</span>`
+          ).join('')}
+        </div>
+
+        ${score ? `
+        <div style="display:flex;align-items:center;gap:12px;
+             padding:12px;background:#1A1814;border-radius:8px">
+          <div style="font-size:32px;font-weight:800;color:${scoreColor}">
+            ${score}
+          </div>
+          <div>
+            <div style="font-size:10px;color:#6b6b6b;
+                 letter-spacing:0.1em">SAFETY SCORE</div>
+            <div style="font-size:13px;font-weight:500;color:${scoreColor}">
+              ${band}
+            </div>
+          </div>
+          <div style="flex:1;background:#2a2520;border-radius:999px;
+               height:6px;overflow:hidden">
+            <div style="background:${scoreColor};height:100%;
+                 border-radius:999px;width:${score}%"></div>
+          </div>
+        </div>` : ''}
+      </div>
+
+      ${ixCards ? `
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;letter-spacing:0.1em;color:#6b6b6b;
+             margin-bottom:8px">INTERACTIONS</div>
+        ${ixCards}
+      </div>` : `
+      <div style="background:#221F1A;border:1px solid #1D9E75;
+           border-radius:8px;padding:14px;margin-bottom:16px;
+           text-align:center;color:#4ade80;font-size:13px">
+        ✅ No significant interactions found
+      </div>`}
+
+      ${synCards ? `
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;letter-spacing:0.1em;color:#6b6b6b;
+             margin-bottom:8px">SYNERGIES</div>
+        ${synCards}
+      </div>` : ''}
+
+      <div style="font-size:10px;color:#6b6b6b;text-align:center;
+           padding:12px;border-top:1px solid #2a2520;line-height:1.6">
+        Viewed ${(stack.view_count||0)+1} time${(stack.view_count||0)+1!==1?'s':''}
+        · Created ${new Date(stack.created_at).toLocaleDateString()}
+        · Educational only — not medical advice
+      </div>`;
+
+  } catch(e) {
+    document.getElementById('sharedStackContent').innerHTML = `
+      <div style="text-align:center;padding:40px;color:#E24B4A">
+        Error loading stack: ${e.message}
+      </div>`;
+  }
+}
+
+window.shareMyStack = shareMyStack;
+window.closeShareModal = closeShareModal;
+window.createShare = createShare;
+window.copyShareUrl = copyShareUrl;
+window.shareToReddit = shareToReddit;
+window.shareToTwitter = shareToTwitter;
+window.loadSharedStack = loadSharedStack;
+
+document.addEventListener('click', (e) => {
+  const modal = document.getElementById('shareModal');
+  if (modal && e.target === modal) closeShareModal();
+});
 
 window.showSaveStackCard = showSaveStackCard;
 window.saveMyStack = saveMyStack;
@@ -6140,7 +6457,15 @@ function initOnboarding() {
 // ════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════
+(function loadSharedStackIfNeeded() {
+  const path  = window.location.pathname;
+  const match = path.match(/^\/stack\/([a-zA-Z0-9]+)$/);
+  if (!match) return;
+  window._elthioSharedView = true;
+  loadSharedStack(match[1]);
+})();
 (function applyTabFromUrl() {
+  if (window._elthioSharedView) return;
   try {
     const tab = new URLSearchParams(window.location.search).get('tab');
     if (tab && BIO_TABS.includes(tab)) { showTab(tab); return; }
@@ -6218,5 +6543,108 @@ if (heroAuth) {
   loadCoachRoutineFields();
 }
 </script>
+
+<!-- Share Stack Modal -->
+<div id="shareModal" style="display:none;position:fixed;inset:0;
+     background:rgba(0,0,0,0.7);z-index:1000;
+     align-items:center;justify-content:center">
+  <div style="background:var(--surface);border:1px solid var(--border);
+       border-radius:12px;padding:24px;max-width:420px;width:90%;
+       max-height:90vh;overflow-y:auto">
+
+    <div style="display:flex;justify-content:space-between;
+         align-items:center;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:500">Share your stack</div>
+      <button onclick="closeShareModal()"
+        style="background:none;border:none;color:var(--muted);
+               font-size:20px;cursor:pointer">×</button>
+    </div>
+
+    <div style="font-size:12px;color:var(--muted);
+         margin-bottom:16px;line-height:1.6">
+      Create a public link to your stack. Anyone with the link
+      can see your supplements, Safety Score, and interactions.
+      Your email is never shown publicly.
+    </div>
+
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;color:var(--muted);display:block;
+             margin-bottom:4px">Stack title (optional)</label>
+      <input class="input" id="shareTitle"
+        placeholder="e.g. My Longevity Stack"
+        style="width:100%;box-sizing:border-box">
+    </div>
+
+    <div style="margin-bottom:16px">
+      <label style="font-size:11px;color:var(--muted);display:block;
+             margin-bottom:4px">Note (optional)</label>
+      <textarea id="shareNote"
+        placeholder="e.g. Been running this stack for 3 months..."
+        style="width:100%;height:60px;padding:8px 10px;
+               background:var(--surface2);border:1px solid var(--border);
+               border-radius:6px;font-size:12px;color:var(--text);
+               font-family:inherit;resize:none;box-sizing:border-box"></textarea>
+    </div>
+
+    <button onclick="createShare()"
+      id="createShareBtn"
+      style="width:100%;padding:12px;background:var(--gold);
+             color:#000;border:none;border-radius:8px;
+             font-size:13px;font-weight:600;cursor:pointer;
+             margin-bottom:12px">
+      Create shareable link →
+    </button>
+
+    <div id="shareResult" style="display:none">
+      <div style="background:var(--surface2);border:1px solid var(--border);
+           border-radius:8px;padding:12px;margin-bottom:10px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">
+          Your shareable link:
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="shareUrlInput" readonly
+            style="flex:1;font-size:12px;padding:6px 8px;
+                   background:var(--surface);border:1px solid var(--border);
+                   border-radius:4px;color:var(--text)">
+          <button onclick="copyShareUrl()"
+            id="copyShareBtn"
+            style="font-size:11px;padding:6px 12px;background:var(--gold);
+                   color:#000;border:none;border-radius:4px;cursor:pointer;
+                   white-space:nowrap">
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="shareToReddit()"
+          style="flex:1;font-size:11px;padding:8px;
+                 background:#FF4500;color:#fff;border:none;
+                 border-radius:6px;cursor:pointer">
+          Share on Reddit
+        </button>
+        <button onclick="shareToTwitter()"
+          style="flex:1;font-size:11px;padding:8px;
+                 background:#1DA1F2;color:#fff;border:none;
+                 border-radius:6px;cursor:pointer">
+          Share on X
+        </button>
+        <button onclick="copyShareUrl()"
+          style="flex:1;font-size:11px;padding:8px;
+                 background:var(--surface2);color:var(--text);
+                 border:1px solid var(--border);
+                 border-radius:6px;cursor:pointer">
+          Copy link
+        </button>
+      </div>
+
+      <div style="font-size:10px;color:var(--muted);
+           margin-top:10px;text-align:center">
+        Link expires in 90 days · Views tracked · Email never shown
+      </div>
+    </div>
+
+  </div>
+</div>
 </body>
 </html>

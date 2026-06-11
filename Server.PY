@@ -647,6 +647,35 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": str(e)}, 500)
             return
 
+        if path.startswith("/api/stack/"):
+            try:
+                slug = path.split("/api/stack/")[-1].strip("/")
+                if not slug:
+                    self._send_json({"error": "slug required"}, 400)
+                    return
+                from share import get_share
+                stack = get_share(slug)
+                if stack:
+                    self._send_json(stack)
+                else:
+                    self._send_json({"error": "Stack not found or expired"}, 404)
+            except Exception as e:
+                log.error("stack GET error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
+        if path.startswith("/api/my-shares"):
+            try:
+                qs    = parse_qs(urlparse(self.path).query)
+                email = (qs.get("email") or [""])[0].strip()
+                from share import get_my_shares
+                shares = get_my_shares(email)
+                self._send_json({"shares": shares})
+            except Exception as e:
+                log.error("my-shares error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
         if path.startswith("/api/memory"):
             try:
                 qs    = parse_qs(urlparse(self.path).query)
@@ -1518,6 +1547,29 @@ class ElthioHandler(BaseHTTPRequestHandler):
                 })
             except Exception as e:
                 log.error("save-stack error: %s", e)
+                self._send_json({"error": str(e)}, 500)
+            return
+
+        if path == "/api/share":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body   = json.loads(self.rfile.read(length).decode())
+                from share import create_share
+                result = create_share(
+                    medications  = body.get("meds",         []),
+                    supplements  = body.get("supps",        []),
+                    interactions = body.get("interactions", []),
+                    synergies    = body.get("synergies",    []),
+                    near_misses  = body.get("near_misses",  []),
+                    safety_score = body.get("safety_score"),
+                    safety_band  = body.get("safety_band",  ""),
+                    email        = body.get("email",        ""),
+                    title        = body.get("title",        "My Supplement Stack"),
+                    note         = body.get("note",         ""),
+                )
+                self._send_json(result)
+            except Exception as e:
+                log.error("share error: %s", e)
                 self._send_json({"error": str(e)}, 500)
             return
 
