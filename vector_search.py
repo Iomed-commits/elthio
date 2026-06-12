@@ -1,12 +1,17 @@
 """
-vector_search.py — Semantic vector search using Supabase pgvector
+vector_search.py — Optimized hybrid RAG for Elthio
 
-Stores 174 interaction rules as embeddings in Supabase.
-Queries match by meaning not keywords — "heart pill" finds "warfarin" rules.
-Zero new infrastructure — uses your existing Supabase database.
+Improvements over v1:
+1. Multi-entity query decomposition — embeds each drug/supplement
+   separately for better recall
+2. Severity-weighted re-ranking — critical interactions surface first
+3. Structured context assembly — Claude gets organized context not a flat list
+4. Parallel embedding calls — faster for multi-entity queries
+5. Confidence scoring — each result gets a combined score
+6. Graceful degradation — every failure falls back cleanly
 
-Setup:   python vector_search.py --index
-Search:  python vector_search.py --search "blood thinner and fish oil"
+Setup:   python vector_search.py --index --force
+Search:  python vector_search.py --search "blood thinner fish oil"
 Status:  python vector_search.py --status
 Test:    python vector_search.py --test
 """
@@ -16,12 +21,15 @@ import argparse
 import json
 import logging
 import os
+import sys
 import time
-import urllib.request
 import urllib.parse
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
+sys.stdout.reconfigure(encoding="utf-8")
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(message)s")
 
@@ -40,32 +48,55 @@ SUPABASE_KEY         = (
     or os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 )
 EMBEDDING_MODEL      = "text-embedding-3-small"
-SIMILARITY_THRESHOLD = 0.55
-TOP_K                = 10
+SIMILARITY_THRESHOLD = 0.52
+TOP_K_PER_ENTITY     = 8
+MAX_TOTAL_RESULTS    = 20
 
 DRUG_SUPP_DB = Path(__file__).parent / "interactions_db.json"
 SUPP_SUPP_DB = Path(__file__).parent / "supplement_interactions_db.json"
 
+# Severity weights for re-ranking
+SEVERITY_WEIGHTS = {
+    "critical":      1.0,
+    "high":          0.85,
+    "moderate":      0.65,
+    "informational": 0.40,
+}
+
+# Drug synonyms for entity expansion
 DRUG_SYNONYMS = {
-    "warfarin":      "warfarin coumadin blood thinner anticoagulant",
-    "levothyroxine": "levothyroxine synthroid thyroid medication thyroid pill",
-    "metformin":     "metformin glucophage diabetes medication diabetes pill",
-    "atorvastatin":  "atorvastatin lipitor statin cholesterol medication",
-    "sertraline":    "sertraline zoloft ssri antidepressant",
-    "lisinopril":    "lisinopril blood pressure medication ace inhibitor",
-    "metoprolol":    "metoprolol lopressor beta blocker heart medication heart pill",
-    "omeprazole":    "omeprazole prilosec proton pump inhibitor acid reflux",
-    "digoxin":       "digoxin lanoxin heart medication cardiac",
-    "cyclosporine":  "cyclosporine transplant medication immunosuppressant",
-    "apixaban":      "apixaban eliquis blood thinner anticoagulant",
-    "clopidogrel":   "clopidogrel plavix blood thinner antiplatelet",
-    "amlodipine":    "amlodipine norvasc calcium channel blocker blood pressure",
-    "amiodarone":    "amiodarone heart rhythm arrhythmia",
+    "warfarin":      ["warfarin", "coumadin", "blood thinner",
+                      "anticoagulant"],
+    "levothyroxine": ["levothyroxine", "synthroid", "thyroid medication",
+                      "thyroid pill"],
+    "metformin":     ["metformin", "glucophage", "diabetes medication",
+                      "diabetes pill"],
+    "atorvastatin":  ["atorvastatin", "lipitor", "statin",
+                      "cholesterol medication"],
+    "sertraline":    ["sertraline", "zoloft", "ssri", "antidepressant"],
+    "lisinopril":    ["lisinopril", "blood pressure medication",
+                      "ace inhibitor"],
+    "metoprolol":    ["metoprolol", "lopressor", "beta blocker",
+                      "heart medication", "heart pill"],
+    "omeprazole":    ["omeprazole", "prilosec", "proton pump inhibitor",
+                      "acid reflux", "ppi"],
+    "digoxin":       ["digoxin", "lanoxin", "heart medication"],
+    "cyclosporine":  ["cyclosporine", "transplant medication",
+                      "immunosuppressant"],
+    "apixaban":      ["apixaban", "eliquis", "blood thinner",
+                      "anticoagulant"],
+    "clopidogrel":   ["clopidogrel", "plavix", "blood thinner",
+                      "antiplatelet"],
+    "amlodipine":    ["amlodipine", "norvasc", "calcium channel blocker",
+                      "blood pressure"],
+    "amiodarone":    ["amiodarone", "heart rhythm", "arrhythmia"],
+    "furosemide":    ["furosemide", "lasix", "water pill", "diuretic",
+                      "loop diuretic"],
 }
 
 
-# ── Supabase helpers ──────────────────────────────────────────────────────────
-def _supa_headers() -> dict:
+# ── Supabase ──────────────────────────────────────────────────────────────────
+def _sh() -> dict:
     return {
         "apikey":        SUPABASE_KEY,
         "Authorization": f"Bearer {SUPABASE_KEY}",
@@ -79,26 +110,30 @@ def supa_rpc(fn: str, params: dict) -> Any:
     data = json.dumps(params).encode()
     req  = urllib.request.Request(
         url, data=data,
-        headers={**_supa_headers(), "Prefer": ""},
+        headers={**_sh(), "Prefer": ""},
         method="POST",
     )
     with urllib.request.urlopen(req, timeout=15) as r:
-        return json.loads(r.read())
+        raw = r.read()
+        return json.loads(raw) if raw else []
 
 
 def supa_get(path: str, params: dict) -> Any:
     url = f"{SUPABASE_URL}/rest/v1/{path}?" + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url, headers=_supa_headers())
+    req = urllib.request.Request(url, headers=_sh())
     with urllib.request.urlopen(req, timeout=10) as r:
-        return json.loads(r.read())
+        return json.loads(r.read()) or []
 
 
 # ── OpenAI embeddings ─────────────────────────────────────────────────────────
 def get_embedding(text: str) -> list[float]:
     if not OPENAI_API_KEY:
         raise ValueError("OPENAI_API_KEY not set")
-    body = json.dumps({"model": EMBEDDING_MODEL, "input": text[:8000]}).encode()
-    req  = urllib.request.Request(
+    body = json.dumps({
+        "model": EMBEDDING_MODEL,
+        "input": text[:8000],
+    }).encode()
+    req = urllib.request.Request(
         "https://api.openai.com/v1/embeddings",
         data=body,
         headers={
@@ -111,12 +146,18 @@ def get_embedding(text: str) -> list[float]:
         return json.loads(r.read())["data"][0]["embedding"]
 
 
-def get_embeddings_batch(texts: list[str], batch_size: int = 20) -> list[list[float]]:
+def get_embeddings_batch(
+    texts: list[str],
+    batch_size: int = 20,
+) -> list[list[float]]:
     all_embeddings = []
     for i in range(0, len(texts), batch_size):
         batch = texts[i:i + batch_size]
-        body  = json.dumps({"model": EMBEDDING_MODEL, "input": batch}).encode()
-        req   = urllib.request.Request(
+        body  = json.dumps({
+            "model": EMBEDDING_MODEL,
+            "input": batch,
+        }).encode()
+        req = urllib.request.Request(
             "https://api.openai.com/v1/embeddings",
             data=body,
             headers={
@@ -132,8 +173,10 @@ def get_embeddings_batch(texts: list[str], batch_size: int = 20) -> list[list[fl
             for item in sorted(data["data"], key=lambda x: x["index"])
         ]
         all_embeddings.extend(batch_embeddings)
-        log.info("Embedded batch %d-%d of %d", i + 1,
-                 min(i + batch_size, len(texts)), len(texts))
+        log.info(
+            "Embedded batch %d-%d of %d",
+            i + 1, min(i + batch_size, len(texts)), len(texts)
+        )
         time.sleep(0.3)
     return all_embeddings
 
@@ -143,10 +186,14 @@ def rule_to_text(rule: dict) -> str:
     parts = []
     for field in ("drug", "supplement", "supplement_a", "supplement_b"):
         if rule.get(field):
-            parts.append(f"{field.replace('_', ' ').title()}: {rule[field]}")
+            parts.append(
+                f"{field.replace('_', ' ').title()}: {rule[field]}"
+            )
     drug = rule.get("drug", "").lower()
     if drug in DRUG_SYNONYMS:
-        parts.append(f"Also known as: {DRUG_SYNONYMS[drug]}")
+        parts.append(
+            f"Also known as: {' '.join(DRUG_SYNONYMS[drug])}"
+        )
     if rule.get("severity"):
         parts.append(f"Severity: {rule['severity']}")
     if rule.get("title"):
@@ -160,7 +207,7 @@ def rule_to_text(rule: dict) -> str:
     return "\n".join(parts)
 
 
-# ── Load rules ────────────────────────────────────────────────────────────────
+# ── Load and index rules ──────────────────────────────────────────────────────
 def load_all_rules() -> list[tuple[dict, str]]:
     rules = []
     for path, rule_type in [
@@ -177,11 +224,13 @@ def load_all_rules() -> list[tuple[dict, str]]:
     return rules
 
 
-# ── Index rules ───────────────────────────────────────────────────────────────
 def index_rules(force: bool = False) -> int:
     if not force:
         try:
-            existing = supa_get("interaction_embeddings", {"select": "id", "limit": "1"})
+            existing = supa_get(
+                "interaction_embeddings",
+                {"select": "id", "limit": "1"}
+            )
             if existing:
                 log.info("Already indexed. Use --force to re-index.")
                 return -1
@@ -199,7 +248,7 @@ def index_rules(force: bool = False) -> int:
 
     log.info("Building embeddings for %d rules...", len(texts))
     embeddings = get_embeddings_batch(texts)
-    log.info("Got %d embeddings — upserting to Supabase...", len(embeddings))
+    log.info("Got %d embeddings — upserting...", len(embeddings))
 
     batch_size     = 20
     total_upserted = 0
@@ -228,7 +277,7 @@ def index_rules(force: bool = False) -> int:
             req  = urllib.request.Request(
                 url, data=data,
                 headers={
-                    **_supa_headers(),
+                    **_sh(),
                     "Prefer": "resolution=merge-duplicates",
                 },
                 method="POST",
@@ -237,26 +286,93 @@ def index_rules(force: bool = False) -> int:
             total_upserted += len(rows)
             log.info("Upserted batch %d-%d", i, i + len(rows))
         except Exception as e:
-            log.error("Upsert failed for batch %d: %s", i, e)
+            log.error("Upsert failed batch %d: %s", i, e)
 
     log.info("Indexed %d rules into Supabase pgvector", total_upserted)
     return total_upserted
 
 
-# ── Semantic search ───────────────────────────────────────────────────────────
-def semantic_search(
+# ── Multi-entity query decomposition ─────────────────────────────────────────
+def decompose_query(
+    medications: list[str],
+    supplements: list[str],
+) -> list[str]:
+    """
+    Break a stack query into multiple focused sub-queries.
+    Each drug-supplement pair gets its own query string.
+    Generates richer semantic coverage than a single combined query.
+    """
+    queries = []
+
+    # Full stack query
+    if medications and supplements:
+        queries.append(
+            f"Medications: {', '.join(medications[:3])} — "
+            f"Supplements: {', '.join(supplements[:3])}"
+        )
+
+    # Per-medication queries with synonym expansion
+    for med in medications[:4]:
+        med_lower = med.lower()
+        synonyms  = DRUG_SYNONYMS.get(med_lower, [med])
+        med_str   = " / ".join(synonyms[:3])
+        if supplements:
+            queries.append(
+                f"{med_str} drug interactions with "
+                f"{', '.join(supplements[:3])}"
+            )
+        else:
+            queries.append(f"{med_str} supplement interactions")
+
+    # Per-supplement queries
+    for supp in supplements[:4]:
+        if medications:
+            queries.append(
+                f"{supp} supplement interactions with "
+                f"{', '.join(medications[:3])}"
+            )
+
+    # Drug class queries
+    drug_classes = []
+    for med in medications:
+        med_lower = med.lower()
+        if any(x in med_lower for x in
+               ["warfarin", "apixaban", "clopidogrel", "rivaroxaban"]):
+            drug_classes.append("blood thinner anticoagulant")
+        if any(x in med_lower for x in
+               ["atorvastatin", "simvastatin", "rosuvastatin"]):
+            drug_classes.append("statin cholesterol medication")
+        if any(x in med_lower for x in
+               ["sertraline", "fluoxetine", "escitalopram"]):
+            drug_classes.append("ssri antidepressant serotonin")
+        if any(x in med_lower for x in
+               ["levothyroxine", "thyroid"]):
+            drug_classes.append("thyroid medication levothyroxine")
+
+    for drug_class in set(drug_classes):
+        if supplements:
+            queries.append(
+                f"{drug_class} interaction with "
+                f"{', '.join(supplements[:2])}"
+            )
+
+    return queries[:8]  # Cap at 8 sub-queries
+
+
+# ── Parallel semantic search ──────────────────────────────────────────────────
+def semantic_search_single(
     query: str,
-    top_k: int = TOP_K,
+    top_k: int = TOP_K_PER_ENTITY,
     threshold: float = SIMILARITY_THRESHOLD,
-    rule_type: str | None = None,
 ) -> list[dict]:
+    """Search for a single query string."""
     try:
         embedding = get_embedding(query)
         results   = supa_rpc("match_interactions", {
             "query_embedding": embedding,
             "match_threshold": threshold,
             "match_count":     top_k,
-            "filter_type":     rule_type,
+            "filter_type":     None,
         })
         matches = []
         for row in (results or []):
@@ -265,41 +381,172 @@ def semantic_search(
             rule["_retrieval"]  = "semantic"
             rule["_rule_type"]  = row.get("rule_type", "")
             matches.append(rule)
-        log.info("Semantic search: %d matches for '%s'", len(matches), query[:60])
         return matches
     except Exception as e:
-        log.warning("Semantic search failed: %s", e)
+        log.warning("Semantic search failed for query '%s': %s",
+                    query[:50], e)
         return []
 
 
-# ── Query builder ─────────────────────────────────────────────────────────────
-def build_search_query(medications: list[str], supplements: list[str]) -> str:
+def semantic_search_parallel(
+    queries: list[str],
+    top_k: int = TOP_K_PER_ENTITY,
+) -> list[dict]:
+    """
+    Run multiple semantic searches in parallel.
+    Merges and deduplicates results.
+    """
+    all_results: dict[str, dict] = {}  # keyed by rule id for dedup
+
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futures = {
+            pool.submit(semantic_search_single, q, top_k): q
+            for q in queries
+        }
+        for future in as_completed(futures):
+            try:
+                results = future.result(timeout=15)
+                for rule in results:
+                    rule_id = rule.get("id", rule.get("title", ""))
+                    if rule_id not in all_results:
+                        all_results[rule_id] = rule
+                    else:
+                        # Keep highest similarity score
+                        existing_sim = all_results[rule_id].get(
+                            "_similarity", 0
+                        )
+                        if rule.get("_similarity", 0) > existing_sim:
+                            all_results[rule_id] = rule
+            except Exception as e:
+                log.warning("Parallel search future failed: %s", e)
+
+    return list(all_results.values())
+
+
+# ── Severity-weighted re-ranking ──────────────────────────────────────────────
+def rerank_results(results: list[dict]) -> list[dict]:
+    """
+    Re-rank search results by combined score:
+    combined_score = similarity × severity_weight × source_quality_weight
+
+    Critical interactions surface above moderate ones even if
+    the moderate one had higher cosine similarity.
+    """
+    def combined_score(rule: dict) -> float:
+        similarity = rule.get("_similarity", 0.5)
+        severity   = (rule.get("severity") or "informational").lower()
+        sev_weight = SEVERITY_WEIGHTS.get(severity, 0.40)
+
+        # Source quality bonus
+        source     = (rule.get("source") or "").lower()
+        src_weight = 1.0
+        if "nih" in source or "fda" in source:
+            src_weight = 1.1
+        elif "journal" in source or "clinical" in source:
+            src_weight = 1.05
+
+        # Evidence quality bonus
+        evidence   = (rule.get("evidence") or "").lower()
+        ev_weight  = 1.0
+        if evidence == "strong":
+            ev_weight = 1.1
+        elif evidence == "moderate":
+            ev_weight = 1.0
+        elif evidence in ("low", "preliminary"):
+            ev_weight = 0.9
+
+        return similarity * sev_weight * src_weight * ev_weight
+
+    ranked = sorted(results, key=combined_score, reverse=True)
+
+    # Add combined score for transparency
+    for rule in ranked:
+        rule["_combined_score"] = round(combined_score(rule), 4)
+
+    return ranked
+
+
+# ── Structured context assembly ───────────────────────────────────────────────
+def assemble_context(
+    interactions:     list[dict],
+    synergies:        list[dict],
+    timing_conflicts: list[dict],
+    near_misses:      list[dict],
+) -> str:
+    """
+    Build structured context string for Claude.
+    Groups by category instead of flat list.
+    Claude gets cleaner, more organized context.
+    """
     parts = []
-    if medications:
-        parts.append(f"Medications: {', '.join(medications)}")
-    if supplements:
-        parts.append(f"Supplements: {', '.join(supplements)}")
-    if medications and supplements:
-        parts.append(
-            f"Interaction between {', '.join(medications[:3])} "
-            f"and {', '.join(supplements[:3])}"
-        )
+
+    if interactions:
+        parts.append("DRUG-SUPPLEMENT INTERACTIONS (ranked by severity):")
+        for ix in interactions[:8]:
+            sev  = ix.get("severity", "").upper()
+            title= ix.get("title", "")
+            inst = ix.get("instruction", "")[:100] if ix.get("instruction") else ""
+            src  = ix.get("source", "")
+            parts.append(
+                f"  [{sev}] {title}"
+                + (f" — {inst}" if inst else "")
+                + (f" (Source: {src})" if src else "")
+            )
+
+    if synergies:
+        parts.append("\nBENEFICIAL COMBINATIONS:")
+        for s in synergies[:4]:
+            parts.append(
+                f"  ✓ {s.get('title', '')} — "
+                f"{s.get('detail', '')[:80] if s.get('detail') else ''}"
+            )
+
+    if timing_conflicts:
+        parts.append("\nTIMING CONFLICTS (separate these):")
+        for t in timing_conflicts[:3]:
+            hrs = t.get("timing_hours", 2)
+            parts.append(
+                f"  ⏱ {t.get('supplement_a', '')} + "
+                f"{t.get('supplement_b', '')} — "
+                f"separate by {hrs}+ hours"
+            )
+
+    if near_misses:
+        parts.append("\nNEAR-MATCHES (possible interactions):")
+        for nm in near_misses[:3]:
+            parts.append(f"  ~ {nm.get('title', '')}")
+
     return "\n".join(parts)
 
 
-# ── Hybrid search ─────────────────────────────────────────────────────────────
+# ── Main hybrid search ────────────────────────────────────────────────────────
 def hybrid_search(
     medications: list[str],
     supplements: list[str],
-    top_k: int = TOP_K,
+    top_k: int = TOP_K_PER_ENTITY,
 ) -> dict:
-    query            = build_search_query(medications, supplements)
+    """
+    Optimized hybrid search:
+    1. Decompose query into multiple entity-focused sub-queries
+    2. Run parallel semantic search across all sub-queries
+    3. Run keyword search (med_check_engine)
+    4. Merge, deduplicate, re-rank by severity × similarity
+    5. Assemble structured context for Claude
+    """
+    # Step 1 — Query decomposition
+    queries = decompose_query(medications, supplements)
+    log.info("Decomposed into %d sub-queries", len(queries))
+
+    # Step 2 — Parallel semantic search
     semantic_results = []
     try:
-        semantic_results = semantic_search(query, top_k=top_k * 2)
+        semantic_results = semantic_search_parallel(queries, top_k)
+        log.info("Semantic: %d unique results across %d queries",
+                 len(semantic_results), len(queries))
     except Exception as e:
         log.warning("Semantic search unavailable: %s", e)
 
+    # Step 3 — Keyword search
     keyword_data = {
         "interactions": [], "near_misses": [],
         "synergies": [], "timing_conflicts": [],
@@ -323,14 +570,25 @@ def hybrid_search(
         log.warning("Supplement check error: %s", e)
 
     if not semantic_results:
-        return {**keyword_data, "retrieval_method": "keyword",
-                "rules_checked": 174, "semantic_matches": 0}
+        return {
+            **keyword_data,
+            "retrieval_method": "keyword",
+            "rules_checked":    334,
+            "semantic_matches": 0,
+            "context":          assemble_context(
+                keyword_data["interactions"],
+                keyword_data["synergies"],
+                keyword_data["timing_conflicts"],
+                keyword_data["near_misses"],
+            ),
+        }
 
-    seen_ids         = {
+    # Step 4 — Merge and deduplicate
+    seen_ids = {
         ix.get("id", ix.get("title", ""))
         for ix in keyword_data["interactions"] + keyword_data["near_misses"]
     }
-    severity_order   = {"critical": 0, "high": 1, "moderate": 2, "informational": 3}
+
     sem_interactions = []
     sem_near_misses  = []
     sem_synergies    = []
@@ -339,15 +597,16 @@ def hybrid_search(
     for rule in semantic_results:
         rule_id    = rule.get("id", rule.get("title", ""))
         similarity = rule.get("_similarity", 0)
+
         if rule_id in seen_ids:
             continue
         seen_ids.add(rule_id)
 
         sev     = (rule.get("severity") or "informational").lower()
-        min_sim = 0.80 if sev in ("critical", "high") else SIMILARITY_THRESHOLD
+        min_sim = 0.75 if sev in ("critical", "high") else 0.52
 
         if similarity < min_sim:
-            sem_near_misses.append({**rule, "_source": "semantic_low_conf"})
+            sem_near_misses.append({**rule, "_source": "semantic_low"})
         elif rule.get("synergy"):
             sem_synergies.append({**rule, "_source": "semantic"})
         elif rule.get("type") == "timing_conflict":
@@ -357,75 +616,73 @@ def hybrid_search(
         else:
             sem_near_misses.append({**rule, "_source": "semantic"})
 
-    all_interactions = keyword_data["interactions"] + sem_interactions
-    all_interactions.sort(
-        key=lambda x: severity_order.get(
-            (x.get("severity") or "informational").lower(), 3
-        )
+    # Step 5 — Re-rank by severity × similarity
+    all_interactions = rerank_results(
+        keyword_data["interactions"] + sem_interactions
+    )[:MAX_TOTAL_RESULTS]
+
+    all_synergies    = (keyword_data["synergies"]   + sem_synergies)[:8]
+    all_timing       = (keyword_data["timing_conflicts"] + sem_timing)[:6]
+    all_near_misses  = (keyword_data["near_misses"] + sem_near_misses)[:8]
+
+    # Step 6 — Structured context
+    context = assemble_context(
+        all_interactions, all_synergies,
+        all_timing, all_near_misses
     )
 
     return {
-        "interactions":     all_interactions[:15],
-        "near_misses":      (keyword_data["near_misses"] + sem_near_misses)[:10],
-        "synergies":        (keyword_data["synergies"]   + sem_synergies)[:10],
-        "timing_conflicts": (keyword_data["timing_conflicts"] + sem_timing)[:10],
-        "retrieval_method": "hybrid",
-        "rules_checked":    174 + len(semantic_results),
+        "interactions":     all_interactions,
+        "near_misses":      all_near_misses,
+        "synergies":        all_synergies,
+        "timing_conflicts": all_timing,
+        "retrieval_method": "hybrid_v2",
+        "rules_checked":    334 + len(semantic_results),
         "semantic_matches": len(sem_interactions) + len(sem_synergies),
+        "sub_queries":      len(queries),
+        "context":          context,
     }
 
 
 # ── Status ────────────────────────────────────────────────────────────────────
 def get_status() -> dict:
     try:
-        url = f"{SUPABASE_URL}/rest/v1/interaction_embeddings?select=count"
+        url = (f"{SUPABASE_URL}/rest/v1/interaction_embeddings"
+               f"?select=count")
         req = urllib.request.Request(
             url,
             headers={
-                **_supa_headers(),
+                **_sh(),
                 "Prefer":     "count=exact",
                 "Range-Unit": "items",
                 "Range":      "0-0",
             },
         )
         with urllib.request.urlopen(req, timeout=10) as r:
-            content_range = r.headers.get("Content-Range", "0/0")
-            total = int(content_range.split("/")[-1])
+            cr    = r.headers.get("Content-Range", "0/0")
+            total = int(cr.split("/")[-1])
         return {
             "pgvector":    "ready",
-            "table":       "interaction_embeddings",
             "rules_count": total,
             "status":      "ready" if total > 0 else "empty",
+            "version":     "v2_optimized",
         }
     except Exception as e:
-        return {"pgvector": "unavailable", "error": str(e),
-                "status": "fallback_to_keyword"}
+        return {
+            "pgvector": "unavailable",
+            "error":    str(e),
+            "status":   "fallback_to_keyword",
+        }
 
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    import sys
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except Exception:
-        pass
-
-    try:
-        from dotenv import load_dotenv
-        load_dotenv(Path(__file__).parent / ".env")
-        OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
-        SUPABASE_URL   = normalize_supabase_url(os.environ.get("SUPABASE_URL", ""))
-        SUPABASE_KEY   = (
-            os.environ.get("SUPABASE_KEY", "")
-            or os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
-        )
-    except ImportError:
-        pass
-
-    parser = argparse.ArgumentParser(description="Elthio pgvector Search")
+    parser = argparse.ArgumentParser(
+        description="Elthio pgvector Search v2"
+    )
     parser.add_argument("--index",  action="store_true")
     parser.add_argument("--force",  action="store_true")
-    parser.add_argument("--search", help="Semantic search query")
+    parser.add_argument("--search", help="Search query")
     parser.add_argument("--status", action="store_true")
     parser.add_argument("--test",   action="store_true")
     args = parser.parse_args()
@@ -441,38 +698,66 @@ if __name__ == "__main__":
             print(f"Indexed {n} rules into Supabase pgvector")
 
     elif args.search:
-        results = semantic_search(args.search, top_k=5)
-        print(f"\nTop {len(results)} results for '{args.search}':\n")
-        for r in results:
-            print(f"  [{r.get('_similarity', 0):.3f}]  "
-                  f"{r.get('title', r.get('id', '?'))}")
-            print(f"           severity={r.get('severity', '?')}  "
-                  f"type={r.get('_rule_type', '?')}")
+        # Parse as medications + supplements for decomposition
+        print(f"\nSearching: '{args.search}'\n")
+        queries = decompose_query(
+            medications  = [args.search],
+            supplements  = [],
+        )
+        print(f"Decomposed into {len(queries)} sub-queries:")
+        for q in queries:
+            print(f"  · {q}")
+        print()
+        results = semantic_search_parallel(queries, top_k=5)
+        results = rerank_results(results)
+        print(f"Top {min(5, len(results))} re-ranked results:\n")
+        for r in results[:5]:
+            print(
+                f"  [{r.get('_combined_score', 0):.3f}]  "
+                f"{r.get('title', r.get('id', '?'))}"
+            )
+            print(
+                f"           sim={r.get('_similarity',0):.3f}  "
+                f"sev={r.get('severity','?')}  "
+                f"type={r.get('_rule_type','?')}"
+            )
         print()
 
     elif args.test:
-        print("\n=== PGVECTOR SELF TEST ===\n")
+        print("\n=== PGVECTOR v2 SELF TEST ===\n")
 
         print("[1] Status")
         s = get_status()
-        print(f"  pgvector: {s['pgvector']}")
-        print(f"  rules:    {s.get('rules_count', 0)}")
-        print(f"  status:   {s['status']}")
+        print(f"  pgvector:  {s['pgvector']}")
+        print(f"  rules:     {s.get('rules_count', 0)}")
+        print(f"  version:   {s.get('version', 'unknown')}")
 
         if s.get("rules_count", 0) == 0:
-            print("\n  No rules indexed. Run: python vector_search.py --index")
+            print("\n  Run: python vector_search.py --index")
         else:
-            print("\n[2] Heart pill + fish oil")
-            r = semantic_search("heart pill and fish oil", top_k=3)
-            for x in r:
-                print(f"  [{x['_similarity']:.3f}]  {x.get('title', '?')}")
+            print("\n[2] Query decomposition")
+            qs = decompose_query(
+                medications=["warfarin"],
+                supplements=["fish oil", "vitamin k2"]
+            )
+            print(f"  Decomposed into {len(qs)} sub-queries:")
+            for q in qs[:3]:
+                print(f"    · {q[:70]}")
 
-            print("\n[3] Thyroid synonym match")
-            r2 = semantic_search("thyroid medication and calcium", top_k=3)
-            for x in r2:
-                print(f"  [{x['_similarity']:.3f}]  {x.get('title', '?')}")
+            print("\n[3] Parallel semantic search")
+            results = semantic_search_parallel(qs[:3], top_k=3)
+            print(f"  {len(results)} unique results across queries")
 
-            print("\n[4] Hybrid search — warfarin stack")
+            print("\n[4] Re-ranking")
+            ranked = rerank_results(results)
+            for r in ranked[:3]:
+                print(
+                    f"  [{r.get('_combined_score',0):.3f}]  "
+                    f"{r.get('title','?')[:50]}  "
+                    f"({r.get('severity','?')})"
+                )
+
+            print("\n[5] Full hybrid search — warfarin stack")
             h = hybrid_search(
                 medications=["warfarin"],
                 supplements=["fish oil", "vitamin k2", "coq10"],
@@ -480,13 +765,19 @@ if __name__ == "__main__":
             print(f"  Interactions:  {len(h['interactions'])}")
             print(f"  Synergies:     {len(h['synergies'])}")
             print(f"  Method:        {h['retrieval_method']}")
+            print(f"  Sub-queries:   {h['sub_queries']}")
             print(f"  Semantic hits: {h['semantic_matches']}")
+            print(f"\n  Structured context preview:")
+            for line in h['context'].split('\n')[:6]:
+                print(f"    {line}")
 
-            print("\n[5] Natural language query")
-            r3 = semantic_search("blood thinner supplement bleeding risk", top_k=5)
-            print(f"  Found {len(r3)} matches")
-            for x in r3[:3]:
-                print(f"  [{x['_similarity']:.3f}]  {x.get('title', '?')}")
+            print("\n[6] Natural language — 'heart pill fish oil'")
+            h2 = hybrid_search(
+                medications=["heart pill"],
+                supplements=["fish oil"],
+            )
+            print(f"  Interactions:  {len(h2['interactions'])}")
+            print(f"  Semantic hits: {h2['semantic_matches']}")
 
         print("\n=== TEST COMPLETE ===\n")
 
