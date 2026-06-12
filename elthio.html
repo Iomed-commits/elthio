@@ -498,7 +498,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
     Know What You're<br><em style="color:var(--gold)">Actually Taking.</em>
   </h1>
   <p style="font-size:13px;color:#9B9488;max-width:520px;line-height:1.8;margin-bottom:20px">
-    Check supplement-drug interactions against 114 curated rules +
+    Check supplement-drug interactions against 334 curated rules +
     real FDA adverse event data. Scan labels. Import your pharmacy
     history. Get a doctor-ready safety report in 30 seconds.
   </p>
@@ -507,7 +507,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
        gap:12px;margin:0 0 20px;max-width:560px">
     <div style="text-align:center;padding:12px;background:rgba(255,255,255,0.05);
          border-radius:8px;border:1px solid rgba(255,255,255,0.08)">
-      <div style="font-size:24px;font-weight:800;color:var(--gold)">114</div>
+      <div style="font-size:24px;font-weight:800;color:var(--gold)">334</div>
       <div style="font-size:9px;letter-spacing:0.15em;color:#6b6b6b;margin-top:3px">
         INTERACTION RULES
       </div>
@@ -622,7 +622,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
       🛡 Check my stack — free
     </button>
     <p style="font-size:10px;color:#9B9488;text-align:center;margin-top:8px;line-height:1.5">
-      114 curated interaction rules · NIH verified sources · not medical advice
+      334 curated interaction rules · NIH verified sources · not medical advice
     </p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
             margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
@@ -656,7 +656,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
         then tap <strong>Check my stack</strong> to see interactions.
       </div>
       <div style="margin-top:14px;font-size:11px;color:var(--muted)">
-        Checks against 114 curated rules · NIH sources · FDA adverse event data
+        Checks against 334 curated rules · NIH sources · FDA adverse event data
       </div>
     </div>
   </div>
@@ -698,7 +698,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 
 <div class="stat-strip">
   <div class="stat-strip-item">
-    <span class="stat-strip-num">114</span>
+    <span class="stat-strip-num">334</span>
     <span class="stat-strip-lbl">INTERACTION RULES</span>
   </div>
   <div class="stat-strip-item">
@@ -733,7 +733,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 <div class="nav-tabs">
   <button class="nav-tab active" onclick="showTab('medcheck')">🛡 MED CHECK</button>
   <button class="nav-tab" onclick="showTab('coach')">⏱ SEPARATION COACH</button>
-  <button class="nav-tab" onclick="showTab('agent')" style="display:none">🛒 BASKET</button>
+  <button class="nav-tab" onclick="showTab('agent')">🛒 BASKET</button>
   <button class="nav-tab" onclick="showTab('compare')" style="display:none">⚖️ VALUE COMPARE</button>
   <button class="nav-tab" onclick="showTab('stack')">💊 MY STACK</button>
   <button class="nav-tab" onclick="showTab('chemistry')" style="display:none">⚗️ STACK CHEMISTRY</button>
@@ -753,7 +753,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
             placeholder="Search supplements e.g. Vitamin D3, Magnesium, Omega-3..."
             style="width:100%"
             onkeydown="if(event.key==='Enter')searchProducts()">
-          <div style="display:flex;gap:8px">
+          <div style="display:none;gap:8px">
             <button type="button" class="btn gold" id="searchBtn"
               onclick="searchProducts()" style="flex:1">
               🔍 Search
@@ -803,7 +803,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
     <div class="empty-state"><div class="ei">⚖️</div><p>Load demo data or add products above to compare value across brands.</p></div>
   </div>
 
-  <details id="goldenRecordsDetails" style="margin-top:18px;border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:0 14px 14px;box-shadow:var(--shadow)">
+  <details id="goldenRecordsDetails" style="display:none;margin-top:18px;border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:0 14px 14px;box-shadow:var(--shadow)">
     <summary style="cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.06em;color:var(--text);padding:14px 0;list-style:none;display:flex;align-items:center;gap:8px;user-select:none">
       <span style="color:var(--muted)">▸</span> 📁 Golden Records <span style="color:var(--muted);font-weight:400">(optional — saved audits)</span>
     </summary>
@@ -1314,7 +1314,7 @@ Atorvastatin 20mg - Take at bedtime"
           <i class="ti ti-shield-check" aria-hidden="true" style="color:var(--red)"></i>
         </div>
         <div class="feature-title">Med Check</div>
-        <div class="feature-sub">114 curated drug-supplement interaction rules. Critical flags, near-misses, NIH sourced.</div>
+        <div class="feature-sub">334 curated drug-supplement interaction rules. Critical flags, near-misses, NIH sourced.</div>
         <span class="feature-badge badge-free">Free · entry point</span>
       </div>
 
@@ -1378,12 +1378,12 @@ Atorvastatin 20mg - Take at bedtime"
         </div>
         <div class="feature-title">Visit Packet</div>
         <div class="feature-sub">One-page PDF of your stack, interactions, and timing schedule for doctor appointments.</div>
-        <span class="feature-badge badge-pro">Pro feature</span>
+        <span class="feature-badge badge-free">Free</span>
       </div>
 
     </div>
   </div>
-  <details id="medcheckLegacyDetails" style="margin-top:8px">
+  <details id="medcheckLegacyDetails" style="display:none;margin-top:8px">
     <summary style="cursor:pointer;font-size:12px;color:var(--muted);padding:8px 0">Open classic Med Check tool</summary>
     <div id="medcheckLoadError" style="display:none;margin-bottom:12px"></div>
     <p id="medcheckLoading" style="display:none !important" hidden aria-hidden="true">Loading Med Check…</p>
@@ -1434,7 +1434,7 @@ Atorvastatin 20mg - Take at bedtime"
   });
 })();
 
-const ELTHIO_INTERACTION_RULES = 114;
+const ELTHIO_INTERACTION_RULES = 334;
 const ELTHIO_TIMING_RULES = 36;
 
 function isLocalDev() {
@@ -3661,7 +3661,7 @@ function resetMedCheckEmptyState() {
       then tap <strong>Check my stack</strong> to see interactions.
     </div>
     <div style="margin-top:14px;font-size:11px;color:var(--muted)">
-      Checks against 114 curated rules · NIH sources · FDA adverse event data
+      Checks against 334 curated rules · NIH sources · FDA adverse event data
     </div>
   </div>`;
 }
@@ -3795,7 +3795,7 @@ function buildSeveritySummary(interactions, nearMisses) {
           No interactions found
         </div>
         <div style="font-size:11px;color:var(--green);opacity:0.8;margin-top:2px">
-          Your stack looks clear against our 114 curated rules
+          Your stack looks clear against our 334 curated rules
         </div>
       </div>
     </div>`;
@@ -4429,7 +4429,7 @@ async function heroRunCheck() {
   if (!checkBtn || !res) return;
 
   checkBtn.disabled    = true;
-  checkBtn.textContent = '↻ Checking 114 rules + FDA data…';
+  checkBtn.textContent = '↻ Checking 334 rules + FDA data…';
   hideMedCheckEmptyState();
   res.innerHTML = '';
   res.dataset.hasResults = '';
