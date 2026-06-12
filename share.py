@@ -191,6 +191,9 @@ def get_share(slug: str) -> dict | None:
 
         stack = results[0]
 
+        # Strip email before returning — never expose to frontend
+        stack.pop("email", None)
+
         expires_at = stack.get("expires_at")
         if expires_at:
             try:
