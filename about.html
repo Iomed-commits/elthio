@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Elthio</title>
+  <meta name="description"
+    content="Why Elthio exists: from supplement price comparison to full-stack medication safety checks. Data sources, disclaimers, and privacy.">
+  <meta name="application-name" content="Elthio">
+  <meta name="theme-color" content="#1A1814">
+  <meta property="og:title" content="About Elthio">
+  <meta property="og:description"
+    content="How a price comparison tool became a free supplement safety checker.">
+  <meta property="og:site_name" content="Elthio">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #F7F5F0;
+      --text:   #1A1814;
+      --muted:  #7A7468;
+      --gold:   #B8922E;
+      --border: #E2DDD4;
+      --surface:#FFFFFF;
+    }
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: #1A1814;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: #F7F5F0;
+      text-decoration: none;
+    }
+    .header-logo span { color: #B8922E; }
+    .header-back {
+      font-size: 12px;
+      color: #7A7468;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .header-back:hover { color: #F7F5F0; }
+    .main { flex: 1; }
+    a { color: var(--gold); }
+    .footer {
+      background: #1A1814;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .footer-copy {
+      font-size: 11px;
+      color: #7A7468;
+    }
+    .footer-links {
+      display: flex;
+      gap: 16px;
+    }
+    .footer-links a {
+      font-size: 11px;
+      color: #7A7468;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: #F7F5F0; }
+    @media (max-width: 600px) {
+      .header { padding: 16px; }
+      .footer { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <a href="/" class="header-logo">EL<span>TH</span>IO</a>
+  <a href="/" class="header-back">← Back to app</a>
+</header>
+
+<main class="main">
+
+  <!-- Hero -->
+  <div style="text-align:center;padding:40px 20px 20px">
+    <div style="font-size:11px;letter-spacing:0.2em;color:var(--gold);
+         margin-bottom:10px">
+      ABOUT ELTHIO
+    </div>
+    <h1 style="font-family:'Syne',sans-serif;font-size:clamp(28px,5vw,44px);
+         font-weight:800;margin-bottom:12px">
+      Why I built this
+    </h1>
+  </div>
+
+  <!-- Story -->
+  <div style="max-width:640px;margin:0 auto;padding:0 20px 40px;
+       font-size:14px;line-height:1.8;color:var(--text)">
+
+    <p style="margin-bottom:20px">
+      Elthio started as something much smaller: a tool to find the
+      best price on supplements across iHerb, Life Extension, and
+      other retailers. I wanted to know — am I overpaying for
+      magnesium? Is this CoQ10 actually a good deal compared to that
+      one?
+    </p>
+
+    <p style="margin-bottom:20px">
+      While building that, I kept running into the same question from
+      people testing it: <em>"this is great, but is it actually safe
+      for me to take with my other medications?"</em>
+    </p>
+
+    <p style="margin-bottom:20px">
+      That question turned out to matter a lot more than the price.
+      I started digging into drug-supplement interactions and
+      realized something surprising — most free tools either don't
+      check supplement interactions at all, or only check one
+      supplement against one drug at a time. Nobody was looking at
+      a person's <strong>full stack</strong> — all their medications
+      and all their supplements together — and explaining what that
+      actually meant in plain English.
+    </p>
+
+    <p style="margin-bottom:20px">
+      So Elthio became that. The price comparison is still there
+      (that's how this site stays free, through small affiliate
+      commissions when you buy something — more on that below), but
+      the core of Elthio now is making sure what you're taking
+      together is actually safe, and helping you understand why.
+    </p>
+
+    <!-- Section divider -->
+    <div style="height:1px;background:var(--border);margin:32px 0"></div>
+
+    <h2 style="font-family:'Syne',sans-serif;font-size:20px;
+         font-weight:700;margin-bottom:16px">
+      What Elthio checks
+    </h2>
+
+    <p style="margin-bottom:16px">
+      Every Med Check runs your medications and supplements against:
+    </p>
+
+    <ul style="margin-bottom:20px;padding-left:20px;line-height:2">
+      <li>
+        <strong>334 curated interaction rules</strong> — sourced from
+        the NIH Office of Dietary Supplements, the NIH National Center
+        for Complementary and Integrative Health, and peer-reviewed
+        journals. Every rule shows its source and evidence strength.
+      </li>
+      <li>
+        <strong>FDA adverse event data (FAERS)</strong> — real reports
+        from real patients who experienced side effects combining
+        specific drugs and supplements.
+      </li>
+      <li>
+        <strong>NIH ingredient verification (DSLD)</strong> — checks
+        whether a product's label actually matches what's registered
+        with the NIH Dietary Supplement Label Database.
+      </li>
+      <li>
+        <strong>Semantic search</strong> — you can describe your
+        situation in plain English ("I take a blood thinner and want
+        to try turmeric") and Elthio understands what you mean, even
+        without exact drug names.
+      </li>
+    </ul>
+
+    <!-- Section divider -->
+    <div style="height:1px;background:var(--border);margin:32px 0"></div>
+
+    <h2 style="font-family:'Syne',sans-serif;font-size:20px;
+         font-weight:700;margin-bottom:16px">
+      What Elthio is not
+    </h2>
+
+    <p style="margin-bottom:16px">
+      I want to be straightforward about this:
+    </p>
+
+    <ul style="margin-bottom:20px;padding-left:20px;line-height:2">
+      <li>
+        <strong>Elthio is not a substitute for medical advice.</strong>
+        It's a research and awareness tool. Every result includes
+        sources so you can verify them yourself and bring questions
+        to your doctor or pharmacist.
+      </li>
+      <li>
+        <strong>The interaction database is not exhaustive.</strong>
+        334 rules covers the most common and clinically significant
+        combinations, but it's not every possible interaction.
+        Professional databases like DrugBank have thousands more —
+        expanding coverage is ongoing.
+      </li>
+      <li>
+        <strong>The AI explanations are AI-generated.</strong>
+        Claude (Anthropic's AI) synthesizes the rule data and FDA
+        reports into plain English. The underlying rules and sources
+        are fixed and citable. The explanation text is generated and,
+        while designed to be accurate and conservative, can occasionally
+        be imperfect — which is why every source is shown so you can
+        check the original.
+      </li>
+      <li>
+        <strong>No part of Elthio has been formally reviewed by a
+        licensed pharmacist yet.</strong> This is something I'm
+        actively working on. If you're a pharmacist or have clinical
+        experience and want to help review the rule database, I'd
+        genuinely love to hear from you —
+        <a href="/contact" style="color:var(--gold)">get in touch</a>.
+      </li>
+    </ul>
+
+    <!-- Section divider -->
+    <div style="height:1px;background:var(--border);margin:32px 0"></div>
+
+    <h2 style="font-family:'Syne',sans-serif;font-size:20px;
+         font-weight:700;margin-bottom:16px">
+      How Elthio makes money
+    </h2>
+
+    <p style="margin-bottom:16px">
+      Elthio is free and always will be for the core safety check.
+      The price comparison feature includes affiliate links — if you
+      buy something through Elthio, I may earn a small commission at
+      no extra cost to you.
+    </p>
+
+    <p style="margin-bottom:20px">
+      This commission never affects what Elthio recommends. Safety
+      rankings are based purely on NIH verification and interaction
+      data. Price rankings are based purely on cost per serving. If a
+      product is a better deal or safer, it shows up higher —
+      regardless of commission.
+    </p>
+
+    <!-- Section divider -->
+    <div style="height:1px;background:var(--border);margin:32px 0"></div>
+
+    <h2 style="font-family:'Syne',sans-serif;font-size:20px;
+         font-weight:700;margin-bottom:16px">
+      Your privacy
+    </h2>
+
+    <p style="margin-bottom:20px">
+      Elthio doesn't require an account to use. If you choose to save
+      your stack for weekly safety updates, your email and stack data
+      are stored securely and never sold or shared. You can delete your
+      data at any time by
+      <a href="/contact" style="color:var(--gold)">contacting me</a>.
+      Shared stack links never show your email publicly.
+    </p>
+
+    <!-- Section divider -->
+    <div style="height:1px;background:var(--border);margin:32px 0"></div>
+
+    <h2 style="font-family:'Syne',sans-serif;font-size:20px;
+         font-weight:700;margin-bottom:16px">
+      Questions or feedback?
+    </h2>
+
+    <p style="margin-bottom:20px">
+      If something seems wrong, missing, or could be better — please
+      tell me. This is a tool I'm building because I think it's
+      genuinely useful, and feedback directly shapes what gets built
+      next.
+    </p>
+
+    <a href="/contact"
+       style="display:inline-block;padding:12px 28px;
+              background:var(--gold);color:#000;border-radius:8px;
+              text-decoration:none;font-weight:600;font-size:13px;
+              margin-bottom:8px">
+      Get in touch →
+    </a>
+
+  </div>
+
+  <!-- Back to app -->
+  <div style="text-align:center;padding:20px 0 40px">
+    <a href="/"
+       style="font-size:12px;color:var(--muted);text-decoration:none">
+      ← Back to Elthio
+    </a>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <span class="footer-copy">© 2026 Elthio Health</span>
+  <div class="footer-links">
+    <a href="/">App</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+    <a href="https://www.termsfeed.com/live/861d899d-92b0-4801-a33f-e0ac8103d834"
+       target="_blank">Privacy Policy</a>
+  </div>
+</footer>
+
+</body>
+</html>
