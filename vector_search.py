@@ -514,7 +514,10 @@ def assemble_context(
     if near_misses:
         parts.append("\nNEAR-MATCHES (possible interactions):")
         for nm in near_misses[:3]:
-            parts.append(f"  ~ {nm.get('title', '')}")
+            if isinstance(nm, dict):
+                parts.append(f"  ~ {nm.get('title', '')}")
+            else:
+                parts.append(f"  ~ {nm}")
 
     return "\n".join(parts)
 
@@ -584,9 +587,15 @@ def hybrid_search(
         }
 
     # Step 4 — Merge and deduplicate
+    def _rule_id(item: dict | str) -> str:
+        if isinstance(item, dict):
+            return item.get("id", item.get("title", "")) or ""
+        return str(item)
+
     seen_ids = {
-        ix.get("id", ix.get("title", ""))
+        rid
         for ix in keyword_data["interactions"] + keyword_data["near_misses"]
+        if (rid := _rule_id(ix))
     }
 
     sem_interactions = []
