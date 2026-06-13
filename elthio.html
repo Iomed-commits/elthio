@@ -570,7 +570,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
     <div style="flex:1;height:1px;background:#E2DDD4"></div>
   </div>
 
-  <div style="background:#FFFFFF;border-radius:10px;padding:18px;max-width:560px">
+  <div id="heroStackCheck" style="background:#FFFFFF;border-radius:10px;padding:18px;max-width:560px">
 
     <div style="font-size:10px;letter-spacing:0.15em;color:#9B9488;margin-bottom:6px">
       MEDICATIONS (Rx)
@@ -5273,17 +5273,23 @@ window.loadMyStack = loadMyStack;
 
 const BIO_TABS = ['medcheck','coach','agent','compare','stack','chemistry','passport','visitpacket'];
 
-function showTab(tab) {
+function showTab(tab, opts) {
+  opts = opts || {};
   if (!tab || !BIO_TABS.includes(tab)) return;
   BIO_TABS.forEach(t => {
     const panel = document.getElementById('tab-' + t);
     if (panel) panel.style.display = t === tab ? 'block' : 'none';
   });
   const activePanel = document.getElementById('tab-' + tab);
-  if (activePanel) {
-    requestAnimationFrame(() => {
-      activePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+  if (opts.scroll !== false) {
+    const scrollTarget = tab === 'medcheck'
+      ? (document.getElementById('heroStackCheck') || document.querySelector('.hero'))
+      : activePanel;
+    if (scrollTarget) {
+      requestAnimationFrame(() => {
+        scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
   }
   document.querySelectorAll('.nav-tab').forEach((b, i) => {
     b.classList.toggle('active', BIO_TABS[i] === tab);
@@ -6672,9 +6678,9 @@ function initOnboarding() {
   if (window._elthioSharedView) return;
   try {
     const tab = new URLSearchParams(window.location.search).get('tab');
-    if (tab && BIO_TABS.includes(tab)) { showTab(tab); return; }
+    if (tab && BIO_TABS.includes(tab)) { showTab(tab, { scroll: tab !== 'medcheck' }); return; }
   } catch (e) { /* ignore */ }
-  showTab('medcheck');
+  showTab('medcheck', { scroll: false });
 })();
 setupElthioNav();
 setupMedcheckLegacyDetails();
