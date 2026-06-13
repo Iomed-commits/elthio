@@ -4309,7 +4309,6 @@ async function runAiMedCheck(opts) {
     res.innerHTML = renderAiMedCheckResult(data);
     const meds  = data.resolved_medications || [];
     const supps = data.resolved_supplements  || [];
-    const email = localStorage.getItem('elthio_saved_email') || '';
     const scoreData = await fetchSafetyScoreData(meds, supps, email);
     storeResultForSharing({ ...data, gaps: data.gaps || [] }, scoreData);
   } catch(e) {
