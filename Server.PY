@@ -629,6 +629,15 @@ class ElthioHandler(BaseHTTPRequestHandler):
             )
             return
 
+        if path == "/api/vector-status":
+            try:
+                from vector_search import get_status
+                self._send_json(get_status())
+            except Exception as e:
+                log.error("vector-status error: %s", e)
+                self._send_json({"error": str(e), "status": "fallback_to_keyword"}, 500)
+            return
+
         if path == "/api/load-stack" or path.startswith("/api/load-stack"):
             try:
                 qs    = parse_qs(urlparse(self.path).query)
