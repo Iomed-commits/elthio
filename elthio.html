@@ -4285,6 +4285,16 @@ function heroQuick(name, type) {
   heroRenderTags();
 }
 
+function formatFetchError(err) {
+  const msg = String(err && err.message ? err.message : err);
+  if (msg === 'Failed to fetch' || msg.includes('NetworkError') || msg.includes('Load failed')) {
+    return 'Could not reach the Elthio check service (server may be restarting). '
+      + 'Wait a minute and try again, or use <strong>OR CHECK YOUR FULL STACK</strong> '
+      + 'below with the medication and supplement chips.';
+  }
+  return escapeHtml(msg);
+}
+
 async function runAiMedCheck(opts) {
   opts = opts || {};
   const inp   = document.getElementById(opts.inputId || 'aiMedCheckInput');
@@ -4312,7 +4322,7 @@ async function runAiMedCheck(opts) {
     const scoreData = await fetchSafetyScoreData(meds, supps, email);
     storeResultForSharing({ ...data, gaps: data.gaps || [] }, scoreData);
   } catch(e) {
-    res.innerHTML = `<div style="background:var(--red-light);border:1px solid var(--red);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--red)">Error: ${String(e.message||e)}</div>`;
+    res.innerHTML = `<div style="background:var(--red-light);border:1px solid var(--red);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--red);line-height:1.6">Error: ${formatFetchError(e)}</div>`;
   } finally {
     btn.disabled    = false;
     btn.textContent = 'Ask →';

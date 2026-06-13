@@ -24,7 +24,7 @@ import json
 import logging
 import os
 from datetime import datetime, timezone
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
 import re
@@ -1653,7 +1653,7 @@ class ElthioHandler(BaseHTTPRequestHandler):
 # ---------------------------------------------------------------------------
 
 def main():
-    server = HTTPServer((BIND, PORT), ElthioHandler)
+    server = ThreadingHTTPServer((BIND, PORT), ElthioHandler)
     mc = _med_check_file()
     pp = _supplement_passport_file()
     vp = _visit_packet_file()
