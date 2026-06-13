@@ -670,11 +670,25 @@ def get_status() -> dict:
         with urllib.request.urlopen(req, timeout=10) as r:
             cr    = r.headers.get("Content-Range", "0/0")
             total = int(cr.split("/")[-1])
+
+        last_indexed = None
+        try:
+            recent = supa_get("interaction_embeddings", {
+                "select": "created_at",
+                "order":  "created_at.desc",
+                "limit":  "1",
+            })
+            if recent:
+                last_indexed = recent[0].get("created_at")
+        except Exception:
+            pass
+
         return {
-            "pgvector":    "ready",
-            "rules_count": total,
-            "status":      "ready" if total > 0 else "empty",
-            "version":     "v2_optimized",
+            "pgvector":     "ready",
+            "rules_count":  total,
+            "status":       "ready" if total > 0 else "empty",
+            "version":      "v2_optimized",
+            "last_indexed": last_indexed,
         }
     except Exception as e:
         return {

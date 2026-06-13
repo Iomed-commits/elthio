@@ -498,7 +498,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
     Know What You're<br><em style="color:var(--gold)">Actually Taking.</em>
   </h1>
   <p style="font-size:13px;color:#9B9488;max-width:520px;line-height:1.8;margin-bottom:20px">
-    Check supplement-drug interactions against 334 curated rules +
+    Check supplement-drug interactions against <span class="rule-count">334</span> curated rules +
     real FDA adverse event data. Scan labels. Import your pharmacy
     history. Get a doctor-ready safety report in 30 seconds.
   </p>
@@ -507,7 +507,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
        gap:12px;margin:0 0 20px;max-width:560px">
     <div style="text-align:center;padding:12px;background:rgba(255,255,255,0.05);
          border-radius:8px;border:1px solid rgba(255,255,255,0.08)">
-      <div style="font-size:24px;font-weight:800;color:var(--gold)">334</div>
+      <div class="rule-count" style="font-size:24px;font-weight:800;color:var(--gold)">334</div>
       <div style="font-size:9px;letter-spacing:0.15em;color:#6b6b6b;margin-top:3px">
         INTERACTION RULES
       </div>
@@ -622,7 +622,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
       🛡 Check my stack — free
     </button>
     <p style="font-size:10px;color:#9B9488;text-align:center;margin-top:8px;line-height:1.5">
-      334 curated interaction rules · NIH verified sources · not medical advice
+      <span class="rule-count">334</span> curated interaction rules · NIH verified sources · not medical advice
     </p>
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center;
             margin-top:10px;padding-top:10px;border-top:1px solid var(--border);
@@ -658,7 +658,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
         then tap <strong>Check my stack</strong> to see interactions.
       </div>
       <div style="margin-top:14px;font-size:11px;color:var(--muted)">
-        Checks against 334 curated rules · NIH sources · FDA adverse event data
+        Checks against <span class="rule-count">334</span> curated rules · NIH sources · FDA adverse event data
       </div>
     </div>
   </div>
@@ -700,7 +700,7 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 
 <div class="stat-strip">
   <div class="stat-strip-item">
-    <span class="stat-strip-num">334</span>
+    <span class="stat-strip-num rule-count">334</span>
     <span class="stat-strip-lbl">INTERACTION RULES</span>
   </div>
   <div class="stat-strip-item">
@@ -1316,7 +1316,7 @@ Atorvastatin 20mg - Take at bedtime"
           <i class="ti ti-shield-check" aria-hidden="true" style="color:var(--red)"></i>
         </div>
         <div class="feature-title">Med Check</div>
-        <div class="feature-sub">334 curated drug-supplement interaction rules. Critical flags, near-misses, NIH sourced.</div>
+        <div class="feature-sub"><span class="rule-count">334</span> curated drug-supplement interaction rules. Critical flags, near-misses, NIH sourced.</div>
         <span class="feature-badge badge-free">Free · entry point</span>
       </div>
 
@@ -1475,6 +1475,47 @@ function apiOrigin() {
   return 'https://elthio-production.up.railway.app';
 }
 window.apiOrigin = apiOrigin;
+
+let _vectorStatus = null;
+
+async function loadVectorStatus() {
+  try {
+    const resp = await fetch(apiOrigin() + '/api/vector-status');
+    const data = await resp.json();
+    if (data.rules_count) {
+      _vectorStatus = data;
+    }
+  } catch(e) {
+    console.warn('Vector status unavailable, using fallback');
+  }
+  return _vectorStatus;
+}
+
+function getRuleCount() {
+  return _vectorStatus?.rules_count || ELTHIO_INTERACTION_RULES;
+}
+
+function updateRuleCountDisplays() {
+  const count = getRuleCount();
+
+  document.querySelectorAll('.rule-count').forEach(el => {
+    el.textContent = count;
+  });
+
+  const ruleCountEl = document.getElementById('freshnessRuleCount');
+  if (ruleCountEl) ruleCountEl.textContent = count;
+
+  const dateEl = document.getElementById('freshnessUpdateDate');
+  if (dateEl && _vectorStatus?.last_indexed) {
+    const date = new Date(_vectorStatus.last_indexed);
+    dateEl.textContent = date.toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric'
+    });
+  }
+}
+window.loadVectorStatus = loadVectorStatus;
+window.getRuleCount = getRuleCount;
+window.updateRuleCountDisplays = updateRuleCountDisplays;
 
 function embedPagePath(routePath) {
   const map = {
@@ -3708,7 +3749,7 @@ function resetMedCheckEmptyState() {
       then tap <strong>Check my stack</strong> to see interactions.
     </div>
     <div style="margin-top:14px;font-size:11px;color:var(--muted)">
-      Checks against 334 curated rules · NIH sources · FDA adverse event data
+      Checks against ${getRuleCount()} curated rules · NIH sources · FDA adverse event data
     </div>
   </div>`;
 }
@@ -3842,7 +3883,7 @@ function buildSeveritySummary(interactions, nearMisses) {
           No interactions found
         </div>
         <div style="font-size:11px;color:var(--green);opacity:0.8;margin-top:2px">
-          Your stack looks clear against our 334 curated rules
+          Your stack looks clear against our ${getRuleCount()} curated rules
         </div>
       </div>
     </div>`;
@@ -3979,11 +4020,12 @@ function buildMedCheckSourcesFooter() {
       <div style="display:flex;justify-content:space-between;
            padding:6px 0;border-bottom:1px solid var(--border)">
         <span>
-          📋 <strong>334 curated interaction rules</strong><br>
+          📋 <strong><span id="freshnessRuleCount">334</span>
+             curated interaction rules</strong><br>
           <span style="color:var(--muted)">NIH ODS + NCCIH</span>
         </span>
         <span style="color:var(--muted);text-align:right">
-          Updated<br>Jun 12, 2026
+          Updated<br><span id="freshnessUpdateDate">recently</span>
         </span>
       </div>
 
@@ -4357,7 +4399,7 @@ function renderAiMedCheckResult(data) {
       ? '📋 Curated guidance (Claude key not configured on server)'
       : '📋 Curated guidance (AI explanation unavailable)');
   html += `<div style="font-size:10px;color:var(--muted);padding:8px 10px;background:var(--surface2);border-radius:5px;line-height:1.6">
-    ${aiLabel} · ${data.rules_checked||ELTHIO_INTERACTION_RULES} rules checked · Sources: ${(data.sources||[]).join(' · ')}
+    ${aiLabel} · ${data.rules_checked||getRuleCount()} rules checked · Sources: ${(data.sources||[]).join(' · ')}
   </div>`;
   html += buildNextStepsBar(ixs.length > 0);
   return html;
@@ -4536,7 +4578,7 @@ async function heroRunCheck() {
   if (!checkBtn || !res) return;
 
   checkBtn.disabled    = true;
-  checkBtn.textContent = '↻ Checking 334 rules + FDA data…';
+  checkBtn.textContent = `↻ Checking ${getRuleCount()} rules + FDA data…`;
   hideMedCheckEmptyState();
   res.innerHTML = '';
   res.dataset.hasResults = '';
@@ -4622,6 +4664,7 @@ async function heroRunCheck() {
     html += buildNextStepsBar(interactions.length > 0);
     res.innerHTML = html;
     res.dataset.hasResults = '1';
+    updateRuleCountDisplays();
     storeResultForSharing({ ...data, gaps }, scoreData);
     showSaveStackCard();
     if (_heroMeds.length && typeof _coachMeds !== 'undefined') {
@@ -6653,6 +6696,16 @@ initOnboarding();
   det.addEventListener('toggle', function () {
     if (this.open) void refreshGoldenRecordsList();
   });
+})();
+(function initVectorStatus() {
+  function refresh() {
+    loadVectorStatus().then(() => updateRuleCountDisplays());
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', refresh);
+  } else {
+    refresh();
+  }
 })();
 </script>
 <script type="module">
