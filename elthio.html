@@ -1439,6 +1439,30 @@ Atorvastatin 20mg - Take at bedtime"
 const ELTHIO_INTERACTION_RULES = 334;
 const ELTHIO_TIMING_RULES = 36;
 
+// Data source freshness — update these dates when sources are refreshed
+const DATA_SOURCES = {
+  rules: {
+    name:     "Curated Interaction Rules",
+    count:    334,
+    sources:  ["NIH Office of Dietary Supplements", "NIH NCCIH"],
+    updated:  "2026-06-12",  // Update this when expand_rules.py is re-run
+  },
+  dsld: {
+    name:     "NIH Dietary Supplement Label Database",
+    url:      "https://dsld.od.nih.gov",
+    updated:  "Live — queried in real-time",
+  },
+  faers: {
+    name:     "FDA Adverse Event Reporting System (FAERS)",
+    url:      "https://open.fda.gov/data/faers/",
+    updated:  "Live — queried in real-time via OpenFDA",
+  },
+  prices: {
+    name:     "Retailer Price Monitor",
+    updated:  "Refreshed nightly",
+  },
+};
+
 function isLocalDev() {
   const h = window.location.hostname;
   return h === 'localhost' || h === '127.0.0.1';
@@ -3528,10 +3552,31 @@ async function runPriceSearch() {
 }
 
 function renderPriceResults(rows, query) {
-  const nihBadge = status => {
-    if (status === 'VERIFIED')  return '<span style="color:#1D9E75;font-size:10px">✅ NIH Verified</span>';
-    if (status === 'POSSIBLE')  return '<span style="color:#EF9F27;font-size:10px">⚠ NIH Possible</span>';
-    if (status === 'MISMATCH')  return '<span style="color:#E24B4A;font-size:10px">⚠ Label Mismatch</span>';
+  const nihBadge = (status, dsldId) => {
+    const dsldUrl = dsldId
+      ? `https://dsld.od.nih.gov/label/${dsldId}`
+      : null;
+
+    if (status === 'VERIFIED') {
+      return dsldUrl
+        ? `<a href="${dsldUrl}" target="_blank" rel="noopener"
+             style="color:#1D9E75;font-size:10px;text-decoration:none;
+                    border-bottom:1px dotted #1D9E75">
+             ✅ NIH Verified — view record →
+           </a>`
+        : '<span style="color:#1D9E75;font-size:10px">✅ NIH Verified</span>';
+    }
+    if (status === 'POSSIBLE') {
+      return dsldUrl
+        ? `<a href="${dsldUrl}" target="_blank" rel="noopener"
+             style="color:#EF9F27;font-size:10px;text-decoration:none;
+                    border-bottom:1px dotted #EF9F27">
+             ⚠ NIH Possible match — view record →
+           </a>`
+        : '<span style="color:#EF9F27;font-size:10px">⚠ NIH Possible</span>';
+    }
+    if (status === 'MISMATCH')
+      return '<span style="color:#E24B4A;font-size:10px">⚠ Label Mismatch</span>';
     return '<span style="color:var(--muted);font-size:10px">○ Unverified</span>';
   };
 
@@ -3576,7 +3621,7 @@ function renderPriceResults(rows, query) {
             ${escapeHtml(retailerLabel(r.retailer))} · ${escapeHtml(servings)} ${form}
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            ${nihBadge(r.nih_status)}
+            ${nihBadge(r.nih_status, r.nih_dsld_id)}
             <span style="font-size:10px;color:var(--muted)">${escapeHtml(checked)}</span>
           </div>
         </div>
@@ -3918,33 +3963,93 @@ function buildMedCheckSourcesFooter() {
   return `<div style="font-size:10px;color:var(--muted);padding:10px 12px;
      background:var(--surface2);border-radius:6px;
      margin-top:8px;line-height:1.8">
-  <div style="font-weight:500;color:var(--text);
-       margin-bottom:4px;font-size:11px">
-    Data sources
-  </div>
-  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px">
-    <span style="background:var(--surface);border:1px solid var(--border);
-          padding:2px 8px;border-radius:20px">
-      📋 NIH Office of Dietary Supplements
-    </span>
-    <span style="background:var(--surface);border:1px solid var(--border);
-          padding:2px 8px;border-radius:20px">
-      🏥 FDA Adverse Event Reporting (FAERS)
-    </span>
-    <span style="background:var(--surface);border:1px solid var(--border);
-          padding:2px 8px;border-radius:20px">
-      🔬 NIH DSLD Verified Ingredients
-    </span>
-    <span style="background:var(--surface);border:1px solid var(--border);
-          padding:2px 8px;border-radius:20px">
-      📚 Peer-reviewed literature
-    </span>
+  <div style="margin-top:8px">
+    <div onclick="toggleDataSources()"
+      style="display:flex;align-items:center;justify-content:space-between;
+             cursor:pointer;padding:8px 0">
+      <div style="font-weight:500;color:var(--text);font-size:11px">
+        📊 Data sources & freshness
+      </div>
+      <span id="dataSourcesIcon" style="color:var(--muted);font-size:12px">▸</span>
+    </div>
+
+    <div id="dataSourcesPanel" style="display:none;
+         padding-top:4px;font-size:11px;line-height:2">
+
+      <div style="display:flex;justify-content:space-between;
+           padding:6px 0;border-bottom:1px solid var(--border)">
+        <span>
+          📋 <strong>334 curated interaction rules</strong><br>
+          <span style="color:var(--muted)">NIH ODS + NCCIH</span>
+        </span>
+        <span style="color:var(--muted);text-align:right">
+          Updated<br>Jun 12, 2026
+        </span>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;
+           padding:6px 0;border-bottom:1px solid var(--border)">
+        <span>
+          🔬 <a href="https://dsld.od.nih.gov" target="_blank"
+                style="color:var(--gold)">NIH DSLD</a>
+          <strong>ingredient verification</strong><br>
+          <span style="color:var(--muted)">Product label accuracy</span>
+        </span>
+        <span style="color:#1D9E75;text-align:right">
+          Live<br>real-time
+        </span>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;
+           padding:6px 0;border-bottom:1px solid var(--border)">
+        <span>
+          🏥 <a href="https://open.fda.gov/data/faers/" target="_blank"
+                style="color:var(--gold)">FDA FAERS</a>
+          <strong>adverse events</strong><br>
+          <span style="color:var(--muted)">Real patient-reported reactions</span>
+        </span>
+        <span style="color:#1D9E75;text-align:right">
+          Live<br>real-time
+        </span>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;
+           padding:6px 0">
+        <span>
+          💰 <strong>Retailer prices</strong><br>
+          <span style="color:var(--muted)">iHerb, Life Extension, more</span>
+        </span>
+        <span style="color:var(--muted);text-align:right">
+          Refreshed<br>nightly
+        </span>
+      </div>
+
+      <div style="margin-top:8px;font-size:10px;color:var(--muted);
+           line-height:1.6">
+        Rule database is expanded periodically as new NIH and NCCIH
+        sources are reviewed. DSLD and FAERS are queried live for
+        every check — not cached. Want to know more about our
+        methodology? <a href="/about" style="color:var(--gold)">
+        Read about Elthio →</a>
+      </div>
+
+    </div>
   </div>
   ⚠ Educational tool only — not medical advice.
   Always confirm with your pharmacist or doctor before
   changing your supplement or medication routine.
 </div>`;
 }
+
+function toggleDataSources() {
+  const panel = document.getElementById('dataSourcesPanel');
+  const icon  = document.getElementById('dataSourcesIcon');
+  if (!panel || !icon) return;
+  const open  = panel.style.display === 'none';
+  panel.style.display = open ? 'block' : 'none';
+  icon.textContent    = open ? '▾' : '▸';
+}
+window.toggleDataSources = toggleDataSources;
 
 function renderSynergies(synergies) {
   if (!synergies || !synergies.length) return '';
