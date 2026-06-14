@@ -368,8 +368,8 @@ def get_rxnorm_context(
     if len(all_rxcuis) >= 2:
         drug_interactions = get_interactions_for_list(all_rxcuis)
 
-    # Fallback: individual lookups if list query fails
-    if not drug_interactions and rxcui_list:
+    # Fallback to individual lookups if list query returns fewer than 2 results
+    if len(drug_interactions) < 2 and rxcui_list:
         for rxcui in rxcui_list[:3]:
             ixs = get_interactions_for_rxcui(rxcui)
             drug_interactions.extend(ixs)
