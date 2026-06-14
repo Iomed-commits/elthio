@@ -822,10 +822,32 @@ def ai_med_check(
             "rules_checked":        0,
         }
 
+    # RxNorm live drug resolution + FDA interaction data
+    rxnorm_context: dict[str, Any] = {}
+    try:
+        from rxnorm import get_rxnorm_context
+        rxnorm_context = get_rxnorm_context(medications, supplements)
+        if rxnorm_context.get("resolved_meds"):
+            log.info(
+                "RxNorm: resolved %d meds, %d FDA interactions",
+                len(rxnorm_context["resolved_meds"]),
+                len(rxnorm_context["drug_interactions"]),
+            )
+    except Exception as e:
+        log.warning("RxNorm lookup failed: %s", e)
+
+    normalized_meds = []
+    for med in medications:
+        resolved = rxnorm_context.get("resolved_meds", {}).get(med)
+        if resolved and resolved.get("name"):
+            normalized_meds.append(resolved["name"])
+        else:
+            normalized_meds.append(med)
+
     # Hybrid vector + keyword search
     try:
         from vector_search import hybrid_search
-        result = hybrid_search(medications, supplements)
+        result = hybrid_search(normalized_meds, supplements)
         result["supp_interactions"] = [
             i for i in result.get("interactions", [])
             if i.get("check_type") == "supplement_supplement"
@@ -835,7 +857,7 @@ def ai_med_check(
     except Exception as e:
         log.warning("Hybrid search unavailable, using keyword: %s", e)
         from med_check_engine import run_med_check
-        result = run_med_check(medications, supplements, [])
+        result = run_med_check(normalized_meds, supplements, [])
     interactions = result.get("interactions", [])
     near_misses  = result.get("near_misses", [])
 
@@ -843,7 +865,7 @@ def ai_med_check(
     faers_context = []
     try:
         from faers import get_faers_context_for_stack
-        faers_context = get_faers_context_for_stack(medications, supplements)
+        faers_context = get_faers_context_for_stack(normalized_meds, supplements)
         log.info("FAERS: %d pairs with adverse events", len(faers_context))
     except Exception as e:
         log.warning("FAERS lookup failed: %s", e)
@@ -852,9 +874,9 @@ def ai_med_check(
     openfda_data, pubchem_data, medlineplus_data = [], [], []
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=6) as ex:
-        fda_futs = {ex.submit(query_openfda, m): m        for m in medications[:2]}
+        fda_futs = {ex.submit(query_openfda, m): m        for m in normalized_meds[:2]}
         pub_futs = {ex.submit(get_pubchem_context, s): s  for s in supplements[:2]}
-        mpl_futs = {ex.submit(get_medlineplus, m): m      for m in medications[:1]}
+        mpl_futs = {ex.submit(get_medlineplus, m): m      for m in normalized_meds[:1]}
 
         for f in concurrent.futures.as_completed(fda_futs):
             try:
@@ -879,6 +901,8 @@ def ai_med_check(
 
     # Build context block for Claude explanations
     ctx = ""
+    if rxnorm_context.get("context_text"):
+        ctx += rxnorm_context["context_text"] + "\n"
     if openfda_data:
         ctx += "\nFDA Label Data:\n" + "".join(
             f"- {d['field']}: {d['text'][:200]}\n" for d in openfda_data[:3]
@@ -929,7 +953,7 @@ def ai_med_check(
 
     gaps = []
     try:
-        gaps = detect_gaps(medications, supplements)
+        gaps = detect_gaps(normalized_meds, supplements)
         if gaps:
             gap_text = "NUTRIENT GAPS DETECTED (medications depleting nutrients not in stack):\n"
             for g in gaps:
@@ -968,7 +992,7 @@ Never say definitely safe or definitely dangerous.
     claude_error = ""
 
     for ix in interactions:
-        med_name  = medications[0]  if medications  else ""
+        med_name  = normalized_meds[0]  if normalized_meds  else ""
         supp_name = supplements[0] if supplements else ""
         prompt    = (
             f'User asked: "{query}"\n\n'
@@ -1009,7 +1033,7 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'.
     if not interactions:
         prompt = (
             f'User asked: "{query}"\n'
-            f"Medications: {medications}\nSupplements: {supplements}\n"
+            f"Medications: {normalized_meds}\nSupplements: {supplements}\n"
             f"Database: no specific rule found.\n{ctx}\n\nProvide a helpful response."
         )
         overall = (
@@ -1036,7 +1060,7 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'.
         )
         prompt = (
             f'User asked: "{query}"\n'
-            f"Medications: {medications}\nSupplements: {supplements}\n"
+            f"Medications: {normalized_meds}\nSupplements: {supplements}\n"
             f"Interactions found: {len(interactions)}\n"
             f"Top concern: {interactions[0].get('title')} ({interactions[0].get('severity')})\n"
             f"{ctx}\n\nProvide a brief overall summary."
@@ -1060,14 +1084,18 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'.
     if pubchem_data:     sources.add(f"PubChem CID {pubchem_data[0].get('cid','')}")
     if medlineplus_data: sources.add("NIH MedlinePlus")
     if faers_context:    sources.add("FDA FAERS (OpenFDA adverse events)")
+    if rxnorm_context.get("drug_interactions"):
+        sources.add("NLM RxNav Drug Interaction API")
     sources.add("Educational only — not medical advice. Consult your pharmacist.")
 
     out = {
         "query":                query,
         "intent":               intent,
-        "resolved_medications": medications,
+        "resolved_medications": normalized_meds,
         "resolved_supplements": supplements,
-        "rxnorm_resolved":      intent.get("rxnorm_resolved", []),
+        "rxnorm_resolved":      rxnorm_context.get("resolved_meds", {}),
+        "fda_interactions":     rxnorm_context.get("drug_interactions", []),
+        "rxcui_list":           rxnorm_context.get("rxcui_list", []),
         "interactions":         enhanced,
         "near_misses":          near_misses,
         "openfda_data":         openfda_data,
@@ -1099,7 +1127,7 @@ Plain English. Always end with 'discuss with your pharmacist or doctor'.
             from memory import save_session
             save_session(
                 email            = email,
-                medications      = medications,
+                medications      = normalized_meds,
                 supplements      = supplements,
                 med_check_result = {
                     "interactions": interactions,
